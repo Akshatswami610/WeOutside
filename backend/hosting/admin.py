@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(Party)
 class PartyAdmin(admin.ModelAdmin):
-    list_display = ('party_id', 'party_name')
+    list_display = ('party_id', 'party_name', 'created_at')
     search_fields = ('party_id', 'party_name')
 
 @admin.register(Partyposter)
