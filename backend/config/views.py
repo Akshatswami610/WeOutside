@@ -12,8 +12,14 @@ def home(request):
 def eventdetails(request):
     return render(request, "eventdetails.html")
 
+def bookingcheckout(request):
+    return render(request, "booking-checkout.html")
+
 def hosting(request):
     return render(request, "hosting.html")
+
+def profile(request):
+    return render(request, "profile.html")
 
 def about(request):
     return render(request, "about.html")
@@ -29,5 +35,3 @@ def privacy(request):
 
 def terms(request):
     return render(request, "terms-and-conditions.html")
-
-def
