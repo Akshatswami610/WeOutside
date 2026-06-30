@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, phone_number, name, password=None, **extra_fields):
         if not email:
@@ -9,8 +10,17 @@ class UserManager(BaseUserManager):
         if not phone_number:
             raise ValueError("Phone number is required")
 
+        if not password:
+            raise ValueError("Password is required")
+
         email = self.normalize_email(email)
-        user = self.model(email=email,phone_number=phone_number,name=name,**extra_fields)
+
+        user = self.model(
+            email=email,
+            phone_number=phone_number,
+            name=name,
+            **extra_fields
+        )
 
         user.set_password(password)
         user.save(using=self._db)
@@ -20,6 +30,12 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(
             email,
@@ -32,8 +48,9 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=150)
-    email = models.EmailField(unique=True,db_index=True)
-    phone_number = models.CharField(max_length=15,unique=True,db_index=True)
+    email = models.EmailField(unique=True, db_index=True)
+    phone_number = models.CharField(max_length=15, unique=True, db_index=True)
+    date_of_birth = models.DateField(null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
