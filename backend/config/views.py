@@ -9,8 +9,8 @@ def register(request):
 def home(request):
     return render(request, "home.html")
 
-def eventdetails(request):
-    return render(request, "eventdetails.html")
+def eventdetails(request, id):
+    return render(request, "event-details.html")
 
 def bookingcheckout(request):
     return render(request, "booking-checkout.html")
