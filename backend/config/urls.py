@@ -24,10 +24,10 @@ urlpatterns = [
     path('bookingcheckout/', bookingcheckout, name='bookingcheckout'),
     path('profile/', profile, name='profile'),
     path('careers/', careers, name='careers'),
-    path('privacy/', privacy, name='privacy'),
+    path('privacy-policy/', privacy, name='privacy'),
     path('support/', support, name='support'),
     path('about/', about, name='about'),
-    path('terms/', terms, name='terms'),
+    path('terms-and-conditions/', terms, name='terms'),
     path('privacy/', privacy, name='privacy'),
 ]
 
