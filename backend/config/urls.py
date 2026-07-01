@@ -20,7 +20,7 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('register/', register, name='register'),
     path('hosting/', hosting, name='hosting'),
-    path('eventdetails/', eventdetails, name='eventdetails'),
+    path('event-details/<int:id>/', eventdetails, name='eventdetails'),
     path('bookingcheckout/', bookingcheckout, name='bookingcheckout'),
     path('profile/', profile, name='profile'),
     path('careers/', careers, name='careers'),
@@ -30,3 +30,6 @@ urlpatterns = [
     path('terms/', terms, name='terms'),
     path('privacy/', privacy, name='privacy'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
