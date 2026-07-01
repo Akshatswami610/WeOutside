@@ -1,10 +1,274 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .profile-card {
+        text-align: center;
+        padding: 34px 24px;
+    }
+
+    .profile-avatar-wrap {
+        width: 132px;
+        height: 132px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, var(--accent), rgba(245, 200, 76, .15));
+    }
+
+    #avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 3px solid var(--bg);
+    }
+
+    #name {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 6px;
+    }
+
+    #email {
+        color: var(--text-secondary);
+        font-size: .92rem;
+        margin-bottom: 2px;
+    }
+
+    #phone {
+        color: var(--text-muted);
+        font-size: .87rem;
+        margin-bottom: 0;
+    }
+
+    .profile-card .btn-danger {
+        width: 100%;
+    }
+
+    .info-panel h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+    }
+
+    .info-list {
+        margin-top: 18px;
+    }
+
+    .info-list .info-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 4px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-list .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-list .info-icon {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .25);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .info-list .info-label {
+        display: block;
+        font-size: .74rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+    }
+
+    .info-list .info-value {
+        font-size: .96rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row fade-in">
+
+    <div class="col-md-4">
+
+        <div class="card">
+
+            <div class="card-body profile-card">
+
+                <div class="profile-avatar-wrap">
+
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D0D0D&color=F5C84C&size=150"
+                        id="avatar"
+                        class="rounded-circle">
+
+                </div>
+
+                <h3 id="name">Loading...</h3>
+
+                <p id="email"></p>
+
+                <p id="phone"></p>
+
+                <button class="btn btn-danger mt-4" onclick="logout()">
+
+                    <i class="bi bi-box-arrow-right me-1"></i>
+
+                    Logout
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-8">
+
+        <div class="card">
+
+            <div class="card-body info-panel">
+
+                <h3>
+
+                    My Information
+
+                </h3>
+
+                <div class="info-list">
+
+                    <div class="info-row">
+
+                        <div class="info-icon"><i class="bi bi-person-fill"></i></div>
+
+                        <div>
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value" id="fullname">-</span>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
+
+                        <div>
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="email2">-</span>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
+
+                        <div>
+                            <span class="info-label">Phone</span>
+                            <span class="info-value" id="phone2">-</span>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-icon"><i class="bi bi-cake2-fill"></i></div>
+
+                        <div>
+                            <span class="info-label">Date of Birth</span>
+                            <span class="info-value" id="dob">-</span>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <div class="info-icon"><i class="bi bi-calendar-check-fill"></i></div>
+
+                        <div>
+                            <span class="info-label">Joined</span>
+                            <span class="info-value" id="joined">-</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+async function loadProfile(){
+
+    try{
+
+        const user=await api("/accounts/me/");
+
+        const fullName=user.name || "User";
+
+        document.getElementById("name").textContent=fullName;
+
+        document.getElementById("fullname").textContent=fullName;
+
+        document.getElementById("email").textContent=user.email || "Not available";
+
+        document.getElementById("email2").textContent=user.email || "Not available";
+
+        document.getElementById("phone").textContent=user.phone_number || "Not available";
+
+        document.getElementById("phone2").textContent=user.phone_number || "Not available";
+
+        document.getElementById("dob").textContent=user.date_of_birth || "Not available";
+
+        document.getElementById("joined").textContent=user.date_joined || "Not available";
+
+        document.getElementById("avatar").src=
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0D0D0D&color=F5C84C&size=150`;
+
+    }
+
+    catch(error){
+
+        document.getElementById("name").textContent="Unable to load profile";
+
+    }
+
+}
+
+loadProfile();
+
+</script>
+
+{% endblock %}
