@@ -1,10 +1,519 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+Event Details
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .event-hero {
+        position: relative;
+        height: 320px;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, #1c1c20, #131316);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .event-hero img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .event-hero .event-hero-fallback {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 2.6rem;
+    }
+
+    .event-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 40%, rgba(11, 11, 12, .92) 100%);
+    }
+
+    .event-hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 26px;
+        width: 100%;
+    }
+
+    .event-hero-content .badge-category {
+        display: inline-block;
+        background: rgba(11, 11, 12, .7);
+        backdrop-filter: blur(6px);
+        border: 1px solid var(--border);
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        padding: 5px 12px;
+        border-radius: 999px;
+        margin-bottom: 12px;
+    }
+
+    #title {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    hr {
+        border-color: var(--border);
+        opacity: 1;
+    }
+
+    #description {
+        color: var(--text-secondary);
+        font-size: .97rem;
+        line-height: 1.7;
+    }
+
+    .stat-tile {
+        border-radius: var(--radius-md);
+        padding: 18px;
+        height: 100%;
+        border: 1px solid var(--border);
+        background: var(--bg-secondary);
+    }
+
+    .stat-tile strong {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .stat-tile strong i {
+        color: var(--accent);
+    }
+
+    .stat-tile span,
+    .stat-tile .stat-value {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .info-row i {
+        color: var(--accent);
+        font-size: 1rem;
+        margin-top: 2px;
+        width: 20px;
+    }
+
+    .info-row strong {
+        display: block;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .info-row p {
+        margin: 0;
+        color: var(--text-primary);
+        font-weight: 500;
+        font-size: .95rem;
+    }
+
+    .book-btn {
+        width: 100%;
+    }
+
+    .host-card {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .host-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .3);
+        color: var(--accent);
+        font-size: 1.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+    }
+
+    #host_name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    #host_events {
+        color: var(--text-muted);
+        font-size: .88rem;
+        margin-bottom: 14px;
+    }
+
+    .host-email {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-secondary);
+        font-size: .85rem;
+        font-weight: 500;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        padding: 7px 14px;
+        border-radius: 999px;
+        margin-top: 4px;
+        transition: color .25s var(--ease), border-color .25s var(--ease);
+    }
+
+    .host-email:hover {
+        color: var(--accent);
+        border-color: rgba(245, 200, 76, .35);
+    }
+
+    .host-email i {
+        color: var(--accent);
+        font-size: .85rem;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row fade-in">
+
+    <div class="col-lg-8">
+
+        <div class="event-hero">
+
+            <img id="poster_img" src="" alt="" style="display:none;">
+
+            <div class="event-hero-fallback" id="poster_fallback">
+                <i class="bi bi-image"></i>
+            </div>
+
+            <div class="event-hero-content">
+
+                <span class="badge-category" id="category_badge">
+                    &nbsp;
+                </span>
+
+                <h2 id="title">
+                    Loading...
+                </h2>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <p id="description"></p>
+
+                <div class="row mt-3 g-3">
+
+                    <div class="col-md-4">
+
+                        <div class="stat-tile">
+
+                            <strong><i class="bi bi-tag-fill"></i> Category</strong>
+
+                            <span id="category"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="stat-tile">
+
+                            <strong><i class="bi bi-cash-coin"></i> Ticket Price</strong>
+
+                            <span>₹<span id="price"></span></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="stat-tile">
+
+                            <strong><i class="bi bi-people-fill"></i> Guests</strong>
+
+                            <span id="guests"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+
+                    <div class="info-row">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <div>
+                            <strong>Date &amp; Time</strong>
+                            <p id="date"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <i class="bi bi-geo-alt-fill"></i>
+
+                        <div>
+                            <strong>Location</strong>
+                            <p id="location"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="info-row">
+
+                        <i class="bi bi-shield-check"></i>
+
+                        <div>
+                            <strong>Guest Policy</strong>
+                            <p id="policy"></p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="btn btn-primary btn-lg mt-4 book-btn"
+                    onclick="bookNow()">
+
+                    Book Ticket
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-4">
+
+        <div class="card">
+
+            <div class="card-body host-card">
+
+                <div class="host-avatar" id="host_avatar">
+                    <i class="bi bi-person-fill" id="host_avatar_icon"></i>
+                    <img id="host_avatar_img" src="" alt="" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                </div>
+
+                <p id="host_name">
+
+                    -
+
+                </p>
+
+                <p id="host_events">
+
+                    -
+
+                </p>
+
+                <a href="#" id="host_email" class="host-email">
+
+                    <i class="bi bi-envelope-fill"></i>
+
+                    <span id="host_email_text">-</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+const eventId=window.location.pathname.split("/").filter(Boolean).pop();
+
+loadEvent();
+
+async function loadEvent(){
+
+    try{
+
+        const event=await api(`/hosting/events/${eventId}/`);
+
+        document.getElementById("title").textContent=event.event_name || "Untitled Event";
+
+        document.getElementById("description").textContent=event.description || "";
+
+        document.getElementById("category").textContent=event.event_category || "Not Available";
+
+        document.getElementById("category_badge").textContent=event.event_category || "Event";
+
+        document.getElementById("price").textContent=event.fee ?? "0";
+
+        document.getElementById("guests").textContent=event.max_members ?? "0";
+
+        const eventDate=event.event_date || "Not Available";
+        const eventTime=event.event_time || "";
+
+        document.getElementById("date").textContent=eventTime ? `${eventDate} at ${eventTime}` : eventDate;
+
+        document.getElementById("location").textContent=event.location || "Not Available";
+
+        const genderLabel=event.gender && event.gender !== "ANY" ? event.gender : "Open to everyone";
+        const ageLabel=event.age_limit ? `${event.age_limit}+` : "No age limit";
+
+        document.getElementById("policy").textContent=`${genderLabel} • ${ageLabel}`;
+
+        renderHost(event);
+
+        if(event.poster){
+
+            const img=document.getElementById("poster_img");
+
+            img.src=event.poster;
+
+            img.style.display="block";
+
+            document.getElementById("poster_fallback").style.display="none";
+
+        }
+
+    }
+
+    catch{
+
+        alert("Unable to load event.");
+
+    }
+
+}
+
+function renderHost(event){
+
+    // API may return the host under `user` or `host` — never assume either exists.
+    const host=event.user || event.host || null;
+
+    const nameEl=document.getElementById("host_name");
+    const eventsEl=document.getElementById("host_events");
+    const emailTextEl=document.getElementById("host_email_text");
+    const emailLinkEl=document.getElementById("host_email");
+    const avatarImg=document.getElementById("host_avatar_img");
+    const avatarIcon=document.getElementById("host_avatar_icon");
+
+    // Name
+    const hostName=(host && host.name) || event.user.name || "Host";
+    nameEl.textContent=hostName;
+
+    // Hosted events count (supports either top-level or nested field, no fake default)
+    const hostedCountRaw=event.host_events ?? (host && host.host_events) ?? 0;
+    const hostedCount=Number.isFinite(Number(hostedCountRaw)) ? Number(hostedCountRaw) : 0;
+    eventsEl.textContent=`${hostedCount} hosted event${hostedCount === 1 ? "" : "s"}`;
+
+    // Email
+    const hostEmail=(host && host.email) || event.host_email || "";
+
+    if(hostEmail){
+
+        emailTextEl.textContent=hostEmail;
+        emailLinkEl.href=`mailto:${hostEmail}`;
+        emailLinkEl.classList.remove("disabled");
+        emailLinkEl.removeAttribute("aria-disabled");
+        emailLinkEl.style.pointerEvents="";
+        emailLinkEl.style.opacity="";
+
+    } else {
+
+        emailTextEl.textContent="Not available";
+        emailLinkEl.removeAttribute("href");
+        emailLinkEl.classList.add("disabled");
+        emailLinkEl.setAttribute("aria-disabled", "true");
+        emailLinkEl.style.pointerEvents="none";
+        emailLinkEl.style.opacity=".6";
+
+    }
+
+    // Profile image (falls back to the default avatar icon)
+    const profileImage=(host && (host.profile_image || host.avatar)) || event.host_profile_image || "";
+
+    if(profileImage){
+
+        avatarImg.src=profileImage;
+        avatarImg.style.display="block";
+        avatarIcon.style.display="none";
+
+    } else {
+
+        avatarImg.removeAttribute("src");
+        avatarImg.style.display="none";
+        avatarIcon.style.display="";
+
+    }
+
+}
+
+function bookNow(){
+
+    window.location=`/booking-checkout/?event=${eventId}`;
+
+}
+
+</script>
+
+{% endblock %}
