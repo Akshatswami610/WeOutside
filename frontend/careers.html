@@ -1,10 +1,594 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+Careers
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .page-hero {
+        text-align: center;
+        padding: 20px 20px 44px;
+    }
+
+    .page-hero .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: .82rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .25);
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+    }
+
+    .page-hero h1 {
+        font-size: clamp(1.9rem, 4vw, 2.6rem);
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .page-hero .lead {
+        color: var(--text-secondary);
+        max-width: 560px;
+        margin: 16px auto 0;
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .section-label {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0 0 28px;
+    }
+
+    hr {
+        border-color: var(--border);
+        opacity: 1;
+        margin: 44px 0;
+    }
+
+    .perk-card {
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .perk-card i {
+        font-size: 2.1rem;
+        color: var(--accent) !important;
+    }
+
+    .perk-card h5 {
+        margin: 16px 0 8px;
+        font-size: 1.05rem;
+    }
+
+    .perk-card p {
+        color: var(--text-secondary);
+        font-size: .88rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Job accordion */
+
+    .job-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .job-item {
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .job-trigger {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        cursor: pointer;
+        text-align: left;
+        color: var(--text-primary);
+    }
+
+    .job-trigger-info {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .job-trigger h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .job-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        font-size: .83rem;
+        font-weight: 500;
+    }
+
+    .job-meta i {
+        color: var(--accent);
+        font-size: .78rem;
+    }
+
+    .role-type {
+        display: inline-block;
+        font-size: .74rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--accent-dim);
+        color: var(--accent);
+        border: 1px solid rgba(245, 200, 76, .25);
+        white-space: nowrap;
+    }
+
+    .job-chevron {
+        color: var(--text-muted);
+        font-size: 1rem;
+        transition: transform .3s var(--ease);
+        flex-shrink: 0;
+    }
+
+    .job-item.open .job-chevron {
+        transform: rotate(180deg);
+        color: var(--accent);
+    }
+
+    .job-panel {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s var(--ease);
+    }
+
+    .job-item.open .job-panel {
+        max-height: 500px;
+    }
+
+    .job-panel-inner {
+        padding: 0 22px 24px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+        margin-top: -1px;
+    }
+
+    .job-panel-inner h6 {
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+    }
+
+    .job-req-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .job-req-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: var(--text-secondary);
+        font-size: .89rem;
+        line-height: 1.6;
+    }
+
+    .job-req-list li::before {
+        content: '\F26B';
+        font-family: "bootstrap-icons";
+        color: var(--accent);
+        font-size: .78rem;
+        margin-top: 3px;
+    }
+
+    .job-panel-inner .job-apply-btn {
+        margin-top: 4px;
+    }
+
+    .cta-block {
+        text-align: center;
+        margin-top: 48px;
+    }
+
+    .cta-block p.eyebrow-text {
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+
+    .cta-block h4 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .cta-block p.sub {
+        color: var(--text-muted);
+        font-size: .9rem;
+        margin-bottom: 22px;
+    }
+
+    .mail-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="fade-in">
+
+    <div class="page-hero">
+
+        <span class="hero-eyebrow">
+            <i class="bi bi-briefcase-fill"></i>
+            Join The Team
+        </span>
+
+        <h1 class="fw-bold">
+
+            Careers at House Party Marketplace
+
+        </h1>
+
+        <p class="lead">
+
+            We're building the future of social experiences.
+            If you're passionate about technology, community, and creating memorable experiences, we'd love to hear from you.
+
+        </p>
+
+    </div>
+
+    <h3 class="section-label">Why Join Us?</h3>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card perk-card h-100">
+
+                <i class="bi bi-lightbulb"></i>
+
+                <h5>
+                    Innovation
+                </h5>
+
+                <p>
+                    Build products that connect thousands of people.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card perk-card h-100">
+
+                <i class="bi bi-globe"></i>
+
+                <h5>
+                    Remote Friendly
+                </h5>
+
+                <p>
+                    Work from anywhere with flexible schedules.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card perk-card h-100">
+
+                <i class="bi bi-people"></i>
+
+                <h5>
+                    Amazing Team
+                </h5>
+
+                <p>
+                    Collaborate with talented people from different backgrounds.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h3 class="section-label">Open Positions</h3>
+
+    <p class="text-muted mb-3" style="font-size:.87rem;">
+
+        Click a role to see the full requirements.
+
+    </p>
+
+    <div class="job-list">
+
+        <div class="card job-item">
+
+            <button class="job-trigger" onclick="toggleJob(this)">
+
+                <div class="job-trigger-info">
+
+                    <h5>Frontend Developer</h5>
+
+                    <span class="job-meta"><i class="bi bi-geo-alt-fill"></i> Remote</span>
+
+                    <span class="role-type">Full Time</span>
+
+                </div>
+
+                <i class="bi bi-chevron-down job-chevron"></i>
+
+            </button>
+
+            <div class="job-panel">
+
+                <div class="job-panel-inner">
+
+                    <h6>Requirements</h6>
+
+                    <ul class="job-req-list">
+
+                        <li>2+ years of experience with React, Vue, or a similar frontend framework.</li>
+
+                        <li>Strong command of HTML, CSS, and modern JavaScript (ES6+).</li>
+
+                        <li>Experience turning design mockups into pixel-accurate, responsive UI.</li>
+
+                        <li>Familiarity with REST APIs and asynchronous data fetching.</li>
+
+                        <li>An eye for detail, animation, and clean user experience.</li>
+
+                    </ul>
+
+                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Frontend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Frontend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+
+                        <i class="bi bi-envelope-fill me-1"></i> Apply via Email
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card job-item">
+
+            <button class="job-trigger" onclick="toggleJob(this)">
+
+                <div class="job-trigger-info">
+
+                    <h5>Backend Developer</h5>
+
+                    <span class="job-meta"><i class="bi bi-geo-alt-fill"></i> Remote</span>
+
+                    <span class="role-type">Full Time</span>
+
+                </div>
+
+                <i class="bi bi-chevron-down job-chevron"></i>
+
+            </button>
+
+            <div class="job-panel">
+
+                <div class="job-panel-inner">
+
+                    <h6>Requirements</h6>
+
+                    <ul class="job-req-list">
+
+                        <li>2+ years of experience with Python and Django or Django REST Framework.</li>
+
+                        <li>Solid understanding of relational databases (PostgreSQL/MySQL) and query optimization.</li>
+
+                        <li>Experience designing and securing REST APIs.</li>
+
+                        <li>Comfort working with authentication, permissions, and background tasks.</li>
+
+                        <li>Understanding of scalable, maintainable backend architecture.</li>
+
+                    </ul>
+
+                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Backend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Backend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+
+                        <i class="bi bi-envelope-fill me-1"></i> Apply via Email
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card job-item">
+
+            <button class="job-trigger" onclick="toggleJob(this)">
+
+                <div class="job-trigger-info">
+
+                    <h5>UI/UX Designer</h5>
+
+                    <span class="job-meta"><i class="bi bi-geo-alt-fill"></i> Remote</span>
+
+                    <span class="role-type">Internship</span>
+
+                </div>
+
+                <i class="bi bi-chevron-down job-chevron"></i>
+
+            </button>
+
+            <div class="job-panel">
+
+                <div class="job-panel-inner">
+
+                    <h6>Requirements</h6>
+
+                    <ul class="job-req-list">
+
+                        <li>Portfolio showing product design work (Figma or similar tools).</li>
+
+                        <li>Understanding of visual hierarchy, typography, and spacing systems.</li>
+
+                        <li>Interest in designing for mobile and web interfaces.</li>
+
+                        <li>Willingness to learn and take feedback from senior designers.</li>
+
+                        <li>Currently pursuing or recently completed a design-related degree/course.</li>
+
+                    </ul>
+
+                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20UI%2FUX%20Designer%20Internship&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20UI%2FUX%20Designer%20Internship.%20Please%20find%20my%20CV%2Fportfolio%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+
+                        <i class="bi bi-envelope-fill me-1"></i> Apply via Email
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card job-item">
+
+            <button class="job-trigger" onclick="toggleJob(this)">
+
+                <div class="job-trigger-info">
+
+                    <h5>Community Manager</h5>
+
+                    <span class="job-meta"><i class="bi bi-geo-alt-fill"></i> Hybrid</span>
+
+                    <span class="role-type">Full Time</span>
+
+                </div>
+
+                <i class="bi bi-chevron-down job-chevron"></i>
+
+            </button>
+
+            <div class="job-panel">
+
+                <div class="job-panel-inner">
+
+                    <h6>Requirements</h6>
+
+                    <ul class="job-req-list">
+
+                        <li>1+ years of experience in community management or social media.</li>
+
+                        <li>Strong written and verbal communication skills.</li>
+
+                        <li>Comfortable engaging directly with hosts and guests to gather feedback.</li>
+
+                        <li>Experience planning or coordinating in-person or online events is a plus.</li>
+
+                        <li>Based near a hybrid work location or willing to relocate.</li>
+
+                    </ul>
+
+                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Community%20Manager&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Community%20Manager%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+
+                        <i class="bi bi-envelope-fill me-1"></i> Apply via Email
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="cta-block">
+
+        <p class="eyebrow-text">Don't see a role that fits?</p>
+
+        <h4 class="fw-bold">We're always open to great people</h4>
+
+        <p class="sub">Share your CV with us and we'll reach out when something matches.</p>
+
+        <a href="mailto:careers@housepartymarketplace.com?subject=General%20Application&body=Hi%20House%20Party%20team%2C%0A%0AI%27d%20love%20to%20be%20considered%20for%20future%20opportunities.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary btn-lg mail-btn">
+
+            <i class="bi bi-envelope-fill"></i>
+
+            careers@housepartymarketplace.com
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+function toggleJob(trigger){
+
+    const item=trigger.closest(".job-item");
+
+    const isOpen=item.classList.contains("open");
+
+    document.querySelectorAll(".job-item.open").forEach(openItem=>{
+
+        if(openItem!==item){
+
+            openItem.classList.remove("open");
+
+        }
+
+    });
+
+    item.classList.toggle("open", !isOpen);
+
+}
+
+</script>
+
+{% endblock %}
