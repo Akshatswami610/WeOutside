@@ -1,10 +1,433 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}
+Support
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .page-hero {
+        text-align: center;
+        padding: 20px 20px 40px;
+    }
+
+    .page-hero .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: .82rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .25);
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+    }
+
+    .page-hero h1 {
+        font-size: clamp(1.9rem, 4vw, 2.4rem);
+        margin-bottom: 10px;
+    }
+
+    .page-hero p {
+        color: var(--text-secondary);
+        max-width: 480px;
+        margin: 0 auto;
+        font-size: .96rem;
+    }
+
+    .support-form-card {
+        padding: 8px;
+    }
+
+    .support-form-card h2 {
+        font-size: 1.25rem;
+        margin-bottom: 6px;
+    }
+
+    .support-form-card .subtext {
+        color: var(--text-muted);
+        font-size: .88rem;
+        margin-bottom: 26px;
+    }
+
+    .support-form-card textarea.form-control {
+        resize: vertical;
+        min-height: 140px;
+    }
+
+    #status .alert {
+        font-size: .88rem;
+    }
+
+    .faq-card {
+        margin-top: 24px;
+        padding: 8px;
+    }
+
+    .faq-card h4 {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+
+    .faq-card hr {
+        border-color: var(--border);
+        opacity: 1;
+        margin: 18px 0 6px;
+    }
+
+    .faq-item {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item:last-child {
+        border-bottom: none;
+    }
+
+    .faq-trigger {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: 18px 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        cursor: pointer;
+        text-align: left;
+        color: var(--text-primary);
+    }
+
+    .faq-trigger h6 {
+        margin: 0;
+        font-size: .96rem;
+        font-weight: 600;
+    }
+
+    .faq-trigger i {
+        color: var(--text-muted);
+        font-size: .9rem;
+        transition: transform .3s var(--ease), color .3s var(--ease);
+        flex-shrink: 0;
+    }
+
+    .faq-item.open .faq-trigger i {
+        transform: rotate(180deg);
+        color: var(--accent);
+    }
+
+    .faq-panel {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .3s var(--ease);
+    }
+
+    .faq-item.open .faq-panel {
+        max-height: 200px;
+    }
+
+    .faq-panel p {
+        color: var(--text-secondary);
+        font-size: .89rem;
+        line-height: 1.6;
+        padding: 0 4px 18px;
+        margin: 0;
+    }
+
+    .faq-panel p strong {
+        color: var(--text-primary);
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center fade-in">
+
+    <div class="col-lg-8">
+
+        <div class="page-hero">
+
+            <span class="hero-eyebrow">
+                <i class="bi bi-headset"></i>
+                We're Here to Help
+            </span>
+
+            <h1 class="fw-bold">
+
+                Contact Support
+
+            </h1>
+
+            <p>
+
+                Need help? Submit your issue below and our team will get back to you soon.
+
+            </p>
+
+        </div>
+
+        <div class="card support-form-card">
+
+            <div class="card-body">
+
+                <h2 class="fw-bold">Submit a Ticket</h2>
+
+                <p class="subtext">
+
+                    Tell us what's going on and we'll take it from there.
+
+                </p>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Full Name
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            class="form-control"
+                            placeholder="John Doe">
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+
+                            Phone Number
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="phone_number"
+                            class="form-control"
+                            placeholder="9876543210">
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Email
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        class="form-control"
+                        placeholder="you@example.com">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Subject
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subject"
+                        class="form-control"
+                        placeholder="Enter Subject">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Message
+
+                    </label>
+
+                    <textarea
+                        id="message"
+                        rows="6"
+                        class="form-control"
+                        placeholder="Describe your issue"></textarea>
+
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="submitTicket()">
+
+                    <i class="bi bi-send-fill me-1"></i>
+
+                    Submit Ticket
+
+                </button>
+
+                <div
+                    id="status"
+                    class="mt-3">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card faq-card">
+
+            <div class="card-body">
+
+                <h4 class="fw-bold">
+
+                    Frequently Asked Questions
+
+                </h4>
+
+                <hr>
+
+                <div class="faq-item">
+
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <h6>How do I book an event?</h6>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <div class="faq-panel">
+                        <p>Select an event and click <strong>Book Ticket</strong>.</p>
+                    </div>
+
+                </div>
+
+                <div class="faq-item">
+
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <h6>How do I become a host?</h6>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <div class="faq-panel">
+                        <p>Go to the <strong>Hosting</strong> page and create your first event.</p>
+                    </div>
+
+                </div>
+
+                <div class="faq-item">
+
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <h6>Can I cancel my booking?</h6>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <div class="faq-panel">
+                        <p>Yes, depending on the host's cancellation policy.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+function toggleFaq(trigger){
+
+    const item=trigger.closest(".faq-item");
+
+    item.classList.toggle("open");
+
+}
+
+async function submitTicket(){
+
+    const name=document.getElementById("name").value.trim();
+
+    const phone_number=document.getElementById("phone_number").value.trim();
+
+    const email=document.getElementById("email").value.trim();
+
+    const subject=document.getElementById("subject").value.trim();
+
+    const message=document.getElementById("message").value.trim();
+
+    const status=document.getElementById("status");
+
+    status.innerHTML="";
+
+    if(name==="" || phone_number==="" || email==="" || subject==="" || message===""){
+
+        status.innerHTML="<div class='alert alert-danger'>Please fill all fields.</div>";
+
+        return;
+
+    }
+
+    try {
+        const response = await api("/support/help/", "POST", {
+            name,
+            phone_number,
+            email,
+            subject,
+            message
+        });
+
+        console.log(response);
+
+        status.innerHTML = `
+            <div class="alert alert-success">
+                Support request submitted successfully.
+            </div>
+        `;
+
+        document.getElementById("name").value="";
+
+        document.getElementById("phone_number").value="";
+
+        document.getElementById("email").value="";
+
+        document.getElementById("subject").value="";
+
+        document.getElementById("message").value="";
+
+    }
+
+    catch (error) {
+        console.error("Support Error:", error);
+
+        status.innerHTML = `
+            <div class="alert alert-danger">
+                ${error?.message || "Something went wrong."}
+            </div>
+        `;
+    }
+
+}
+
+</script>
+
+{% endblock %}
