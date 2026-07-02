@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import login, register, home, hosting, eventdetails, bookingcheckout, about, careers, terms, profile, privacy, support
+from .views import login, register, home, hosting, eventdetails, bookingcheckout, payment, about, careers, terms, profile, privacy, support
 
 
 urlpatterns = [
@@ -21,7 +21,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('hosting/', hosting, name='hosting'),
     path('event-details/<int:id>/', eventdetails, name='eventdetails'),
-    path('bookingcheckout/', bookingcheckout, name='bookingcheckout'),
+    path('booking-checkout/', bookingcheckout, name='bookingcheckout'),
+    path('booking-checkout/payment/', payment, name='payment'),
     path('profile/', profile, name='profile'),
     path('careers/', careers, name='careers'),
     path('privacy-policy/', privacy, name='privacy'),
