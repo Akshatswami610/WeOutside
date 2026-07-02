@@ -15,6 +15,9 @@ def eventdetails(request, id):
 def bookingcheckout(request):
     return render(request, "booking-checkout.html")
 
+def payment(request):
+    return render(request, "payment.html")
+
 def hosting(request):
     return render(request, "hosting.html")
 
