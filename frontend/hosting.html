@@ -4,62 +4,470 @@
 Host Event
 {% endblock %}
 
+{% block css %}
+
+<style>
+
+    .hosting-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .hosting-header h1 {
+        font-size: 1.7rem;
+        margin-bottom: 6px;
+    }
+
+    .hosting-header p {
+        color: var(--text-muted);
+        font-size: .92rem;
+        margin: 0;
+    }
+
+    /* Floating Action Button */
+
+    .fab-btn {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #1a1400;
+        border: none;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 12px 28px -6px rgba(245, 200, 76, .5);
+        z-index: 1040;
+        transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+        cursor: pointer;
+    }
+
+    .fab-btn:hover {
+        transform: translateY(-3px) scale(1.04);
+        box-shadow: 0 16px 34px -6px rgba(245, 200, 76, .6);
+    }
+
+    .fab-btn:active {
+        transform: translateY(0) scale(.96);
+    }
+
+    @media (max-width: 576px) {
+        .fab-btn {
+            bottom: 20px;
+            right: 20px;
+            width: 54px;
+            height: 54px;
+            font-size: 1.35rem;
+        }
+    }
+
+    /* Modal form */
+
+    #createEventModal .modal-dialog {
+        max-width: 720px;
+    }
+
+    #createEventModal .modal-body {
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent) transparent;
+    }
+
+    #createEventModal .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #createEventModal .modal-body::-webkit-scrollbar-thumb {
+        background: rgba(245, 200, 76, .45);
+        border-radius: 8px;
+    }
+
+    #createEventModal .modal-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #createEventModal label.form-label {
+        margin-bottom: .3rem;
+    }
+
+    #createEventModal .form-row-split > div {
+        min-width: 0;
+    }
+
+    #createEventModal .form-row-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    @media (max-width: 576px) {
+        #createEventModal .form-row-split {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .poster-upload {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+    }
+
+    .poster-preview {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .poster-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .poster-upload label {
+        color: var(--text-secondary);
+        font-size: .85rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .poster-upload input[type="file"] {
+        font-size: .82rem;
+        color: var(--text-muted);
+    }
+
+    #createStatus .alert {
+        font-size: .85rem;
+    }
+
+    .btn-loading {
+        pointer-events: none;
+        opacity: .75;
+    }
+
+    /* Events grid */
+
+    .ownership-note {
+        margin-bottom: 20px;
+        font-size: .85rem;
+    }
+
+    .event-mgmt-card {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .event-mgmt-media {
+        height: 160px;
+        background: linear-gradient(135deg, #1c1c20, #131316);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 1.8rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .event-mgmt-media img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .event-mgmt-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-mgmt-body h4 {
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+    }
+
+    .event-mgmt-body .event-desc {
+        color: var(--text-secondary);
+        font-size: .86rem;
+        margin-bottom: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-mgmt-meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+    }
+
+    .event-mgmt-meta span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: .8rem;
+        font-weight: 500;
+    }
+
+    .event-mgmt-meta i {
+        color: var(--accent);
+        font-size: .82rem;
+    }
+
+    .event-mgmt-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .event-mgmt-actions .btn {
+        flex: 1;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 70px 20px;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 2.4rem;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .empty-state p {
+        margin-bottom: 18px;
+    }
+
+    #eventList .loading .spinner-border {
+        color: var(--accent);
+    }
+
+</style>
+
+{% endblock %}
+
 {% block content %}
 
-<div class="row">
+<div class="hosting-header fade-in">
 
-    <div class="col-lg-4">
+    <div>
+        <h1 class="fw-bold">My Hosted Events</h1>
+        <p>Everything you're hosting, all in one place.</p>
+    </div>
 
-        <div class="card">
+</div>
 
-            <div class="card-body">
+<div id="ownershipNote"></div>
 
-                <h3 class="mb-3">
+<div id="eventList"></div>
 
-                    Create Event
+<!-- Floating Action Button -->
+<button
+    class="fab-btn"
+    type="button"
+    data-bs-toggle="modal"
+    data-bs-target="#createEventModal"
+    aria-label="Create Event"
+    title="Create Event">
 
-                </h3>
+    <i class="bi bi-plus-lg"></i>
 
+</button>
+
+<!-- Create Event Modal -->
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold" id="createEventModalLabel">Create Event</h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <label class="form-label mb-1 d-block" for="title">Event Title <span class="text-danger">*</span></label>
                 <input
                     class="form-control mb-3"
                     id="title"
-                    placeholder="Event Title">
+                    placeholder="e.g. Rooftop House Party">
 
+                <label class="form-label mb-1 d-block" for="description">Description <span class="text-danger">*</span></label>
                 <textarea
                     class="form-control mb-3"
                     id="description"
-                    rows="4"
-                    placeholder="Description"></textarea>
+                    rows="3"
+                    placeholder="What should guests expect?"></textarea>
 
-                <select
-                    id="category"
-                    class="form-select mb-3">
+                <div class="form-row-split mb-3">
 
-                    <option>House Party</option>
-                    <option>Dinner Party</option>
-                    <option>Game Night</option>
-                    <option>Movie Night</option>
-                    <option>Networking</option>
-                    <option>Live Music</option>
-                    <option>Workshop</option>
+                    <div>
+                        <label class="form-label mb-1 d-block" for="category">Category <span class="text-danger">*</span></label>
+                        <select
+                            id="category"
+                            class="form-select">
 
-                </select>
+                            <option value="HOUSE_PARTY">House Party</option>
+                            <option value="DINNER_PARTY">Dinner Party</option>
+                            <option value="GAME_NIGHT">Game Night</option>
+                            <option value="LIVE_MUSIC">Live Music</option>
+                            <option value="KARAOKE">Karaoke</option>
+                            <option value="NETWORKING">Networking</option>
+                            <option value="BOOK_CLUB">Book Club</option>
+                            <option value="MOVIE_NIGHT">Movie Night</option>
+                            <option value="COOKING_CLASS">Cooking Class</option>
+                            <option value="WELLNESS">Wellness</option>
+                            <option value="ART_CRAFT">Art &amp; Craft</option>
+                            <option value="COFFEE_MEETUP">Coffee Meetup</option>
+                            <option value="CELEBRATION">Celebration</option>
+                            <option value="DANCE_PARTY">Dance Party</option>
+                            <option value="WATCH_PARTY">Watch Party</option>
+                            <option value="CULTURAL_MEETUP">Cultural Meetup</option>
+                            <option value="WORKSHOP">Workshop</option>
+                            <option value="OPEN_MIC">Open Mic</option>
+                            <option value="OTHER">Other</option>
 
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="poster">Event Poster <span class="text-danger">*</span></label>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="poster-preview" id="posterPreviewWrap">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            <input type="file" id="poster" accept="image/*" class="form-control form-control-sm" onchange="previewPoster(event)">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-row-split mb-3">
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="ticket_price">Ticket Price <span class="text-danger">*</span></label>
+                        <input
+                            class="form-control"
+                            id="ticket_price"
+                            type="number"
+                            min="0"
+                            placeholder="0 for free entry">
+                    </div>
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="max_guests">Max Guests <span class="text-danger">*</span></label>
+                        <input
+                            class="form-control"
+                            id="max_guests"
+                            type="number"
+                            min="1"
+                            placeholder="e.g. 20">
+                    </div>
+
+                </div>
+
+                <div class="form-row-split mb-3">
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="age_limit">Age Limit <span class="text-danger">*</span></label>
+                        <input
+                            class="form-control"
+                            id="age_limit"
+                            type="number"
+                            min="0"
+                            placeholder="e.g. 18">
+                    </div>
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="gender">Gender</label>
+                        <select id="gender" class="form-select">
+                            <option value="ANY">Any Gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="O">Other</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <label class="form-label mb-1 d-block" for="location">Location <span class="text-danger">*</span></label>
                 <input
                     class="form-control mb-3"
-                    id="ticket_price"
-                    type="number"
-                    placeholder="Ticket Price">
+                    id="location"
+                    placeholder="Venue address or area">
 
-                <input
-                    class="form-control mb-3"
-                    id="max_guests"
-                    type="number"
-                    placeholder="Maximum Guests">
+                <div class="form-row-split mb-3">
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="event_date">Event Date <span class="text-danger">*</span></label>
+                        <input
+                            class="form-control"
+                            id="event_date"
+                            type="date">
+                    </div>
+
+                    <div>
+                        <label class="form-label mb-1 d-block" for="event_time">Event Time</label>
+                        <input
+                            class="form-control"
+                            id="event_time"
+                            type="time"
+                            value="22:00">
+                    </div>
+
+                </div>
+
+                <div id="createStatus"></div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 
                 <button
-                    class="btn btn-success w-100"
+                    id="createEventBtn"
+                    class="btn btn-primary"
                     onclick="createEvent()">
+
+                    <i class="bi bi-plus-circle-fill me-1"></i>
 
                     Create Event
 
@@ -68,18 +476,6 @@ Host Event
             </div>
 
         </div>
-
-    </div>
-
-    <div class="col-lg-8">
-
-        <h3 class="mb-3">
-
-            My Hosted Events
-
-        </h3>
-
-        <div id="eventList"></div>
 
     </div>
 
@@ -91,141 +487,540 @@ Host Event
 
 <script>
 
-loadEvents();
+// Maps the Event model's stored category keys to human-readable labels,
+// since the API returns raw enum values like "HOUSE_PARTY".
+const CATEGORY_LABELS={
 
-async function loadEvents(){
+    HOUSE_PARTY:"House Party",
 
-    const events=await api("/hosting/events/");
+    DINNER_PARTY:"Dinner Party",
 
-    let html="";
+    GAME_NIGHT:"Game Night",
 
-    if(events.length==0){
+    LIVE_MUSIC:"Live Music",
 
-        html=`
+    KARAOKE:"Karaoke",
 
-        <div class="alert alert-info">
+    NETWORKING:"Networking",
 
-            No Events Found.
+    BOOK_CLUB:"Book Club",
 
-        </div>
+    MOVIE_NIGHT:"Movie Night",
 
-        `;
+    COOKING_CLASS:"Cooking Class",
+
+    WELLNESS:"Wellness",
+
+    ART_CRAFT:"Art & Craft",
+
+    COFFEE_MEETUP:"Coffee Meetup",
+
+    CELEBRATION:"Celebration",
+
+    DANCE_PARTY:"Dance Party",
+
+    WATCH_PARTY:"Watch Party",
+
+    CULTURAL_MEETUP:"Cultural Meetup",
+
+    WORKSHOP:"Workshop",
+
+    OPEN_MIC:"Open Mic",
+
+    OTHER:"Other"
+
+};
+
+function categoryLabel(key){
+
+    return CATEGORY_LABELS[key] || key || "Uncategorized";
+
+}
+
+// The user object stored by login.html at sign-in time (data.user from
+// LoginView's response, which includes "id"). Used below to filter events
+// down to the logged-in host, since the API itself doesn't appear to do
+// this filtering server-side.
+function getCurrentUserId(){
+
+    try{
+
+        const stored=JSON.parse(localStorage.getItem("user") || "null");
+
+        return (stored && stored.id!=null) ? stored.id : null;
 
     }
 
-    events.forEach(event=>{
+    catch(error){
 
-        html+=`
+        return null;
 
-        <div class="card mb-3">
+    }
 
-            <div class="card-body">
+}
+
+loadEvents();
+
+function previewPoster(e){
+
+    const file=e.target.files[0];
+
+    const wrap=document.getElementById("posterPreviewWrap");
+
+    if(!file){
+
+        wrap.innerHTML=`<i class="bi bi-image"></i>`;
+
+        return;
+
+    }
+
+    const reader=new FileReader();
+
+    reader.onload=function(ev){
+
+        wrap.innerHTML=`<img src="${ev.target.result}" alt="Poster preview">`;
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+function renderEventCard(event){
+
+    return `
+
+    <div class="col-md-6 col-lg-4">
+
+        <div class="card event-mgmt-card h-100">
+
+            <div class="event-mgmt-media">
+
+                ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-image"></i>`}
+
+            </div>
+
+            <div class="event-mgmt-body">
 
                 <h4>
 
-                    ${event.title}
+                    ${event.event_name}
 
                 </h4>
 
-                <p>
+                <p class="event-desc">
 
-                    ${event.description}
+                    ${event.description || ""}
 
                 </p>
 
-                <div class="row">
+                <div class="event-mgmt-meta">
 
-                    <div class="col">
+                    <span><i class="bi bi-tag-fill"></i> ${categoryLabel(event.event_category)}</span>
 
-                        <strong>Category</strong>
+                    <span><i class="bi bi-cash-coin"></i> ₹${event.fee}</span>
 
-                        <br>
-
-                        ${event.category}
-
-                    </div>
-
-                    <div class="col">
-
-                        <strong>Price</strong>
-
-                        <br>
-
-                        ₹${event.ticket_price}
-
-                    </div>
-
-                    <div class="col">
-
-                        <strong>Guests</strong>
-
-                        <br>
-
-                        ${event.max_guests}
-
-                    </div>
+                    <span><i class="bi bi-people-fill"></i> ${event.max_members} guests</span>
 
                 </div>
 
-                <hr>
+                <div class="event-mgmt-actions">
 
-                <button
-                    class="btn btn-primary btn-sm"
-                    onclick="viewEvent(${event.id})">
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        onclick="viewEvent(${event.event_id})">
 
-                    View
+                        <i class="bi bi-eye-fill me-1"></i> View
 
-                </button>
+                    </button>
 
-                <button
-                    class="btn btn-warning btn-sm"
-                    onclick="editEvent(${event.id})">
+                    <button
+                        class="btn btn-secondary btn-sm"
+                        onclick="editEvent(${event.event_id})">
 
-                    Edit
+                        <i class="bi bi-pencil-fill me-1"></i> Edit
 
-                </button>
+                    </button>
 
-                <button
-                    class="btn btn-danger btn-sm"
-                    onclick="deleteEvent(${event.id})">
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="deleteEvent(${event.event_id})">
 
-                    Delete
+                        <i class="bi bi-trash-fill me-1"></i> Delete
 
-                </button>
+                    </button>
+
+                </div>
 
             </div>
 
         </div>
 
-        `;
+    </div>
 
-    });
+    `;
 
-    document.getElementById("eventList").innerHTML=html;
+}
+
+async function loadEvents(){
+
+    const eventList=document.getElementById("eventList");
+
+    const ownershipNote=document.getElementById("ownershipNote");
+
+    ownershipNote.innerHTML="";
+
+    eventList.innerHTML=`
+        <div class="loading">
+            <div class="spinner-border" role="status"></div>
+            <div>Loading your events...</div>
+        </div>
+    `;
+
+    try{
+
+        const events=await api("/hosting/events/");
+
+        if(!Array.isArray(events)){
+
+            const message=(events && (events.detail || events.error)) || "Unable to load your events.";
+
+            eventList.innerHTML=`<div class="alert alert-danger">${message}</div>`;
+
+            return;
+
+        }
+
+        if(events.length===0){
+
+            eventList.innerHTML=`
+
+            <div class="empty-state">
+
+                <i class="bi bi-calendar-x"></i>
+
+                <p>You haven't hosted any events yet.</p>
+
+            </div>
+
+            `;
+
+            return;
+
+        }
+
+        // Client-side filtering to "my" events, since /hosting/events/ does
+        // not appear to be scoped to the logged-in host on the server.
+        const currentUserId=getCurrentUserId();
+
+        const hostInfoAvailable=events.some(ev=>{
+
+            const host=ev.user || ev.host;
+
+            return host!=null;
+
+        });
+
+        let myEvents=events;
+
+        if(currentUserId!=null && hostInfoAvailable){
+
+            myEvents=events.filter(ev=>{
+
+                const host=ev.user || ev.host;
+
+                if(host && typeof host==="object" && "id" in host){
+
+                    return host.id===currentUserId;
+
+                }
+
+                if(typeof host==="number"){
+
+                    return host===currentUserId;
+
+                }
+
+                return false;
+
+            });
+
+        }
+        else{
+
+            // We couldn't verify ownership client-side either because the
+            // event objects don't include host/user info, or because we
+            // don't have a logged-in user id (e.g. localStorage "user" was
+            // never set, or the person logged in before this fix shipped).
+            // Showing everything rather than hiding events, but flagging
+            // it clearly instead of pretending this is correctly scoped.
+            ownershipNote.innerHTML=`
+                <div class="alert alert-warning ownership-note">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Showing all events — we couldn't verify which ones you host.
+                    The <code>/hosting/events/</code> API should filter by the
+                    logged-in user on the backend.
+                </div>
+            `;
+
+        }
+
+        if(myEvents.length===0){
+
+            eventList.innerHTML=`
+
+            <div class="empty-state">
+
+                <i class="bi bi-calendar-x"></i>
+
+                <p>You haven't hosted any events yet.</p>
+
+            </div>
+
+            `;
+
+            return;
+
+        }
+
+        eventList.innerHTML=`<div class="row">${myEvents.map(renderEventCard).join("")}</div>`;
+
+    }
+
+    catch(error){
+
+        eventList.innerHTML=`<div class="alert alert-danger">Unable to load your events. Please try again.</div>`;
+
+    }
 
 }
 
 async function createEvent(){
 
-    const body={
+    const status=document.getElementById("createStatus");
 
-        title:document.getElementById("title").value,
+    const btn=document.getElementById("createEventBtn");
 
-        description:document.getElementById("description").value,
+    status.innerHTML="";
 
-        category:document.getElementById("category").value,
+    try{
 
-        ticket_price:document.getElementById("ticket_price").value,
+        const titleEl=document.getElementById("title");
 
-        max_guests:document.getElementById("max_guests").value
+        const descriptionEl=document.getElementById("description");
 
-    };
+        const categoryEl=document.getElementById("category");
 
-    await api("/hosting/events/","POST",body);
+        const posterEl=document.getElementById("poster");
 
-    alert("Event Created Successfully");
+        const ticketPriceEl=document.getElementById("ticket_price");
 
-    location.reload();
+        const maxGuestsEl=document.getElementById("max_guests");
+
+        const ageLimitEl=document.getElementById("age_limit");
+
+        const genderEl=document.getElementById("gender");
+
+        const locationEl=document.getElementById("location");
+
+        const eventDateEl=document.getElementById("event_date");
+
+        const eventTimeEl=document.getElementById("event_time");
+
+        if(!titleEl || !descriptionEl || !categoryEl || !posterEl || !ticketPriceEl || !maxGuestsEl || !ageLimitEl || !genderEl || !locationEl || !eventDateEl){
+
+            status.innerHTML="<div class='alert alert-danger'>Something went wrong loading the form. Please refresh the page and try again.</div>";
+
+            return;
+
+        }
+
+        const title=titleEl.value.trim();
+
+        const description=descriptionEl.value.trim();
+
+        const category=categoryEl.value;
+
+        const posterFile=posterEl.files[0];
+
+        const ticket_price=ticketPriceEl.value;
+
+        const max_guests=maxGuestsEl.value;
+
+        const age_limit=ageLimitEl.value;
+
+        const gender=genderEl.value;
+
+        const eventLocation=locationEl.value.trim();
+
+        const event_date=eventDateEl.value;
+
+        const event_time=eventTimeEl ? eventTimeEl.value : "";
+
+        if(
+
+            title==="" ||
+
+            description==="" ||
+
+            !posterFile ||
+
+            ticket_price==="" ||
+
+            max_guests==="" ||
+
+            age_limit==="" ||
+
+            eventLocation==="" ||
+
+            event_date===""
+
+        ){
+
+            status.innerHTML="<div class='alert alert-danger'>Please fill all required fields, including a poster image.</div>";
+
+            return;
+
+        }
+
+        const ticketPriceNum=Number(ticket_price);
+
+        const maxGuestsNum=Number(max_guests);
+
+        const ageLimitNum=Number(age_limit);
+
+        if(Number.isNaN(ticketPriceNum) || ticketPriceNum<0){
+
+            status.innerHTML="<div class='alert alert-danger'>Ticket price must be a number of 0 or more.</div>";
+
+            return;
+
+        }
+
+        if(!Number.isInteger(maxGuestsNum) || maxGuestsNum<1){
+
+            status.innerHTML="<div class='alert alert-danger'>Max guests must be a whole number of at least 1.</div>";
+
+            return;
+
+        }
+
+        if(!Number.isInteger(ageLimitNum) || ageLimitNum<0){
+
+            status.innerHTML="<div class='alert alert-danger'>Age limit must be a whole number of 0 or more.</div>";
+
+            return;
+
+        }
+
+        const formData=new FormData();
+
+        formData.append("event_name",title);
+
+        formData.append("description",description);
+
+        formData.append("event_category",category);
+
+        formData.append("poster",posterFile);
+
+        formData.append("fee",ticket_price);
+
+        formData.append("max_members",max_guests);
+
+        formData.append("age_limit",age_limit);
+
+        formData.append("gender",gender);
+
+        formData.append("location",eventLocation);
+
+        formData.append("event_date",event_date);
+
+        if(event_time){
+
+            formData.append("event_time",event_time);
+
+        }
+
+        btn.classList.add("btn-loading");
+
+        btn.innerHTML=`<span class="spinner-border spinner-border-sm me-2" role="status"></span> Creating...`;
+
+        const token=getToken();
+
+        const headers={};
+
+        if(token){
+
+            headers["Authorization"]=`Token ${token}`;
+
+        }
+
+        const response=await fetch(API_BASE+"/hosting/events/",{
+
+            method:"POST",
+
+            headers:headers,
+
+            body:formData
+
+        });
+
+        let data={};
+
+        try{
+
+            data=await response.json();
+
+        }
+
+        catch(parseError){
+
+            data={};
+
+        }
+
+        if(response.ok){
+
+            alert("Event Created Successfully");
+
+            location.reload();
+
+            return;
+
+        }
+
+        let errors="";
+
+        if(typeof data==="object" && data!==null){
+
+            Object.values(data).forEach(error=>{
+
+                const text=Array.isArray(error) ? error.join(" ") : error;
+
+                errors+=text+"<br>";
+
+            });
+
+        }
+
+        status.innerHTML=`<div class="alert alert-danger">${errors || "Unable to create event."}</div>`;
+
+        btn.classList.remove("btn-loading");
+
+        btn.innerHTML=`<i class="bi bi-plus-circle-fill me-1"></i> Create Event`;
+
+    }
+
+    catch(error){
+
+        status.innerHTML="<div class='alert alert-danger'>Something went wrong. Please try again.</div>";
+
+        btn.classList.remove("btn-loading");
+
+        btn.innerHTML=`<i class="bi bi-plus-circle-fill me-1"></i> Create Event`;
+
+    }
 
 }
 
@@ -243,9 +1038,19 @@ async function deleteEvent(id){
 
     }
 
-    await api(`/hosting/events/${id}/`,"DELETE");
+    try{
 
-    loadEvents();
+        await api(`/hosting/events/${id}/`,"DELETE");
+
+        loadEvents();
+
+    }
+
+    catch(error){
+
+        alert("Unable to delete this event. Please try again.");
+
+    }
 
 }
 
@@ -253,27 +1058,47 @@ async function editEvent(id){
 
     const title=prompt("Enter New Title");
 
-    if(title==null){
+    if(title===null){
 
         return;
 
     }
 
-    await api(
+    const trimmedTitle=title.trim();
 
-        `/hosting/events/${id}/`,
+    if(trimmedTitle===""){
 
-        "PATCH",
+        alert("Title cannot be empty.");
 
-        {
+        return;
 
-            title:title
+    }
 
-        }
+    try{
 
-    );
+        await api(
 
-    loadEvents();
+            `/hosting/events/${id}/`,
+
+            "PATCH",
+
+            {
+
+                event_name:trimmedTitle
+
+            }
+
+        );
+
+        loadEvents();
+
+    }
+
+    catch(error){
+
+        alert("Unable to update this event. Please try again.");
+
+    }
 
 }
 
