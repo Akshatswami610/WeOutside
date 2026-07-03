@@ -1,11 +1,9 @@
 from django.contrib.auth import authenticate
-
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .serializers import RegisterSerializer, LoginSerializer
 
 
@@ -44,6 +42,13 @@ class MeView(APIView):
             "message": "Profile updated successfully."
         })
 
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response(
+            {"message": "Account deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 # -----------------------------
 # REGISTER
