@@ -44,7 +44,23 @@ class MeView(APIView):
 
     def delete(self, request):
         user = request.user
+        password = request.data.get("password")
+
+        if not password:
+            return Response(
+                {"error": "Password is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify password
+        if not user.check_password(password):
+            return Response(
+                {"error": "Incorrect password."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         user.delete()
+
         return Response(
             {"message": "Account deleted successfully."},
             status=status.HTTP_204_NO_CONTENT
