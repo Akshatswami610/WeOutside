@@ -73,3 +73,6 @@ class LoginSerializer(serializers.Serializer):
         write_only=True,
         style={"input_type": "password"},
     )
+
+    def validate_email(self, value):
+        return value.lower().strip()
