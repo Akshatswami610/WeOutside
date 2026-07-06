@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import login, register, home, hosting, eventdetails, bookingcheckout, payment, about, careers, terms, profile, privacy, support
+from .views import login, register, home, hosting, eventdetails, bookingcheckout, payment, about, careers, terms, profile, privacy, support, team
 
 
 urlpatterns = [
@@ -30,6 +30,8 @@ urlpatterns = [
     path('about/', about, name='about'),
     path('terms-and-conditions/', terms, name='terms'),
     path('privacy/', privacy, name='privacy'),
+    path('team/', team, name='team'),
+
 ]
 
 if settings.DEBUG:
