@@ -651,13 +651,66 @@ async function register(){
 
                 localStorage.setItem("user",JSON.stringify(data.user || {}));
 
+                showToast("Registration successful.","success");
+
+                setTimeout(()=>{
+
+                    window.location="/";
+
+                },1200);
+
+                return;
+
+            }
+
+            // The register endpoint didn't return a token, so log the
+            // new account in immediately with the same credentials
+            // rather than sending the person to the login page.
+            try{
+
+                const loginResponse=await fetch(API_BASE+"/accounts/login/",{
+
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":"application/json"
+
+                    },
+
+                    body:JSON.stringify({
+
+                        email,
+
+                        password
+
+                    })
+
+                });
+
+                const loginData=await loginResponse.json();
+
+                if(loginResponse.ok && loginData.token){
+
+                    localStorage.setItem("access",loginData.token);
+
+                    localStorage.setItem("user",JSON.stringify(loginData.user || {}));
+
+                }
+
+            }
+
+            catch(loginError){
+
+                // Fall through — registration itself still succeeded.
+
             }
 
             showToast("Registration successful.","success");
 
             setTimeout(()=>{
 
-                window.location=data.token ? "/" : "/login/";
+                window.location="/";
 
             },1200);
 
