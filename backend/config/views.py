@@ -38,3 +38,6 @@ def privacy(request):
 
 def terms(request):
     return render(request, "terms-and-conditions.html")
+
+def team(request):
+    return render(request, "team.html")
