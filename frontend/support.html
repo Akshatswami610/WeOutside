@@ -61,8 +61,30 @@ Support
         min-height: 140px;
     }
 
-    #status .alert {
-        font-size: .88rem;
+    .btn-loading {
+        pointer-events: none;
+        opacity: .75;
+    }
+
+    .logged-in-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-size: .82rem;
+        padding: 8px 14px;
+        border-radius: 999px;
+        margin-bottom: 22px;
+    }
+
+    .logged-in-badge i {
+        color: var(--accent);
+    }
+
+    .subject-other-wrap {
+        margin-top: 10px;
     }
 
     .faq-card {
@@ -283,6 +305,8 @@ Support
 
                 </p>
 
+                <div id="loggedInBadge"></div>
+
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
@@ -343,11 +367,31 @@ Support
 
                     </label>
 
-                    <input
-                        type="text"
+                    <select
                         id="subject"
-                        class="form-control"
-                        placeholder="Enter Subject">
+                        class="form-select"
+                        onchange="handleSubjectChange()">
+
+                        <option value="">Select a topic</option>
+                        <option value="Booking Issue">Booking Issue</option>
+                        <option value="Payment &amp; Refunds">Payment &amp; Refunds</option>
+                        <option value="Event Hosting">Event Hosting</option>
+                        <option value="Account &amp; Login">Account &amp; Login</option>
+                        <option value="Report a User or Event">Report a User or Event</option>
+                        <option value="Technical Bug">Technical Bug</option>
+                        <option value="Other">Other</option>
+
+                    </select>
+
+                    <div class="subject-other-wrap" id="subjectOtherWrap" style="display:none;">
+
+                        <input
+                            type="text"
+                            id="subject_other"
+                            class="form-control"
+                            placeholder="Briefly describe your topic">
+
+                    </div>
 
                 </div>
 
@@ -368,6 +412,7 @@ Support
                 </div>
 
                 <button
+                    id="submitTicketBtn"
                     class="btn btn-primary"
                     onclick="submitTicket()">
 
@@ -376,12 +421,6 @@ Support
                     Submit Ticket
 
                 </button>
-
-                <div
-                    id="status"
-                    class="mt-3">
-
-                </div>
 
             </div>
 
@@ -460,6 +499,81 @@ function toggleFaq(trigger){
 
 }
 
+// Reads the user object saved by login.html/register.html at sign-in time.
+function getStoredUser(){
+
+    try{
+
+        return JSON.parse(localStorage.getItem("user") || "null");
+
+    }
+
+    catch(error){
+
+        return null;
+
+    }
+
+}
+
+// Prefills name/phone/email for a logged-in visitor, and shows a small
+// badge confirming whose details were used (they can still edit any of
+// them before submitting).
+function prefillFromUser(){
+
+    const token=getToken();
+
+    const user=getStoredUser();
+
+    const badge=document.getElementById("loggedInBadge");
+
+    if(!token || !user){
+
+        badge.innerHTML="";
+
+        return;
+
+    }
+
+    const name=user.name || "";
+
+    const email=user.email || "";
+
+    const phone=user.phone_number || user.phone || "";
+
+    if(name){
+
+        document.getElementById("name").value=name;
+
+    }
+
+    if(email){
+
+        document.getElementById("email").value=email;
+
+    }
+
+    if(phone){
+
+        document.getElementById("phone_number").value=phone;
+
+    }
+
+
+}
+
+prefillFromUser();
+
+function handleSubjectChange(){
+
+    const subject=document.getElementById("subject").value;
+
+    const otherWrap=document.getElementById("subjectOtherWrap");
+
+    otherWrap.style.display=(subject==="Other") ? "block" : "none";
+
+}
+
 // Site-styled toast notifications, shown top-right instead of relying
 // solely on the inline status box below the form.
 function showToast(message,type="success"){
@@ -512,21 +626,37 @@ async function submitTicket(){
 
     const email=document.getElementById("email").value.trim();
 
-    const subject=document.getElementById("subject").value.trim();
+    const subjectSelect=document.getElementById("subject").value;
+
+    const subjectOther=document.getElementById("subject_other").value.trim();
+
+    const subject=(subjectSelect==="Other") ? subjectOther : subjectSelect;
 
     const message=document.getElementById("message").value.trim();
 
-    const status=document.getElementById("status");
-
-    status.innerHTML="";
+    const btn=document.getElementById("submitTicketBtn");
 
     if(name==="" || phone_number==="" || email==="" || subject==="" || message===""){
 
-        status.innerHTML="<div class='alert alert-danger'>Please fill all fields.</div>";
+        showToast(
+
+            (subjectSelect==="Other" && subjectOther==="") ?
+
+                "Please describe your topic in the Subject field." :
+
+                "Please fill all fields.",
+
+            "danger"
+
+        );
 
         return;
 
     }
+
+    btn.classList.add("btn-loading");
+
+    btn.innerHTML=`<span class="spinner-border spinner-border-sm me-2" role="status"></span> Sending...`;
 
     try {
         const response = await api("/support/help/", "POST", {
@@ -541,15 +671,25 @@ async function submitTicket(){
 
         showToast("Support request submitted successfully.","success");
 
-        document.getElementById("name").value="";
-
-        document.getElementById("phone_number").value="";
-
-        document.getElementById("email").value="";
-
         document.getElementById("subject").value="";
 
+        document.getElementById("subject_other").value="";
+
+        document.getElementById("subjectOtherWrap").style.display="none";
+
         document.getElementById("message").value="";
+
+        // Keep name/phone/email as-is for a logged-in user rather than
+        // clearing details they didn't have to type in the first place.
+        if(!getToken()){
+
+            document.getElementById("name").value="";
+
+            document.getElementById("phone_number").value="";
+
+            document.getElementById("email").value="";
+
+        }
 
     }
 
@@ -558,6 +698,10 @@ async function submitTicket(){
 
         showToast(error?.message || "Something went wrong.","danger");
     }
+
+    btn.classList.remove("btn-loading");
+
+    btn.innerHTML=`<i class="bi bi-send-fill me-1"></i> Submit Ticket`;
 
 }
 
