@@ -166,11 +166,6 @@ Host Event
 
     /* Events grid */
 
-    .ownership-note {
-        margin-bottom: 20px;
-        font-size: .85rem;
-    }
-
     .event-mgmt-card {
         overflow: hidden;
         display: flex;
@@ -383,16 +378,13 @@ Host Event
 
 </div>
 
-<div id="ownershipNote"></div>
-
 <div id="eventList"></div>
 
 <!-- Floating Action Button -->
 <button
     class="fab-btn"
     type="button"
-    data-bs-toggle="modal"
-    data-bs-target="#createEventModal"
+    onclick="handleCreateEventClick()"
     aria-label="Create Event"
     title="Create Event">
 
@@ -857,29 +849,31 @@ function categoryLabel(key){
 
 }
 
-// The user object stored by login.html at sign-in time (data.user from
-// LoginView's response, which includes "id"). Used below to filter events
-// down to the logged-in host, since the API itself doesn't appear to do
-// this filtering server-side.
-function getCurrentUserId(){
+loadEvents();
 
-    try{
+function handleCreateEventClick(){
 
-        const stored=JSON.parse(localStorage.getItem("user") || "null");
+    const token=getToken();
 
-        return (stored && stored.id!=null) ? stored.id : null;
+    if(!token){
+
+        showToast("You need to login to host an event.","danger");
+
+        setTimeout(()=>{
+
+            window.location="/login/";
+
+        },1200);
+
+        return;
 
     }
 
-    catch(error){
+    const modal=new bootstrap.Modal(document.getElementById("createEventModal"));
 
-        return null;
-
-    }
+    modal.show();
 
 }
-
-loadEvents();
 
 // Site-styled toast notifications, used in place of the browser's
 // built-in alert() so success/error messages look and feel like the
@@ -1039,10 +1033,6 @@ async function loadEvents(){
 
     const eventList=document.getElementById("eventList");
 
-    const ownershipNote=document.getElementById("ownershipNote");
-
-    ownershipNote.innerHTML="";
-
     eventList.innerHTML=`
         <div class="loading">
             <div class="spinner-border" role="status"></div>
@@ -1052,7 +1042,10 @@ async function loadEvents(){
 
     try{
 
-        const events=await api("/hosting/events/");
+        // ?mine=true is scoped to the logged-in host server-side (see
+        // EventListCreateView.get_queryset), so no client-side ownership
+        // guessing is needed here anymore.
+        const events=await api("/hosting/events/?mine=true");
 
         if(!Array.isArray(events)){
 
@@ -1082,83 +1075,9 @@ async function loadEvents(){
 
         }
 
-        // Client-side filtering to "my" events, since /hosting/events/ does
-        // not appear to be scoped to the logged-in host on the server.
-        const currentUserId=getCurrentUserId();
+        hostedEventsCache=events;
 
-        const hostInfoAvailable=events.some(ev=>{
-
-            const host=ev.user || ev.host;
-
-            return host!=null;
-
-        });
-
-        let myEvents=events;
-
-        if(currentUserId!=null && hostInfoAvailable){
-
-            myEvents=events.filter(ev=>{
-
-                const host=ev.user || ev.host;
-
-                if(host && typeof host==="object" && "id" in host){
-
-                    return host.id===currentUserId;
-
-                }
-
-                if(typeof host==="number"){
-
-                    return host===currentUserId;
-
-                }
-
-                return false;
-
-            });
-
-        }
-        else{
-
-            // We couldn't verify ownership client-side either because the
-            // event objects don't include host/user info, or because we
-            // don't have a logged-in user id (e.g. localStorage "user" was
-            // never set, or the person logged in before this fix shipped).
-            // Showing everything rather than hiding events, but flagging
-            // it clearly instead of pretending this is correctly scoped.
-            ownershipNote.innerHTML=`
-                <div class="alert alert-warning ownership-note">
-                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Showing all events — we couldn't verify which ones you host.
-                    The <code>/hosting/events/</code> API should filter by the
-                    logged-in user on the backend.
-                </div>
-            `;
-
-        }
-
-        if(myEvents.length===0){
-
-            eventList.innerHTML=`
-
-            <div class="empty-state">
-
-                <i class="bi bi-calendar-x"></i>
-
-                <p>You haven't hosted any events yet.</p>
-
-            </div>
-
-            `;
-
-            return;
-
-        }
-
-        hostedEventsCache=myEvents;
-
-        eventList.innerHTML=`<div class="row">${myEvents.map(renderEventCard).join("")}</div>`;
+        eventList.innerHTML=`<div class="row">${events.map(renderEventCard).join("")}</div>`;
 
     }
 
