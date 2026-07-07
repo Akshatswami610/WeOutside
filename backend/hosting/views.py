@@ -18,7 +18,22 @@ class EventListCreateView(generics.ListCreateAPIView):
     serializer_class = EventSerializer
 
     def get_queryset(self):
-        return Event.objects.all()
+        queryset = Event.objects.all()
+
+        # Opt-in filter used by the hosting/management page. Without a
+        # "mine" param this stays the public, unauthenticated-friendly
+        # listing that home.html relies on for browsing all events.
+        mine = self.request.query_params.get("mine")
+
+        if str(mine).lower() in ("1", "true", "yes"):
+            if self.request.user and self.request.user.is_authenticated:
+                queryset = queryset.filter(user=self.request.user)
+            else:
+                # Someone asked for "my events" without being logged in —
+                # return nothing rather than silently showing everyone's.
+                queryset = queryset.none()
+
+        return queryset
 
     def get_permissions(self):
         # Anyone can view events
