@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import time
+from django.db.models import Sum
 
 User = settings.AUTH_USER_MODEL
 
@@ -38,24 +39,13 @@ class Event(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     event_name = models.CharField(max_length=100)
-    event_category = models.CharField(
-        max_length=100,
-        choices=EventCategory.choices,
-        db_index=True
-    )
+    event_category = models.CharField( max_length=100, choices=EventCategory.choices, db_index=True )
     description = models.TextField()
-
     poster = models.ImageField(upload_to="event_posters/")
-
     max_members = models.PositiveIntegerField()
     fee = models.PositiveIntegerField(default=0)
-    gender = models.CharField(
-        max_length=10,
-        choices=Gender.choices,
-        default=Gender.ANY
-    )
+    gender = models.CharField( max_length=10, choices=Gender.choices, default=Gender.ANY )
     age_limit = models.PositiveIntegerField()
-
     location = models.CharField(max_length=255)
 
     event_date = models.DateField(db_index=True)
@@ -69,3 +59,20 @@ class Event(models.Model):
 
     def __str__(self):
         return self.event_name
+
+    @property
+    def booked_seats(self):
+        return (
+                self.bookings.filter(
+                    payment_status="paid",
+                    booking_status="confirmed"
+                ).aggregate(total=Sum("quantity"))["total"] or 0
+        )
+
+    @property
+    def available_seats(self):
+        return self.max_members - self.booked_seats
+
+    @property
+    def is_sold_out(self):
+        return self.available_seats <= 0
