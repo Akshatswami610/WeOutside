@@ -1,0 +1,1140 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Tickets
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .page-hero {
+        text-align: center;
+        padding: 20px 20px 40px;
+    }
+
+    .page-hero .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        font-weight: 600;
+        font-size: .82rem;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .25);
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+    }
+
+    .page-hero h1 {
+        font-size: clamp(1.9rem, 4vw, 2.4rem);
+        margin-bottom: 10px;
+    }
+
+    .page-hero p {
+        color: var(--text-secondary);
+        max-width: 480px;
+        margin: 0 auto;
+        font-size: .96rem;
+    }
+
+    /* Filter bar */
+
+    .filter-bar {
+        padding: 18px;
+        margin-bottom: 26px;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    @media (max-width: 900px) {
+        .filter-bar {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .filter-bar {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .filter-bar .search-input-wrap {
+        position: relative;
+    }
+
+    .filter-bar .search-input-wrap i {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: .9rem;
+        pointer-events: none;
+    }
+
+    .filter-bar .search-input-wrap input {
+        padding-left: 38px;
+        width: 100%;
+    }
+
+    .results-count {
+        color: var(--text-muted);
+        font-size: .84rem;
+        margin: -10px 2px 18px;
+    }
+
+    /* Ticket card */
+
+    .ticket-card {
+        overflow: hidden;
+        margin-bottom: 22px;
+        animation: fadeInUp .4s var(--ease) both;
+    }
+
+    .ticket-card-top {
+        display: flex;
+        gap: 18px;
+        padding: 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    @media (max-width: 576px) {
+        .ticket-card-top {
+            flex-direction: column;
+        }
+    }
+
+    .ticket-poster {
+        width: 120px;
+        height: 90px;
+        flex-shrink: 0;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        background: linear-gradient(135deg, #1c1c20, #131316);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 1.6rem;
+    }
+
+    .ticket-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .ticket-headline {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ticket-headline-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+
+    .ticket-headline h4 {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .ticket-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        color: var(--text-muted);
+        font-size: .84rem;
+    }
+
+    .ticket-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .ticket-meta i {
+        color: var(--accent);
+    }
+
+    .ticket-card-body {
+        padding: 20px 22px;
+    }
+
+    .ticket-details-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    @media (max-width: 700px) {
+        .ticket-details-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 420px) {
+        .ticket-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .detail-block label {
+        display: block;
+        color: var(--text-muted);
+        font-size: .74rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        margin-bottom: 4px;
+    }
+
+    .detail-block .value {
+        font-size: .92rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        word-break: break-word;
+    }
+
+    .detail-block .value.accent {
+        color: var(--accent);
+    }
+
+    /* Transaction box */
+
+    .transaction-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: .86rem;
+        font-weight: 600;
+        padding: 0;
+        cursor: pointer;
+        margin-bottom: 4px;
+    }
+
+    .transaction-toggle i.chevron {
+        transition: transform .25s var(--ease);
+        font-size: .8rem;
+    }
+
+    .ticket-card.open .transaction-toggle i.chevron {
+        transform: rotate(180deg);
+    }
+
+    .transaction-box {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .3s var(--ease);
+    }
+
+    .ticket-card.open .transaction-box {
+        max-height: 400px;
+    }
+
+    .transaction-box-inner {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 16px 18px;
+        margin-top: 14px;
+    }
+
+    .transaction-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+    }
+
+    .transaction-row:last-child {
+        border-bottom: none;
+    }
+
+    .transaction-row .t-label {
+        color: var(--text-muted);
+        font-size: .82rem;
+        flex-shrink: 0;
+    }
+
+    .transaction-row .t-value {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .84rem;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        color: var(--text-primary);
+        min-width: 0;
+    }
+
+    .transaction-row .t-value .id-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 220px;
+    }
+
+    .copy-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 2px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+        color: var(--accent);
+    }
+
+    .ticket-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    /* Status badges */
+
+    .status-badge {
+        font-size: .74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        padding: 5px 11px;
+        border-radius: 999px;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .status-paid {
+        background: rgba(78, 203, 141, .15);
+        color: #4ecb8d;
+    }
+
+    .status-pending {
+        background: rgba(245, 200, 76, .15);
+        color: var(--accent);
+    }
+
+    .status-failed {
+        background: rgba(239, 91, 106, .15);
+        color: #ef5b6a;
+    }
+
+    .status-refunded {
+        background: var(--bg-secondary);
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+    }
+
+    .status-confirmed {
+        background: rgba(78, 203, 141, .15);
+        color: #4ecb8d;
+    }
+
+    .status-cancelled {
+        background: rgba(239, 91, 106, .15);
+        color: #ef5b6a;
+    }
+
+    /* Empty / error states */
+
+    .empty-state,
+    .error-state {
+        text-align: center;
+        padding: 70px 20px;
+        color: var(--text-muted);
+    }
+
+    .empty-state i,
+    .error-state i {
+        font-size: 2.4rem;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .error-state i {
+        color: #ef5b6a;
+    }
+
+    .empty-state p,
+    .error-state p {
+        margin-bottom: 18px;
+    }
+
+    /* Toast notifications */
+
+    #toastContainer {
+        z-index: 1080;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        pointer-events: none;
+    }
+
+    .site-toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 320px;
+        max-width: calc(100vw - 40px);
+        padding: 14px 16px;
+        border-radius: var(--radius-sm, 10px);
+        background: #1c1c20;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        box-shadow: 0 14px 32px -8px rgba(0, 0, 0, .55);
+        animation: toastIn .3s var(--ease, ease) both;
+    }
+
+    .site-toast.hiding {
+        animation: toastOut .22s var(--ease, ease) both;
+    }
+
+    .site-toast.success {
+        border-left-color: #4ecb8d;
+    }
+
+    .site-toast.danger {
+        border-left-color: #ef5b6a;
+    }
+
+    .site-toast .toast-icon {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+        margin-top: 1px;
+    }
+
+    .site-toast.success .toast-icon {
+        background: rgba(78, 203, 141, .15);
+        color: #4ecb8d;
+    }
+
+    .site-toast.danger .toast-icon {
+        background: rgba(239, 91, 106, .15);
+        color: #ef5b6a;
+    }
+
+    .site-toast .toast-message {
+        flex: 1;
+        font-size: .87rem;
+        line-height: 1.4;
+        color: var(--text-secondary, #e6e6e6);
+        padding-top: 3px;
+    }
+
+    .site-toast .toast-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1;
+        padding: 2px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .site-toast .toast-close:hover {
+        color: var(--text-secondary, #e6e6e6);
+    }
+
+    @keyframes toastIn {
+        from { transform: translateX(24px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(24px); opacity: 0; }
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Toast notifications -->
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+
+<div class="page-hero fade-in">
+
+    <span class="hero-eyebrow">
+        <i class="bi bi-ticket-perforated-fill"></i>
+        Your Bookings
+    </span>
+
+    <h1 class="fw-bold">
+        My Tickets
+    </h1>
+
+    <p>
+        Every event you've booked, along with the full payment and transaction details for each ticket.
+    </p>
+
+</div>
+
+<div class="card filter-bar">
+
+    <div class="search-input-wrap">
+        <i class="bi bi-search"></i>
+        <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Search by event name"
+            oninput="handleFiltersChanged()">
+    </div>
+
+    <select id="paymentFilter" class="form-select" onchange="handleFiltersChanged()">
+        <option value="">All Payment Status</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Pending</option>
+        <option value="failed">Failed</option>
+        <option value="refunded">Refunded</option>
+    </select>
+
+    <select id="bookingFilter" class="form-select" onchange="handleFiltersChanged()">
+        <option value="">All Booking Status</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="cancelled">Cancelled</option>
+    </select>
+
+    <select id="sortFilter" class="form-select" onchange="handleFiltersChanged()">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+    </select>
+
+</div>
+
+<p class="results-count" id="resultsCount"></p>
+
+<div id="ticketsContainer">
+
+    <div class="loading">
+        <div class="spinner-border" role="status"></div>
+        <div>Loading your tickets...</div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+// Site-styled toast notifications, shown top-right.
+function showToast(message,type="success"){
+
+    const container=document.getElementById("toastContainer");
+
+    if(!container){
+
+        return;
+
+    }
+
+    const icon=(type==="success") ? "bi-check-circle-fill" : "bi-exclamation-circle-fill";
+
+    const toastEl=document.createElement("div");
+
+    toastEl.className=`site-toast ${type}`;
+
+    toastEl.innerHTML=`
+        <div class="toast-icon"><i class="bi ${icon}"></i></div>
+        <div class="toast-message">${message}</div>
+        <button type="button" class="toast-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+    `;
+
+    container.appendChild(toastEl);
+
+    let dismissTimer;
+
+    function dismiss(){
+
+        clearTimeout(dismissTimer);
+
+        toastEl.classList.add("hiding");
+
+        toastEl.addEventListener("animationend",()=>toastEl.remove(),{once:true});
+
+    }
+
+    toastEl.querySelector(".toast-close").addEventListener("click",dismiss);
+
+    dismissTimer=setTimeout(dismiss,4000);
+
+}
+
+function paymentStatusLabel(status){
+
+    const labels={ paid:"Paid", pending:"Pending", failed:"Failed", refunded:"Refunded" };
+
+    return labels[status] || status || "Unknown";
+
+}
+
+function bookingStatusLabel(status){
+
+    const labels={ confirmed:"Confirmed", cancelled:"Cancelled" };
+
+    return labels[status] || status || "Unknown";
+
+}
+
+function formatCurrency(amount){
+
+    const num=Number(amount);
+
+    if(Number.isNaN(num)){
+
+        return "₹0";
+
+    }
+
+    return `₹${num.toLocaleString("en-IN")}`;
+
+}
+
+function formatDate(dateStr){
+
+    if(!dateStr){
+
+        return "";
+
+    }
+
+    const parsed=new Date(dateStr);
+
+    if(Number.isNaN(parsed.getTime())){
+
+        return dateStr;
+
+    }
+
+    return parsed.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+
+}
+
+function formatDateTime(dateStr){
+
+    if(!dateStr){
+
+        return "—";
+
+    }
+
+    const parsed=new Date(dateStr);
+
+    if(Number.isNaN(parsed.getTime())){
+
+        return dateStr;
+
+    }
+
+    return parsed.toLocaleString(undefined,{
+
+        month:"short",
+
+        day:"numeric",
+
+        year:"numeric",
+
+        hour:"numeric",
+
+        minute:"2-digit"
+
+    });
+
+}
+
+function formatTime(timeStr){
+
+    if(!timeStr){
+
+        return "";
+
+    }
+
+    const parts=timeStr.split(":");
+
+    if(parts.length<2){
+
+        return timeStr;
+
+    }
+
+    const hour=Number(parts[0]);
+
+    const minute=parts[1];
+
+    const period=(hour>=12) ? "PM" : "AM";
+
+    const hour12=((hour % 12)===0) ? 12 : (hour % 12);
+
+    return `${hour12}:${minute} ${period}`;
+
+}
+
+// Booking.event may come back either as a nested object (with event_name,
+// poster, location, event_date, event_time) or as a plain id, depending
+// on how BookingSerializer represents it. Handled defensively here so the
+// page still renders either way.
+function getEventInfo(booking){
+
+    const event=booking.event;
+
+    if(event && typeof event==="object"){
+
+        return event;
+
+    }
+
+    return {
+
+        event_id:event,
+
+        event_name:booking.event_name || `Event #${event}`,
+
+        poster:null,
+
+        location:null,
+
+        event_date:null,
+
+        event_time:null
+
+    };
+
+}
+
+function copyToClipboard(text,label){
+
+    if(!text || text==="—"){
+
+        return;
+
+    }
+
+    navigator.clipboard.writeText(text)
+
+        .then(()=>showToast(`${label} copied to clipboard.`,"success"))
+
+        .catch(()=>showToast("Unable to copy. Please copy it manually.","danger"));
+
+}
+
+function toggleTransactionDetails(bookingId){
+
+    const card=document.getElementById(`ticket-${bookingId}`);
+
+    if(card){
+
+        card.classList.toggle("open");
+
+    }
+
+}
+
+let allBookings=[];
+
+let searchDebounceTimer=null;
+
+function handleFiltersChanged(){
+
+    clearTimeout(searchDebounceTimer);
+
+    searchDebounceTimer=setTimeout(renderTickets,150);
+
+}
+
+function clearFilters(){
+
+    document.getElementById("searchInput").value="";
+
+    document.getElementById("paymentFilter").value="";
+
+    document.getElementById("bookingFilter").value="";
+
+    document.getElementById("sortFilter").value="newest";
+
+    renderTickets();
+
+}
+
+function renderTicketCard(booking){
+
+    const event=getEventInfo(booking);
+
+    const paymentStatus=booking.payment_status || "pending";
+
+    const bookingStatus=booking.booking_status || "confirmed";
+
+    const dateLabel=formatDate(event.event_date);
+
+    const timeLabel=formatTime(event.event_time);
+
+    return `
+
+    <div class="card ticket-card" id="ticket-${booking.id}">
+
+        <div class="ticket-card-top">
+
+            <div class="ticket-poster">
+                ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-ticket-perforated"></i>`}
+            </div>
+
+            <div class="ticket-headline">
+
+                <div class="ticket-headline-row">
+
+                    <h4>${event.event_name || "Event"}</h4>
+
+                    <span class="status-badge status-${paymentStatus}">${paymentStatusLabel(paymentStatus)}</span>
+
+                </div>
+
+                <div class="ticket-meta">
+
+                    ${dateLabel ? `<span><i class="bi bi-calendar-event"></i> ${dateLabel}${timeLabel ? ` · ${timeLabel}` : ""}</span>` : ""}
+
+                    ${event.location ? `<span><i class="bi bi-geo-alt-fill"></i> ${event.location}</span>` : ""}
+
+                    <span><i class="bi bi-flag-fill"></i> ${bookingStatusLabel(bookingStatus)}</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="ticket-card-body">
+
+            <div class="ticket-details-grid">
+
+                <div class="detail-block">
+                    <label>Booked By</label>
+                    <div class="value">${booking.full_name || "—"}</div>
+                </div>
+
+                <div class="detail-block">
+                    <label>Email</label>
+                    <div class="value">${booking.email || "—"}</div>
+                </div>
+
+                <div class="detail-block">
+                    <label>Phone</label>
+                    <div class="value">${booking.phone_number || "—"}</div>
+                </div>
+
+                <div class="detail-block">
+                    <label>Tickets</label>
+                    <div class="value">${booking.quantity || 1}</div>
+                </div>
+
+                <div class="detail-block">
+                    <label>Price / Ticket</label>
+                    <div class="value">${formatCurrency(booking.ticket_price)}</div>
+                </div>
+
+                <div class="detail-block">
+                    <label>Total Paid</label>
+                    <div class="value accent">${formatCurrency(booking.total_amount)}</div>
+                </div>
+
+            </div>
+
+            <button type="button" class="transaction-toggle" onclick="toggleTransactionDetails(${booking.id})">
+                <i class="bi bi-receipt"></i>
+                Transaction Details
+                <i class="bi bi-chevron-down chevron"></i>
+            </button>
+
+            <div class="transaction-box">
+
+                <div class="transaction-box-inner">
+
+                    <div class="transaction-row">
+                        <span class="t-label">Order ID</span>
+                        <span class="t-value">
+                            <span class="id-text" title="${booking.razorpay_order_id || ""}">${booking.razorpay_order_id || "—"}</span>
+                            ${booking.razorpay_order_id ? `<button type="button" class="copy-btn" onclick="copyToClipboard('${booking.razorpay_order_id}','Order ID')"><i class="bi bi-clipboard"></i></button>` : ""}
+                        </span>
+                    </div>
+
+                    <div class="transaction-row">
+                        <span class="t-label">Payment ID</span>
+                        <span class="t-value">
+                            <span class="id-text" title="${booking.razorpay_payment_id || ""}">${booking.razorpay_payment_id || "—"}</span>
+                            ${booking.razorpay_payment_id ? `<button type="button" class="copy-btn" onclick="copyToClipboard('${booking.razorpay_payment_id}','Payment ID')"><i class="bi bi-clipboard"></i></button>` : ""}
+                        </span>
+                    </div>
+
+                    <div class="transaction-row">
+                        <span class="t-label">Booked On</span>
+                        <span class="t-value">${formatDateTime(booking.booked_at)}</span>
+                    </div>
+
+                    <div class="transaction-row">
+                        <span class="t-label">Last Updated</span>
+                        <span class="t-value">${formatDateTime(booking.updated_at)}</span>
+                    </div>
+
+                    <div class="transaction-row">
+                        <span class="t-label">Booking Status</span>
+                        <span class="status-badge status-${bookingStatus}">${bookingStatusLabel(bookingStatus)}</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="ticket-actions">
+
+                ${event.event_id ? `<a href="/event-details/${event.event_id}/" class="btn btn-secondary btn-sm"><i class="bi bi-eye-fill me-1"></i> View Event</a>` : ""}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+function renderTickets(){
+
+    const container=document.getElementById("ticketsContainer");
+
+    const resultsCount=document.getElementById("resultsCount");
+
+    const query=document.getElementById("searchInput").value.trim().toLowerCase();
+
+    const paymentStatus=document.getElementById("paymentFilter").value;
+
+    const bookingStatus=document.getElementById("bookingFilter").value;
+
+    const sort=document.getElementById("sortFilter").value;
+
+    let filtered=allBookings.filter(booking=>{
+
+        const event=getEventInfo(booking);
+
+        const matchesQuery=(query==="") || (event.event_name || "").toLowerCase().includes(query);
+
+        const matchesPayment=(paymentStatus==="") || booking.payment_status===paymentStatus;
+
+        const matchesBooking=(bookingStatus==="") || booking.booking_status===bookingStatus;
+
+        return matchesQuery && matchesPayment && matchesBooking;
+
+    });
+
+    filtered=filtered.slice().sort((a,b)=>{
+
+        const aTime=a.booked_at ? new Date(a.booked_at).getTime() : (a.id || 0);
+
+        const bTime=b.booked_at ? new Date(b.booked_at).getTime() : (b.id || 0);
+
+        return (sort==="oldest") ? (aTime-bTime) : (bTime-aTime);
+
+    });
+
+    if(allBookings.length===0){
+
+        resultsCount.textContent="";
+
+        container.innerHTML=`
+
+            <div class="card">
+
+                <div class="empty-state">
+
+                    <i class="bi bi-ticket-perforated"></i>
+
+                    <p>You haven't booked any tickets yet.</p>
+
+                    <a href="/" class="btn btn-primary">
+
+                        <i class="bi bi-search me-1"></i> Browse Events
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    if(filtered.length===0){
+
+        resultsCount.textContent="No tickets match your filters.";
+
+        container.innerHTML=`
+
+            <div class="card">
+
+                <div class="empty-state">
+
+                    <i class="bi bi-search"></i>
+
+                    <p>No tickets match your search or filters.</p>
+
+                    <button type="button" class="btn btn-secondary" onclick="clearFilters()">
+
+                        Clear Filters
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    resultsCount.textContent=`Showing ${filtered.length} of ${allBookings.length} ticket${allBookings.length===1 ? "" : "s"}`;
+
+    container.innerHTML=filtered.map(renderTicketCard).join("");
+
+}
+
+async function loadTickets(){
+
+    const container=document.getElementById("ticketsContainer");
+
+    const resultsCount=document.getElementById("resultsCount");
+
+    resultsCount.textContent="";
+
+    if(!getToken()){
+
+        container.innerHTML=`
+
+            <div class="card">
+
+                <div class="empty-state">
+
+                    <i class="bi bi-lock-fill"></i>
+
+                    <p>You need to login to see your tickets.</p>
+
+                    <a href="/login/" class="btn btn-primary">
+
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML=`
+        <div class="loading">
+            <div class="spinner-border" role="status"></div>
+            <div>Loading your tickets...</div>
+        </div>
+    `;
+
+    try{
+
+        // NOTE: assumes the booking app is mounted at /bookings/ in your
+        // project's root urls.py, matching BookingListCreateView which
+        // already scopes results to the logged-in user. Adjust this path
+        // if it's mounted somewhere else (e.g. /booking/).
+        const bookings=await api("/bookings/");
+
+        if(!Array.isArray(bookings)){
+
+            const message=(bookings && (bookings.error || bookings.detail)) || "Unable to load your tickets.";
+
+            container.innerHTML=`<div class="alert alert-danger">${message}</div>`;
+
+            showToast(message,"danger");
+
+            return;
+
+        }
+
+        allBookings=bookings;
+
+        renderTickets();
+
+    }
+
+    catch(error){
+
+        container.innerHTML=`
+
+            <div class="card">
+
+                <div class="error-state">
+
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                    <p>Unable to load your tickets. Please check your connection and try again.</p>
+
+                    <button type="button" class="btn btn-primary" onclick="loadTickets()">
+
+                        <i class="bi bi-arrow-clockwise me-1"></i> Retry
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+        showToast("Unable to load your tickets right now.","danger");
+
+    }
+
+}
+
+loadTickets();
+
+</script>
+
+{% endblock %}
