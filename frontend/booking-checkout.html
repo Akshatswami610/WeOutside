@@ -278,14 +278,17 @@ Checkout
                 </div>
 
                 <button
+                    id="payBtn"
                     class="btn btn-primary btn-lg w-100 mt-3"
-                    onclick="proceedToPay()">
+                    onclick="payNow()">
 
                     <i class="bi bi-lock-fill me-1"></i>
 
                     Proceed to Pay
 
                 </button>
+
+                <div id="paymentStatus" class="mt-3"></div>
 
             </div>
 
@@ -299,6 +302,9 @@ Checkout
 
 {% block js %}
 
+<!-- Razorpay Checkout -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
 
 const params=new URLSearchParams(window.location.search);
@@ -306,6 +312,10 @@ const params=new URLSearchParams(window.location.search);
 const eventId=params.get("event");
 
 let ticketPrice=0;
+
+let eventName="Event";
+
+let currentUser={name:"", email:"", phone_number:""};
 
 loadEvent();
 
@@ -317,7 +327,9 @@ async function loadEvent(){
 
         const event=await api(`/hosting/events/${eventId}/`);
 
-        document.getElementById("event_title").textContent=event.event_name || "Event";
+        eventName=event.event_name || "Event";
+
+        document.getElementById("event_title").textContent=eventName;
 
         document.getElementById("category").textContent=event.event_category || "-";
 
@@ -360,6 +372,16 @@ async function loadCurrentUser(){
 
         document.getElementById("booking_user").textContent=`${user.name} (${user.email})`;
 
+        currentUser={
+
+            name:user.name || "",
+
+            email:user.email || "",
+
+            phone_number:user.phone_number || ""
+
+        };
+
     }
 
     catch(error){
@@ -370,9 +392,150 @@ async function loadCurrentUser(){
 
 }
 
-function proceedToPay(){
+async function payNow(){
 
-    window.location=`/booking-checkout/payment/?event=${eventId}`;
+    const status=document.getElementById("paymentStatus");
+
+    status.innerHTML="";
+
+    const payBtn=document.getElementById("payBtn");
+
+    payBtn.disabled=true;
+
+    try{
+
+        // Step 1: Create Razorpay Order from backend
+        const order=await api(
+
+            "/bookings/create-order/",
+
+            "POST",
+
+            {
+
+                event_id: eventId,
+
+                quantity: 1
+
+            }
+
+        );
+
+        const options={
+
+            key: order.key,
+
+            amount: order.amount,
+
+            currency: order.currency,
+
+            name: "House Party Marketplace",
+
+            description: eventName,
+
+            order_id: order.order_id,
+
+            prefill: {
+
+                name: currentUser.name,
+
+                email: currentUser.email,
+
+                contact: currentUser.phone_number
+
+            },
+
+            theme: {
+
+                color: "#F5C84C"
+
+            },
+
+            handler: async function (response) {
+
+                try{
+
+                    await api(
+
+                        "/bookings/verify-payment/",
+
+                        "POST",
+
+                        {
+
+                            booking_id: order.booking_id,
+
+                            razorpay_order_id: response.razorpay_order_id,
+
+                            razorpay_payment_id: response.razorpay_payment_id,
+
+                            razorpay_signature: response.razorpay_signature
+
+                        }
+
+                    );
+
+                    status.innerHTML=`
+                        <div class="alert alert-success">
+                            Payment Successful!
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+
+                        window.location="/profile/";
+
+                    }, 1500);
+
+                }
+
+                catch(err){
+
+                    status.innerHTML=`
+                        <div class="alert alert-danger">
+                            Payment verification failed.
+                        </div>
+                    `;
+
+                    payBtn.disabled=false;
+
+                }
+
+            }
+
+        };
+
+        const rzp=new Razorpay(options);
+
+        rzp.on("payment.failed", function (response) {
+
+            status.innerHTML=`
+                <div class="alert alert-danger">
+                    ${response.error.description}
+                </div>
+            `;
+
+            payBtn.disabled=false;
+
+        });
+
+        rzp.open();
+
+        payBtn.disabled=false;
+
+    }
+
+    catch(error){
+
+        status.innerHTML=`
+            <div class="alert alert-danger">
+                Unable to initiate payment.
+            </div>
+        `;
+
+        payBtn.disabled=false;
+
+    }
 
 }
 
