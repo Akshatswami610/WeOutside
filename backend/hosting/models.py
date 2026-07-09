@@ -64,8 +64,7 @@ class Event(models.Model):
     def booked_seats(self):
         return (
                 self.bookings.filter(
-                    payment_status="paid",
-                    booking_status="confirmed"
+                    booking_status__in=["pending", "confirmed"]
                 ).aggregate(total=Sum("quantity"))["total"] or 0
         )
 
