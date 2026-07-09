@@ -6,6 +6,9 @@ def login(request):
 def register(request):
     return render(request, "register.html")
 
+def resetpassword(request):
+    return render(request, "reset-password.html")
+
 def home(request):
     return render(request, "home.html")
 
