@@ -9,14 +9,14 @@ def register(request):
 def home(request):
     return render(request, "home.html")
 
+def events(request):
+    return render(request, "events.html")
+
 def eventdetails(request, id):
     return render(request, "event-details.html")
 
 def bookingcheckout(request):
     return render(request, "booking-checkout.html")
-
-def payment(request):
-    return render(request, "payment.html")
 
 def hosting(request):
     return render(request, "hosting.html")
