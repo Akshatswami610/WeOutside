@@ -1,0 +1,790 @@
+{% extends "base.html" %}
+
+{% block title %}
+Events
+{% endblock %}
+
+{% block css %}
+
+<style>
+
+    .page-header {
+        padding: 48px 0 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .page-header h1 {
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        margin-bottom: 8px;
+    }
+
+    .page-header p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .page-header .search-wrap {
+        position: relative;
+        flex: 0 0 auto;
+        width: 220px;
+    }
+
+    .page-header .search-wrap i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: .82rem;
+    }
+
+    .page-header .search-wrap input {
+        padding: .42rem .75rem .42rem 32px;
+        font-size: .85rem;
+        border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 767px) {
+        .page-header .search-wrap {
+            width: 100%;
+        }
+    }
+    /* Event cards (same as home.html) */
+
+    .event-card {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        animation: fadeInUp .5s var(--ease) both;
+    }
+
+    .event-card .event-media {
+        height: 170px;
+        background: linear-gradient(135deg, #1c1c20, #131316);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 2rem;
+        border-bottom: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .event-card .event-media img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .4s var(--ease);
+    }
+
+    .event-card:hover .event-media img {
+        transform: scale(1.05);
+    }
+
+    .event-card .event-media .badge-category {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(11, 11, 12, .72);
+        backdrop-filter: blur(6px);
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+        font-weight: 600;
+        font-size: .68rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        padding: 5px 10px;
+        border-radius: 999px;
+        z-index: 2;
+    }
+
+    .event-card .event-media .badge-price {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--accent);
+        color: #1a1400;
+        font-weight: 700;
+        font-size: .74rem;
+        padding: 5px 11px;
+        border-radius: 999px;
+        z-index: 2;
+    }
+
+    .event-card .card-body {
+        padding: 22px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .event-card h4 {
+        font-size: 1.08rem;
+        margin-bottom: 8px;
+    }
+
+    .event-card .event-desc {
+        color: var(--text-secondary);
+        font-size: .87rem;
+        line-height: 1.55;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+    }
+
+    .event-meta span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: .8rem;
+        font-weight: 500;
+        max-width: 100%;
+    }
+
+    .event-meta span.truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .event-meta i {
+        color: var(--accent);
+        font-size: .85rem;
+    }
+
+    .event-card .btn {
+        width: 100%;
+    }
+
+    .loading .spinner-border {
+        width: 2rem;
+        height: 2rem;
+        margin-bottom: 12px;
+    }
+
+    /* Empty / error states */
+
+    .empty-state,
+    .error-state {
+        text-align: center;
+        padding: 70px 20px;
+        color: var(--text-muted);
+    }
+
+    .empty-state i,
+    .error-state i {
+        font-size: 2.4rem;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .error-state i {
+        color: #ef5b6a;
+    }
+
+    .empty-state p,
+    .error-state p {
+        margin-bottom: 18px;
+    }
+
+    /* Pagination / load more */
+
+    .load-more-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    /* Toast notifications */
+
+    #toastContainer {
+        z-index: 1080;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        pointer-events: none;
+    }
+
+    .site-toast {
+        pointer-events: auto;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 320px;
+        max-width: calc(100vw - 40px);
+        padding: 14px 16px;
+        border-radius: var(--radius-sm, 10px);
+        background: #1c1c20;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        box-shadow: 0 14px 32px -8px rgba(0, 0, 0, .55);
+        animation: toastIn .3s var(--ease, ease) both;
+    }
+
+    .site-toast.hiding {
+        animation: toastOut .22s var(--ease, ease) both;
+    }
+
+    .site-toast.success {
+        border-left-color: #4ecb8d;
+    }
+
+    .site-toast.danger {
+        border-left-color: #ef5b6a;
+    }
+
+    .site-toast .toast-icon {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+        margin-top: 1px;
+    }
+
+    .site-toast.success .toast-icon {
+        background: rgba(78, 203, 141, .15);
+        color: #4ecb8d;
+    }
+
+    .site-toast.danger .toast-icon {
+        background: rgba(239, 91, 106, .15);
+        color: #ef5b6a;
+    }
+
+    .site-toast .toast-message {
+        flex: 1;
+        font-size: .87rem;
+        line-height: 1.4;
+        color: var(--text-secondary, #e6e6e6);
+        padding-top: 3px;
+    }
+
+    .site-toast .toast-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1;
+        padding: 2px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .site-toast .toast-close:hover {
+        color: var(--text-secondary, #e6e6e6);
+    }
+
+    @keyframes toastIn {
+        from { transform: translateX(24px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(24px); opacity: 0; }
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Toast notifications -->
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+
+<div class="page-header fade-in">
+
+    <div>
+
+        <h1 class="fw-bold">All Events</h1>
+
+        <p>Browse every gathering happening on House Party</p>
+
+    </div>
+
+    <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input type="text" class="form-control" id="searchInput" placeholder="Search events...">
+    </div>
+
+</div>
+
+
+<div class="row mt-3" id="eventContainer">
+
+    <div class="loading">
+        <div class="spinner-border" role="status"></div>
+        <div>Loading events...</div>
+    </div>
+
+</div>
+
+<div class="load-more-wrap">
+    <button type="button" class="btn btn-secondary btn-lg" id="loadMoreBtn" style="display:none;">
+        Load More
+        <i class="bi bi-chevron-down ms-1"></i>
+    </button>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+
+// Maps the Event model's stored category keys to human-readable labels,
+// since the API returns raw enum values like "HOUSE_PARTY".
+const CATEGORY_LABELS={
+
+    HOUSE_PARTY:"House Party",
+
+    DINNER_PARTY:"Dinner Party",
+
+    GAME_NIGHT:"Game Night",
+
+    LIVE_MUSIC:"Live Music",
+
+    KARAOKE:"Karaoke",
+
+    NETWORKING:"Networking",
+
+    BOOK_CLUB:"Book Club",
+
+    MOVIE_NIGHT:"Movie Night",
+
+    COOKING_CLASS:"Cooking Class",
+
+    WELLNESS:"Wellness",
+
+    ART_CRAFT:"Art & Craft",
+
+    COFFEE_MEETUP:"Coffee Meetup",
+
+    CELEBRATION:"Celebration",
+
+    DANCE_PARTY:"Dance Party",
+
+    WATCH_PARTY:"Watch Party",
+
+    CULTURAL_MEETUP:"Cultural Meetup",
+
+    WORKSHOP:"Workshop",
+
+    OPEN_MIC:"Open Mic",
+
+    OTHER:"Other"
+
+};
+
+function categoryLabel(key){
+
+    return CATEGORY_LABELS[key] || key || "Uncategorized";
+
+}
+
+function formatPrice(fee){
+
+    const num=Number(fee);
+
+    if(Number.isNaN(num) || num<=0){
+
+        return "Free";
+
+    }
+
+    return `₹${num}`;
+
+}
+
+function formatEventDate(dateStr){
+
+    if(!dateStr){
+
+        return "";
+
+    }
+
+    const parsed=new Date(dateStr);
+
+    if(Number.isNaN(parsed.getTime())){
+
+        return dateStr;
+
+    }
+
+    return parsed.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+
+}
+
+// Site-styled toast notifications, shown top-right.
+function showToast(message,type="success"){
+
+    const container=document.getElementById("toastContainer");
+
+    if(!container){
+
+        return;
+
+    }
+
+    const icon=(type==="success") ? "bi-check-circle-fill" : "bi-exclamation-circle-fill";
+
+    const toastEl=document.createElement("div");
+
+    toastEl.className=`site-toast ${type}`;
+
+    toastEl.innerHTML=`
+        <div class="toast-icon"><i class="bi ${icon}"></i></div>
+        <div class="toast-message">${message}</div>
+        <button type="button" class="toast-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+    `;
+
+    container.appendChild(toastEl);
+
+    let dismissTimer;
+
+    function dismiss(){
+
+        clearTimeout(dismissTimer);
+
+        toastEl.classList.add("hiding");
+
+        toastEl.addEventListener("animationend",()=>toastEl.remove(),{once:true});
+
+    }
+
+    toastEl.querySelector(".toast-close").addEventListener("click",dismiss);
+
+    dismissTimer=setTimeout(dismiss,4000);
+
+}
+
+// All events as loaded from the API.
+let allEvents=[];
+
+// How many events are visible at a time, increased via "Load More".
+const PAGE_SIZE=9;
+let visibleCount=PAGE_SIZE;
+
+// Current filter state.
+let searchTerm="";
+function debounce(fn,delay){
+
+    let timer;
+
+    return function(...args){
+
+        clearTimeout(timer);
+
+        timer=setTimeout(()=>fn.apply(this,args),delay);
+
+    };
+
+}
+
+function getFilteredEvents(){
+
+    const term=searchTerm.trim().toLowerCase();
+
+    return allEvents.filter(event=>{
+
+        if(!term){
+
+            return true;
+
+        }
+
+        const name=(event.event_name || "").toLowerCase();
+
+        const location=(event.location || "").toLowerCase();
+
+        return name.includes(term) || location.includes(term);
+
+    });
+
+}
+
+function renderEventCard(event){
+
+    const location=event.location || "";
+
+    const dateLabel=formatEventDate(event.event_date);
+
+    return `
+
+    <div class="col-lg-4 col-md-6 mb-4">
+
+        <div class="card event-card h-100">
+
+            <div class="event-media">
+
+                ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-image"></i>`}
+
+                <span class="badge-category">${categoryLabel(event.event_category)}</span>
+
+                <span class="badge-price">${formatPrice(event.fee)}</span>
+
+            </div>
+
+            <div class="card-body">
+
+                <h4>
+
+                    ${event.event_name}
+
+                </h4>
+
+                <p class="event-desc">
+
+                    ${event.description || ""}
+
+                </p>
+
+                <div class="event-meta">
+
+                    <span>
+
+                        <i class="bi bi-people-fill"></i>
+
+                        ${event.max_members} guests
+
+                    </span>
+
+                    ${dateLabel ? `
+                    <span>
+                        <i class="bi bi-calendar-event"></i>
+                        ${dateLabel}
+                    </span>
+                    ` : ""}
+
+                    ${location ? `
+                    <span class="truncate" title="${location}">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        ${location}
+                    </span>
+                    ` : ""}
+
+                </div>
+
+                <a href="/event-details/${event.event_id}/"
+
+                   class="btn btn-primary">
+
+                   View Details
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+function renderEvents(){
+
+    const container=document.getElementById("eventContainer");
+
+    const loadMoreBtn=document.getElementById("loadMoreBtn");
+
+    if(allEvents.length===0){
+
+        container.innerHTML=`
+
+        <div class="col-12">
+
+            <div class="empty-state">
+
+                <i class="bi bi-calendar-x"></i>
+
+                <p>No events available right now. Check back soon, or be the first to host one.</p>
+
+                <a href="/hosting/" class="btn btn-primary">
+
+                    <i class="bi bi-plus-circle-fill me-1"></i> Host an Event
+
+                </a>
+
+            </div>
+
+        </div>
+
+        `;
+
+        loadMoreBtn.style.display="none";
+
+        return;
+
+    }
+
+    const filtered=getFilteredEvents();
+
+    // Newest first — fall back to event id if there's no event_date field.
+    const sorted=filtered.slice().sort((a,b)=>{
+
+        const aKey=a.event_date ? new Date(a.event_date).getTime() : a.event_id;
+
+        const bKey=b.event_date ? new Date(b.event_date).getTime() : b.event_id;
+
+        return bKey-aKey;
+
+    });
+
+    if(sorted.length===0){
+
+        container.innerHTML=`
+
+        <div class="col-12">
+
+            <div class="empty-state">
+
+                <i class="bi bi-search"></i>
+
+                <p>No events match your search.</p>
+
+                <button type="button" class="btn btn-primary" onclick="resetFilters()">
+
+                    <i class="bi bi-x-circle me-1"></i> Clear Search
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+        loadMoreBtn.style.display="none";
+
+        return;
+
+    }
+
+    const visibleEvents=sorted.slice(0,visibleCount);
+
+    container.innerHTML=visibleEvents.map(renderEventCard).join("");
+
+    loadMoreBtn.style.display = (visibleCount<sorted.length) ? "" : "none";
+
+}
+
+function resetFilters(){
+
+    searchTerm="";
+
+    visibleCount=PAGE_SIZE;
+
+    document.getElementById("searchInput").value="";
+
+    renderEvents();
+
+}
+
+async function loadEvents(){
+
+    const container=document.getElementById("eventContainer");
+
+    container.innerHTML=`
+        <div class="loading">
+            <div class="spinner-border" role="status"></div>
+            <div>Loading events...</div>
+        </div>
+    `;
+
+    try{
+
+        const events=await api("/hosting/events/");
+
+        allEvents=Array.isArray(events) ? events : [];
+
+        renderEvents();
+
+    }
+
+    catch(error){
+
+        container.innerHTML=`
+
+        <div class="col-12">
+
+            <div class="error-state">
+
+                <i class="bi bi-exclamation-triangle-fill"></i>
+
+                <p>Unable to load events. Please check your connection and try again.</p>
+
+                <button type="button" class="btn btn-primary" onclick="loadEvents()">
+
+                    <i class="bi bi-arrow-clockwise me-1"></i> Retry
+
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+        document.getElementById("loadMoreBtn").style.display="none";
+
+        showToast("Unable to load events right now.","danger");
+
+    }
+
+}
+
+document.getElementById("searchInput").addEventListener("input",debounce(function(e){
+
+    searchTerm=e.target.value;
+
+    visibleCount=PAGE_SIZE;
+
+    renderEvents();
+
+},250));
+
+
+document.getElementById("loadMoreBtn").addEventListener("click",function(){
+
+    visibleCount+=PAGE_SIZE;
+
+    renderEvents();
+
+});
+
+loadEvents();
+
+</script>
+
+{% endblock %}
