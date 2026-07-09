@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import login, register, home, events, hosting, eventdetails, mytickets, bookingcheckout, about, careers, terms, profile, privacy, support, team
+from .views import login, register,resetpassword, home, events, hosting, eventdetails, mytickets, bookingcheckout, about, careers, terms, profile, privacy, support, team
 
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     # Frontend pages
     path('login/', login, name='login'),
     path('register/', register, name='register'),
+    path('reset-password/', resetpassword, name='reset-password'),
     path('', home, name='home'),
     path('home/', home, name='home'),
     path('events/', events, name='events'),
