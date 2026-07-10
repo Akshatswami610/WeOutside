@@ -41,14 +41,72 @@ My Tickets
         font-size: .96rem;
     }
 
+    /* Stats summary */
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 26px;
+    }
+
+    @media (max-width: 700px) {
+        .stats-row {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+    }
+
+    .stat-card .stat-icon {
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: var(--accent-dim);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .stat-card .stat-label {
+        color: var(--text-muted);
+        font-size: .78rem;
+        margin-top: 2px;
+    }
+
     /* Filter bar */
 
     .filter-bar {
         padding: 18px;
-        margin-bottom: 26px;
+        margin-bottom: 16px;
         display: grid;
         grid-template-columns: 1.6fr 1fr 1fr 1fr;
         gap: 12px;
+        position: sticky;
+        top: 12px;
+        z-index: 20;
+        backdrop-filter: blur(10px);
+        background: rgba(26, 26, 30, .92);
     }
 
     @media (max-width: 900px) {
@@ -60,6 +118,7 @@ My Tickets
     @media (max-width: 576px) {
         .filter-bar {
             grid-template-columns: 1fr;
+            position: static;
         }
     }
 
@@ -82,10 +141,69 @@ My Tickets
         width: 100%;
     }
 
+    .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin: 0 2px 18px;
+        min-height: 0;
+    }
+
+    .active-filters:empty {
+        margin: 0;
+    }
+
+    .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-dim);
+        border: 1px solid rgba(245, 200, 76, .25);
+        color: var(--accent);
+        font-size: .78rem;
+        font-weight: 600;
+        padding: 5px 8px 5px 12px;
+        border-radius: 999px;
+    }
+
+    .filter-chip button {
+        background: none;
+        border: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 2px;
+        opacity: .8;
+    }
+
+    .filter-chip button:hover {
+        opacity: 1;
+    }
+
+    .clear-all-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 5px 4px;
+        text-decoration: underline;
+    }
+
+    .clear-all-chip:hover {
+        color: var(--text-secondary);
+    }
+
     .results-count {
         color: var(--text-muted);
         font-size: .84rem;
-        margin: -10px 2px 18px;
+        margin: -6px 2px 18px;
     }
 
     /* Ticket card */
@@ -94,13 +212,28 @@ My Tickets
         overflow: hidden;
         margin-bottom: 22px;
         animation: fadeInUp .4s var(--ease) both;
+        border-left: 3px solid var(--border);
+        transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-left-color .2s var(--ease);
+        position: relative;
+    }
+
+    .ticket-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 34px -14px rgba(0, 0, 0, .5);
+    }
+
+    .ticket-card.status-confirmed {
+        border-left-color: #4ecb8d;
+    }
+
+    .ticket-card.status-cancelled {
+        border-left-color: #ef5b6a;
     }
 
     .ticket-card-top {
         display: flex;
         gap: 18px;
         padding: 22px;
-        border-bottom: 1px solid var(--border);
     }
 
     @media (max-width: 576px) {
@@ -110,8 +243,9 @@ My Tickets
     }
 
     .ticket-poster {
-        width: 120px;
-        height: 90px;
+        position: relative;
+        width: 140px;
+        height: 100px;
         flex-shrink: 0;
         border-radius: var(--radius-sm);
         overflow: hidden;
@@ -123,10 +257,73 @@ My Tickets
         font-size: 1.6rem;
     }
 
+    @media (max-width: 576px) {
+        .ticket-poster {
+            width: 100%;
+            height: 140px;
+        }
+    }
+
     .ticket-poster img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+    }
+
+    .ticket-poster .poster-badge {
+        position: absolute;
+        left: 8px;
+        bottom: 8px;
+        backdrop-filter: blur(6px);
+    }
+
+    .past-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+        color: var(--text-muted);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        padding: 3px 9px;
+        border-radius: 999px;
+    }
+
+    /* Perforated divider between ticket header and details, giving the
+       card a torn-ticket-stub look. The circular "notches" are cut using
+       radial gradients that match the page background. */
+
+    .ticket-perforation {
+        position: relative;
+        height: 1px;
+        margin: 0 22px;
+        border-top: 1.5px dashed var(--border);
+    }
+
+    .ticket-perforation::before,
+    .ticket-perforation::after {
+        content: '';
+        position: absolute;
+        top: -9px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--bg);
+    }
+
+    .ticket-perforation::before {
+        left: -22px;
+    }
+
+    .ticket-perforation::after {
+        right: -22px;
+    }
+
+    .ticket-card-body {
+        padding: 20px 22px 22px;
     }
 
     .ticket-headline {
@@ -354,6 +551,62 @@ My Tickets
         color: #ef5b6a;
     }
 
+    /* Skeleton loading placeholders */
+
+    .skeleton-card {
+        overflow: hidden;
+        margin-bottom: 22px;
+    }
+
+    .skeleton-top {
+        display: flex;
+        gap: 18px;
+        padding: 22px;
+    }
+
+    .skeleton-block {
+        border-radius: var(--radius-sm);
+        background: linear-gradient(100deg, var(--bg-secondary) 30%, #232327 50%, var(--bg-secondary) 70%);
+        background-size: 200% 100%;
+        animation: skeletonShine 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-poster {
+        width: 140px;
+        height: 100px;
+        flex-shrink: 0;
+    }
+
+    .skeleton-lines {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .skeleton-lines .skeleton-block {
+        height: 14px;
+    }
+
+    .skeleton-lines .skeleton-block:first-child {
+        width: 55%;
+        height: 18px;
+    }
+
+    .skeleton-lines .skeleton-block:nth-child(2) {
+        width: 75%;
+    }
+
+    .skeleton-lines .skeleton-block:nth-child(3) {
+        width: 40%;
+    }
+
+    @keyframes skeletonShine {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
     /* Empty / error states */
 
     .empty-state,
@@ -500,6 +753,34 @@ My Tickets
 
 </div>
 
+<div class="stats-row" id="statsRow" style="display:none;">
+
+    <div class="card stat-card">
+        <div class="stat-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
+        <div>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Tickets</div>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+        <div>
+            <div class="stat-value" id="statUpcoming">0</div>
+            <div class="stat-label">Upcoming Events</div>
+        </div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="stat-icon"><i class="bi bi-wallet2"></i></div>
+        <div>
+            <div class="stat-value" id="statSpent">₹0</div>
+            <div class="stat-label">Total Spent</div>
+        </div>
+    </div>
+
+</div>
+
 <div class="card filter-bar">
 
     <div class="search-input-wrap">
@@ -533,13 +814,32 @@ My Tickets
 
 </div>
 
+<div class="active-filters" id="activeFilters"></div>
+
 <p class="results-count" id="resultsCount"></p>
 
 <div id="ticketsContainer">
 
-    <div class="loading">
-        <div class="spinner-border" role="status"></div>
-        <div>Loading your tickets...</div>
+    <div class="skeleton-card card">
+        <div class="skeleton-top">
+            <div class="skeleton-block skeleton-poster"></div>
+            <div class="skeleton-lines">
+                <div class="skeleton-block"></div>
+                <div class="skeleton-block"></div>
+                <div class="skeleton-block"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="skeleton-card card">
+        <div class="skeleton-top">
+            <div class="skeleton-block skeleton-poster"></div>
+            <div class="skeleton-lines">
+                <div class="skeleton-block"></div>
+                <div class="skeleton-block"></div>
+                <div class="skeleton-block"></div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -789,6 +1089,137 @@ function clearFilters(){
 
 }
 
+function renderStats(){
+
+    const statsRow=document.getElementById("statsRow");
+
+    if(allBookings.length===0){
+
+        statsRow.style.display="none";
+
+        return;
+
+    }
+
+    statsRow.style.display="grid";
+
+    const upcomingCount=allBookings.filter(booking=>{
+
+        const event=getEventInfo(booking);
+
+        return event.event_date && !isPastEvent(event.event_date) && booking.booking_status!=="cancelled";
+
+    }).length;
+
+    const totalSpent=allBookings.reduce((sum,booking)=>{
+
+        if(booking.payment_status!=="paid"){
+
+            return sum;
+
+        }
+
+        const amount=Number(booking.total_amount);
+
+        return sum+(Number.isNaN(amount) ? 0 : amount);
+
+    },0);
+
+    document.getElementById("statTotal").textContent=allBookings.length;
+
+    document.getElementById("statUpcoming").textContent=upcomingCount;
+
+    document.getElementById("statSpent").textContent=formatCurrency(totalSpent);
+
+}
+
+function renderActiveFilters(){
+
+    const wrap=document.getElementById("activeFilters");
+
+    const query=document.getElementById("searchInput").value.trim();
+
+    const paymentStatus=document.getElementById("paymentFilter").value;
+
+    const bookingStatus=document.getElementById("bookingFilter").value;
+
+    const chips=[];
+
+    if(query){
+
+        chips.push({label:`Search: "${query}"`,clear:()=>{document.getElementById("searchInput").value="";}});
+
+    }
+
+    if(paymentStatus){
+
+        chips.push({label:`Payment: ${paymentStatusLabel(paymentStatus)}`,clear:()=>{document.getElementById("paymentFilter").value="";}});
+
+    }
+
+    if(bookingStatus){
+
+        chips.push({label:`Status: ${bookingStatusLabel(bookingStatus)}`,clear:()=>{document.getElementById("bookingFilter").value="";}});
+
+    }
+
+    if(chips.length===0){
+
+        wrap.innerHTML="";
+
+        return;
+
+    }
+
+    window.__filterChipClears=chips.map(chip=>chip.clear);
+
+    wrap.innerHTML=chips.map((chip,index)=>`
+
+        <span class="filter-chip">
+            ${chip.label}
+            <button type="button" onclick="clearSingleFilter(${index})" aria-label="Remove filter"><i class="bi bi-x"></i></button>
+        </span>
+
+    `).join("")+`<button type="button" class="clear-all-chip" onclick="clearFilters()">Clear all</button>`;
+
+}
+
+function clearSingleFilter(index){
+
+    if(window.__filterChipClears && window.__filterChipClears[index]){
+
+        window.__filterChipClears[index]();
+
+        renderTickets();
+
+    }
+
+}
+
+function isPastEvent(dateStr){
+
+    if(!dateStr){
+
+        return false;
+
+    }
+
+    const parsed=new Date(dateStr);
+
+    if(Number.isNaN(parsed.getTime())){
+
+        return false;
+
+    }
+
+    const today=new Date();
+
+    today.setHours(0,0,0,0);
+
+    return parsed<today;
+
+}
+
 function renderTicketCard(booking){
 
     const event=getEventInfo(booking);
@@ -801,14 +1232,17 @@ function renderTicketCard(booking){
 
     const timeLabel=formatTime(event.event_time);
 
+    const past=isPastEvent(event.event_date);
+
     return `
 
-    <div class="card ticket-card" id="ticket-${booking.id}">
+    <div class="card ticket-card status-${bookingStatus}" id="ticket-${booking.id}">
 
         <div class="ticket-card-top">
 
             <div class="ticket-poster">
                 ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-ticket-perforated"></i>`}
+                <span class="status-badge status-${paymentStatus} poster-badge">${paymentStatusLabel(paymentStatus)}</span>
             </div>
 
             <div class="ticket-headline">
@@ -816,8 +1250,6 @@ function renderTicketCard(booking){
                 <div class="ticket-headline-row">
 
                     <h4>${event.event_name || "Event"}</h4>
-
-                    <span class="status-badge status-${paymentStatus}">${paymentStatusLabel(paymentStatus)}</span>
 
                 </div>
 
@@ -829,11 +1261,15 @@ function renderTicketCard(booking){
 
                     <span><i class="bi bi-flag-fill"></i> ${bookingStatusLabel(bookingStatus)}</span>
 
+                    ${past ? `<span class="past-tag"><i class="bi bi-clock-history"></i> Past Event</span>` : ""}
+
                 </div>
 
             </div>
 
         </div>
+
+        <div class="ticket-perforation"></div>
 
         <div class="ticket-card-body">
 
@@ -936,6 +1372,10 @@ function renderTickets(){
 
     const resultsCount=document.getElementById("resultsCount");
 
+    renderStats();
+
+    renderActiveFilters();
+
     const query=document.getElementById("searchInput").value.trim().toLowerCase();
 
     const paymentStatus=document.getElementById("paymentFilter").value;
@@ -982,7 +1422,7 @@ function renderTickets(){
 
                     <p>You haven't booked any tickets yet.</p>
 
-                    <a href="/" class="btn btn-primary">
+                    <a href="/" class="btn btn-primary btn-sm">
 
                         <i class="bi bi-search me-1"></i> Browse Events
 
@@ -1071,9 +1511,25 @@ async function loadTickets(){
     }
 
     container.innerHTML=`
-        <div class="loading">
-            <div class="spinner-border" role="status"></div>
-            <div>Loading your tickets...</div>
+        <div class="skeleton-card card">
+            <div class="skeleton-top">
+                <div class="skeleton-block skeleton-poster"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton-block"></div>
+                    <div class="skeleton-block"></div>
+                    <div class="skeleton-block"></div>
+                </div>
+            </div>
+        </div>
+        <div class="skeleton-card card">
+            <div class="skeleton-top">
+                <div class="skeleton-block skeleton-poster"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton-block"></div>
+                    <div class="skeleton-block"></div>
+                    <div class="skeleton-block"></div>
+                </div>
+            </div>
         </div>
     `;
 
