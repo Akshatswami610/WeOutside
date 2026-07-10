@@ -474,3 +474,38 @@ class ResetPasswordView(APIView):
         return Response({
             "message": "Password reset successfully."
         })
+
+# --------------------------------------------------
+# CHANGE PASSWORD
+# --------------------------------------------------
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        current_password = serializer.validated_data["current_password"]
+        new_password = serializer.validated_data["new_password"]
+        if not user.check_password(current_password):
+            return Response(
+                {
+                    "error": "Current password is incorrect."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if current_password == new_password:
+            return Response(
+                {
+                    "error": "New password must be different from the current password."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        user.set_password(new_password)
+        user.save()
+        return Response(
+            {
+                "message": "Password changed successfully."
+            }
+        )
