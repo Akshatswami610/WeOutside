@@ -107,6 +107,53 @@ Register
         opacity: .75;
     }
 
+    /* OTP modal */
+
+    .otp-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 22px 0 6px;
+    }
+
+    .otp-inputs input {
+        width: 46px;
+        height: 54px;
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 0;
+    }
+
+    .otp-sent-to {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: .85rem;
+        margin-top: -6px;
+    }
+
+    .otp-sent-to strong {
+        color: var(--text-primary);
+    }
+
+    .otp-resend {
+        text-align: center;
+        font-size: .84rem;
+        color: var(--text-muted);
+        margin-top: 18px;
+    }
+
+    .otp-resend a {
+        color: var(--accent);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .otp-resend a.disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
     .password-field {
         position: relative;
     }
@@ -470,6 +517,63 @@ Register
 
 </div>
 
+<!-- OTP verification modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header border-0 pb-0">
+
+                <h5 class="modal-title fw-bold" id="otpModalLabel">Verify Your Email</h5>
+
+                <button type="button" class="btn-close" onclick="closeOtpModal()" aria-label="Close"></button>
+
+            </div>
+
+            <div class="modal-body pt-2">
+
+                <p class="otp-sent-to">
+                    We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
+                </p>
+
+                <div class="otp-inputs" id="otpInputs">
+
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit" autocomplete="one-time-code">
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+
+                </div>
+
+                <button
+                    id="verifyOtpBtn"
+                    class="btn btn-primary w-100 mt-3"
+                    onclick="verifyOtp()">
+
+                    Verify & Create Account
+
+                </button>
+
+                <p class="otp-resend">
+
+                    Didn't get the code?
+                    <a id="resendOtpLink" onclick="resendOtp()">Resend OTP</a>
+                    <span id="resendTimer"></span>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}
 
 {% block js %}
@@ -555,6 +659,34 @@ function togglePassword(fieldId, btn){
 
 }
 
+// Holds the registration form values while the OTP step is in progress,
+// since verify/register happens in a second request once the code is confirmed.
+let pendingRegistration=null;
+
+let resendTimerHandle=null;
+
+function collectRegistrationErrors(data){
+
+    if(typeof data==="object" && data!==null){
+
+        let errors="";
+
+        Object.values(data).forEach(error=>{
+
+            const text=Array.isArray(error) ? error.join(" ") : error;
+
+            errors+=text+"<br>";
+
+        });
+
+        return errors;
+
+    }
+
+    return "";
+
+}
+
 async function register(){
 
     const full_name=document.getElementById("full_name").value.trim();
@@ -611,13 +743,233 @@ async function register(){
 
     }
 
+    // Keep the form values around — verifyOtp() needs them to finish
+    // registration once the code is confirmed.
+    pendingRegistration={
+
+        name:full_name,
+
+        email,
+
+        phone_number,
+
+        date_of_birth,
+
+        password,
+
+        confirm_password
+
+    };
+
     btn.classList.add("btn-loading");
 
-    btn.textContent="Creating account...";
+    btn.textContent="Sending code...";
 
     try{
 
-        const response=await fetch(API_BASE+"/accounts/register/",{
+        const sent=await sendRegisterOtp(true);
+
+        if(sent){
+
+            openOtpModal(email);
+
+        }
+
+    }
+
+    finally{
+
+        btn.classList.remove("btn-loading");
+
+        btn.textContent="Register";
+
+    }
+
+}
+
+async function sendRegisterOtp(showSuccessToast){
+
+    if(!pendingRegistration){
+
+        return false;
+
+    }
+
+    try{
+
+        const response=await fetch(API_BASE+"/accounts/register/send-otp/",{
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify(pendingRegistration)
+
+        });
+
+        const data=await response.json();
+
+        if(response.ok){
+
+            if(showSuccessToast){
+
+                showToast("We sent a verification code to your email.","success");
+
+            }
+
+            return true;
+
+        }
+
+        showToast(collectRegistrationErrors(data) || "Could not send OTP.","danger");
+
+        return false;
+
+    }
+
+    catch(error){
+
+        showToast("Server error. Please try again.","danger");
+
+        return false;
+
+    }
+
+}
+
+function openOtpModal(email){
+
+    document.getElementById("otpEmailDisplay").textContent=email;
+
+    document.querySelectorAll(".otp-digit").forEach(input=>input.value="");
+
+    const modalEl=document.getElementById("otpModal");
+
+    const modal=bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    modal.show();
+
+    startResendTimer();
+
+    setTimeout(()=>{
+
+        document.querySelector(".otp-digit").focus();
+
+    },300);
+
+}
+
+function closeOtpModal(){
+
+    const modalEl=document.getElementById("otpModal");
+
+    const modal=bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    modal.hide();
+
+    clearInterval(resendTimerHandle);
+
+}
+
+function getOtpValue(){
+
+    return Array.from(document.querySelectorAll(".otp-digit"))
+
+        .map(input=>input.value.trim())
+
+        .join("");
+
+}
+
+function startResendTimer(){
+
+    clearInterval(resendTimerHandle);
+
+    let seconds=30;
+
+    const link=document.getElementById("resendOtpLink");
+
+    const timerLabel=document.getElementById("resendTimer");
+
+    link.classList.add("disabled");
+
+    timerLabel.textContent=`(${seconds}s)`;
+
+    resendTimerHandle=setInterval(()=>{
+
+        seconds-=1;
+
+        if(seconds<=0){
+
+            clearInterval(resendTimerHandle);
+
+            link.classList.remove("disabled");
+
+            timerLabel.textContent="";
+
+            return;
+
+        }
+
+        timerLabel.textContent=`(${seconds}s)`;
+
+    },1000);
+
+}
+
+async function resendOtp(){
+
+    const link=document.getElementById("resendOtpLink");
+
+    if(link.classList.contains("disabled")){
+
+        return;
+
+    }
+
+    const sent=await sendRegisterOtp(true);
+
+    if(sent){
+
+        startResendTimer();
+
+    }
+
+}
+
+async function verifyOtp(){
+
+    if(!pendingRegistration){
+
+        showToast("Something went wrong. Please start registration again.","danger");
+
+        return;
+
+    }
+
+    const otp=getOtpValue();
+
+    if(otp.length!==6){
+
+        showToast("Please enter the full 6-digit code.","danger");
+
+        return;
+
+    }
+
+    const btn=document.getElementById("verifyOtpBtn");
+
+    btn.classList.add("btn-loading");
+
+    btn.textContent="Verifying...";
+
+    try{
+
+        const response=await fetch(API_BASE+"/accounts/register/verify/",{
 
             method:"POST",
 
@@ -629,17 +981,9 @@ async function register(){
 
             body:JSON.stringify({
 
-                name:full_name,
+                ...pendingRegistration,
 
-                email,
-
-                phone_number,
-
-                date_of_birth,
-
-                password,
-
-                confirm_password
+                otp
 
             })
 
@@ -655,60 +999,9 @@ async function register(){
 
                 localStorage.setItem("user",JSON.stringify(data.user || {}));
 
-                showToast("Registration successful.","success");
-
-                setTimeout(()=>{
-
-                    window.location="/";
-
-                },1200);
-
-                return;
-
             }
 
-            // The register endpoint didn't return a token, so log the
-            // new account in immediately with the same credentials
-            // rather than sending the person to the login page.
-            try{
-
-                const loginResponse=await fetch(API_BASE+"/accounts/login/",{
-
-                    method:"POST",
-
-                    headers:{
-
-                        "Content-Type":"application/json"
-
-                    },
-
-                    body:JSON.stringify({
-
-                        email,
-
-                        password
-
-                    })
-
-                });
-
-                const loginData=await loginResponse.json();
-
-                if(loginResponse.ok && loginData.token){
-
-                    localStorage.setItem("access",loginData.token);
-
-                    localStorage.setItem("user",JSON.stringify(loginData.user || {}));
-
-                }
-
-            }
-
-            catch(loginError){
-
-                // Fall through — registration itself still succeeded.
-
-            }
+            clearInterval(resendTimerHandle);
 
             showToast("Registration successful.","success");
 
@@ -718,37 +1011,15 @@ async function register(){
 
             },1200);
 
-        }
-
-        else{
-
-            if(typeof data==="object" && data!==null){
-
-                let errors="";
-
-                Object.values(data).forEach(error=>{
-
-                    const text=Array.isArray(error) ? error.join(" ") : error;
-
-                    errors+=text+"<br>";
-
-                });
-
-                showToast(errors || "Registration failed.","danger");
-
-            }
-
-            else{
-
-                showToast("Registration failed.","danger");
-
-            }
-
-            btn.classList.remove("btn-loading");
-
-            btn.textContent="Register";
+            return;
 
         }
+
+        showToast(collectRegistrationErrors(data) || "Invalid or expired OTP.","danger");
+
+        btn.classList.remove("btn-loading");
+
+        btn.textContent="Verify & Create Account";
 
     }
 
@@ -758,11 +1029,71 @@ async function register(){
 
         btn.classList.remove("btn-loading");
 
-        btn.textContent="Register";
+        btn.textContent="Verify & Create Account";
 
     }
 
 }
+
+// OTP boxes: auto-advance on digit entry, auto-back on backspace, and
+// support pasting a full 6-digit code into any box.
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const digits=document.querySelectorAll(".otp-digit");
+
+    digits.forEach((input,index)=>{
+
+        input.addEventListener("input",()=>{
+
+            input.value=input.value.replace(/[^0-9]/g,"").slice(0,1);
+
+            if(input.value && index<digits.length-1){
+
+                digits[index+1].focus();
+
+            }
+
+        });
+
+        input.addEventListener("keydown",(e)=>{
+
+            if(e.key==="Backspace" && input.value==="" && index>0){
+
+                digits[index-1].focus();
+
+            }
+
+        });
+
+        input.addEventListener("paste",(e)=>{
+
+            const pasted=(e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g,"");
+
+            if(pasted.length>=1){
+
+                e.preventDefault();
+
+                pasted.slice(0,digits.length).split("").forEach((char,i)=>{
+
+                    if(digits[index+i]){
+
+                        digits[index+i].value=char;
+
+                    }
+
+                });
+
+                const next=Math.min(index+pasted.length,digits.length-1);
+
+                digits[next].focus();
+
+            }
+
+        });
+
+    });
+
+});
 
 </script>
 
