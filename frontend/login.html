@@ -91,6 +91,102 @@ Login
         opacity: .75;
     }
 
+    /* Login method tabs */
+
+    .login-tabs {
+        display: flex;
+        background: var(--bg-secondary, #1a1a1d);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm, 10px);
+        padding: 4px;
+        margin-bottom: 24px;
+    }
+
+    .login-tabs button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: .85rem;
+        font-weight: 600;
+        padding: 9px 0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background .2s var(--ease), color .2s var(--ease);
+    }
+
+    .login-tabs button.active {
+        background: var(--accent);
+        color: #1a1400;
+    }
+
+    .login-panel {
+        display: none;
+    }
+
+    .login-panel.active {
+        display: block;
+    }
+
+    /* OTP boxes */
+
+    .otp-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 18px 0 6px;
+    }
+
+    .otp-inputs input {
+        width: 46px;
+        height: 54px;
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 0;
+    }
+
+    .otp-sent-to {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: .85rem;
+        margin-top: -4px;
+    }
+
+    .otp-sent-to strong {
+        color: var(--text-primary);
+    }
+
+    .otp-resend {
+        text-align: center;
+        font-size: .84rem;
+        color: var(--text-muted);
+        margin-top: 16px;
+    }
+
+    .otp-resend a {
+        color: var(--accent);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .otp-resend a.disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
+    .otp-change-email {
+        text-align: center;
+        font-size: .8rem;
+        margin-top: 4px;
+    }
+
+    .otp-change-email a {
+        color: var(--text-muted);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
     /* Toast notifications */
 
     #toastContainer {
@@ -220,68 +316,166 @@ Login
                     Log in to keep discovering and hosting great events.
                 </p>
 
-                <div class="mb-3">
+                <div class="login-tabs">
 
-                    <label class="form-label">
-                        Email Address
-                    </label>
+                    <button type="button" id="tabPasswordBtn" class="active" onclick="switchLoginTab('password')">
 
-                    <input
-                        type="email"
-                        id="username"
-                        class="form-control"
-                        placeholder="you@example.com"
-                        autocomplete="email">
+                        Password
+
+                    </button>
+
+                    <button type="button" id="tabOtpBtn" onclick="switchLoginTab('otp')">
+
+                        Login with OTP
+
+                    </button>
 
                 </div>
 
-                <div class="mb-3">
+                <!-- PASSWORD LOGIN -->
+                <div id="passwordPanel" class="login-panel active">
 
-                    <label class="form-label">
-                        Password
-                    </label>
+                    <div class="mb-3">
 
-                    <div class="password-field">
+                        <label class="form-label">
+                            Email Address
+                        </label>
 
                         <input
-                            type="password"
-                            id="password"
+                            type="email"
+                            id="username"
                             class="form-control"
-                            placeholder="Enter your password"
-                            autocomplete="current-password">
+                            placeholder="you@example.com"
+                            autocomplete="email">
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="password"
+                                class="form-control"
+                                placeholder="Enter your password"
+                                autocomplete="current-password">
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                aria-label="Show password"
+                                onclick="togglePasswordVisibility('password', this)">
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-end mb-3" style="font-size:.85rem; margin-top:-8px;">
+
+                        <a href="/reset-password/">
+
+                            Forgot password?
+
+                        </a>
+
+                    </p>
+
+                    <button
+                        id="loginBtn"
+                        class="btn btn-primary w-100"
+                        onclick="login()">
+
+                        Login
+
+                    </button>
+
+                </div>
+
+                <!-- OTP LOGIN -->
+                <div id="otpPanel" class="login-panel">
+
+                    <!-- Step 1: enter email -->
+                    <div id="otpEmailStep">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                id="otpEmail"
+                                class="form-control"
+                                placeholder="you@example.com"
+                                autocomplete="email">
+
+                        </div>
 
                         <button
-                            type="button"
-                            class="password-toggle"
-                            aria-label="Show password"
-                            onclick="togglePasswordVisibility('password', this)">
+                            id="sendOtpBtn"
+                            class="btn btn-primary w-100"
+                            onclick="sendLoginOtp()">
 
-                            <i class="bi bi-eye"></i>
+                            Send OTP
 
                         </button>
 
                     </div>
 
+                    <!-- Step 2: enter code -->
+                    <div id="otpCodeStep" style="display:none;">
+
+                        <p class="otp-sent-to">
+                            We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
+                        </p>
+
+                        <div class="otp-inputs" id="otpInputs">
+
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit" autocomplete="one-time-code">
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                            <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+
+                        </div>
+
+                        <button
+                            id="verifyOtpBtn"
+                            class="btn btn-primary w-100 mt-3"
+                            onclick="verifyLoginOtp()">
+
+                            Verify & Login
+
+                        </button>
+
+                        <p class="otp-resend">
+
+                            Didn't get the code?
+                            <a id="resendOtpLink" onclick="resendLoginOtp()">Resend OTP</a>
+                            <span id="resendTimer"></span>
+
+                        </p>
+
+                        <p class="otp-change-email">
+
+                            <a onclick="changeOtpEmail()">Use a different email</a>
+
+                        </p>
+
+                    </div>
+
                 </div>
-
-                <p class="text-end mb-3" style="font-size:.85rem; margin-top:-8px;">
-
-                    <a href="/reset-password/">
-
-                        Forgot password?
-
-                    </a>
-
-                </p>
-
-                <button
-                    id="loginBtn"
-                    class="btn btn-primary w-100"
-                    onclick="login()">
-
-                    Login
-
-                </button>
 
                 <div class="auth-divider">or</div>
 
@@ -365,6 +559,42 @@ function showToast(message,type="success",duration=4000){
     toastEl.querySelector(".toast-close").addEventListener("click",dismiss);
 
     dismissTimer=setTimeout(dismiss,duration);
+
+}
+
+function switchLoginTab(tab){
+
+    const passwordBtn=document.getElementById("tabPasswordBtn");
+
+    const otpBtn=document.getElementById("tabOtpBtn");
+
+    const passwordPanel=document.getElementById("passwordPanel");
+
+    const otpPanel=document.getElementById("otpPanel");
+
+    if(tab==="otp"){
+
+        otpBtn.classList.add("active");
+
+        passwordBtn.classList.remove("active");
+
+        otpPanel.classList.add("active");
+
+        passwordPanel.classList.remove("active");
+
+    }
+
+    else{
+
+        passwordBtn.classList.add("active");
+
+        otpBtn.classList.remove("active");
+
+        passwordPanel.classList.add("active");
+
+        otpPanel.classList.remove("active");
+
+    }
 
 }
 
@@ -459,6 +689,360 @@ async function login(){
     }
 
 }
+
+// --------------------------------------------------
+// OTP LOGIN
+// --------------------------------------------------
+
+let otpLoginEmail=null;
+
+let resendTimerHandle=null;
+
+async function sendLoginOtp(){
+
+    const email=document.getElementById("otpEmail").value.trim();
+
+    const btn=document.getElementById("sendOtpBtn");
+
+    if(email===""){
+
+        showToast("Please enter your email.","danger");
+
+        return;
+
+    }
+
+    btn.classList.add("btn-loading");
+
+    btn.textContent="Sending code...";
+
+    try{
+
+        const response=await fetch(API_BASE+"/accounts/login/send-otp/",{
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify({email})
+
+        });
+
+        const data=await response.json();
+
+        if(response.ok){
+
+            otpLoginEmail=email;
+
+            document.getElementById("otpEmailDisplay").textContent=email;
+
+            document.getElementById("otpEmailStep").style.display="none";
+
+            document.getElementById("otpCodeStep").style.display="block";
+
+            document.querySelectorAll(".otp-digit").forEach(input=>input.value="");
+
+            startResendTimer();
+
+            setTimeout(()=>{
+
+                document.querySelector(".otp-digit").focus();
+
+            },200);
+
+        }
+
+        else{
+
+            const message=(data.email && data.email.join(" ")) || data.error || data.detail || "Could not send OTP.";
+
+            showToast(message,"danger");
+
+        }
+
+    }
+
+    catch(error){
+
+        showToast("Server error. Please try again.","danger");
+
+    }
+
+    finally{
+
+        btn.classList.remove("btn-loading");
+
+        btn.textContent="Send OTP";
+
+    }
+
+}
+
+function startResendTimer(){
+
+    clearInterval(resendTimerHandle);
+
+    let seconds=30;
+
+    const link=document.getElementById("resendOtpLink");
+
+    const timerLabel=document.getElementById("resendTimer");
+
+    link.classList.add("disabled");
+
+    timerLabel.textContent=`(${seconds}s)`;
+
+    resendTimerHandle=setInterval(()=>{
+
+        seconds-=1;
+
+        if(seconds<=0){
+
+            clearInterval(resendTimerHandle);
+
+            link.classList.remove("disabled");
+
+            timerLabel.textContent="";
+
+            return;
+
+        }
+
+        timerLabel.textContent=`(${seconds}s)`;
+
+    },1000);
+
+}
+
+async function resendLoginOtp(){
+
+    const link=document.getElementById("resendOtpLink");
+
+    if(link.classList.contains("disabled") || !otpLoginEmail){
+
+        return;
+
+    }
+
+    try{
+
+        const response=await fetch(API_BASE+"/accounts/login/send-otp/",{
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify({email:otpLoginEmail})
+
+        });
+
+        const data=await response.json();
+
+        if(response.ok){
+
+            showToast("A new code has been sent.","success");
+
+            startResendTimer();
+
+        }
+
+        else{
+
+            showToast(data.error || data.detail || "Could not resend OTP.","danger");
+
+        }
+
+    }
+
+    catch(error){
+
+        showToast("Server error. Please try again.","danger");
+
+    }
+
+}
+
+function changeOtpEmail(){
+
+    clearInterval(resendTimerHandle);
+
+    otpLoginEmail=null;
+
+    document.getElementById("otpCodeStep").style.display="none";
+
+    document.getElementById("otpEmailStep").style.display="block";
+
+    document.getElementById("otpEmail").value="";
+
+}
+
+function getOtpValue(){
+
+    return Array.from(document.querySelectorAll(".otp-digit"))
+
+        .map(input=>input.value.trim())
+
+        .join("");
+
+}
+
+async function verifyLoginOtp(){
+
+    if(!otpLoginEmail){
+
+        showToast("Please request a code first.","danger");
+
+        return;
+
+    }
+
+    const otp=getOtpValue();
+
+    if(otp.length!==6){
+
+        showToast("Please enter the full 6-digit code.","danger");
+
+        return;
+
+    }
+
+    const btn=document.getElementById("verifyOtpBtn");
+
+    btn.classList.add("btn-loading");
+
+    btn.textContent="Verifying...";
+
+    try{
+
+        const response=await fetch(API_BASE+"/accounts/login/verify/",{
+
+            method:"POST",
+
+            headers:{
+
+                "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify({
+
+                email:otpLoginEmail,
+
+                otp
+
+            })
+
+        });
+
+        const data=await response.json();
+
+        if(response.ok){
+
+            localStorage.setItem("access",data.token);
+
+            localStorage.setItem("user",JSON.stringify(data.user || {}));
+
+            clearInterval(resendTimerHandle);
+
+            showToast("Login successful!","success");
+
+            setTimeout(()=>{
+
+                window.location="/";
+
+            },800);
+
+            return;
+
+        }
+
+        showToast(data.error || data.detail || "Invalid or expired OTP.","danger");
+
+        btn.classList.remove("btn-loading");
+
+        btn.textContent="Verify & Login";
+
+    }
+
+    catch(error){
+
+        showToast("Server error. Please try again.","danger");
+
+        btn.classList.remove("btn-loading");
+
+        btn.textContent="Verify & Login";
+
+    }
+
+}
+
+// OTP boxes: auto-advance on digit entry, auto-back on backspace, and
+// support pasting a full 6-digit code into any box.
+document.addEventListener("DOMContentLoaded",()=>{
+
+    const digits=document.querySelectorAll(".otp-digit");
+
+    digits.forEach((input,index)=>{
+
+        input.addEventListener("input",()=>{
+
+            input.value=input.value.replace(/[^0-9]/g,"").slice(0,1);
+
+            if(input.value && index<digits.length-1){
+
+                digits[index+1].focus();
+
+            }
+
+        });
+
+        input.addEventListener("keydown",(e)=>{
+
+            if(e.key==="Backspace" && input.value==="" && index>0){
+
+                digits[index-1].focus();
+
+            }
+
+        });
+
+        input.addEventListener("paste",(e)=>{
+
+            const pasted=(e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g,"");
+
+            if(pasted.length>=1){
+
+                e.preventDefault();
+
+                pasted.slice(0,digits.length).split("").forEach((char,i)=>{
+
+                    if(digits[index+i]){
+
+                        digits[index+i].value=char;
+
+                    }
+
+                });
+
+                const next=Math.min(index+pasted.length,digits.length-1);
+
+                digits[next].focus();
+
+            }
+
+        });
+
+    });
+
+});
 
 </script>
 
