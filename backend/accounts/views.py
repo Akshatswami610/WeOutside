@@ -95,6 +95,20 @@ class MeView(APIView):
             "message": "Profile updated successfully."
         })
 
+    def delete(self, request):
+        user = request.user
+
+        # Delete auth token
+        Token.objects.filter(user=user).delete()
+
+        # Delete user
+        user.delete()
+
+        return Response(
+            {"message": "Account deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
 
 # --------------------------------------------------
 # REGISTER - SEND OTP
