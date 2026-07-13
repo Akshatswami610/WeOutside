@@ -8,93 +8,268 @@ Home
 
 <style>
 
-    .hero {
-        padding: 96px 24px;
+    /* ===== Hero ===== */
+
+    .hero-wrap {
         position: relative;
+        border-radius: var(--radius-lg);
         overflow: hidden;
+        margin-top: 22px;
+        border: 1px solid var(--border);
+        min-height: 560px;
+        isolation: isolate;
     }
 
-    .hero::before {
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background:
+            radial-gradient(46% 60% at 78% 22%, rgba(236, 72, 153, .45), transparent 60%),
+            radial-gradient(38% 50% at 88% 55%, rgba(249, 115, 22, .35), transparent 60%),
+            radial-gradient(50% 60% at 20% 75%, rgba(168, 85, 247, .35), transparent 60%),
+            radial-gradient(70% 90% at 50% 100%, #1c1420 0%, #0a0810 70%),
+            linear-gradient(180deg, #150f18, #0a080d);
+    }
+
+    .hero-bg::before {
+        /* subtle bokeh "string light" dots */
         content: '';
         position: absolute;
-        top: -40%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 700px;
-        height: 700px;
-        background: radial-gradient(circle, rgba(245, 200, 76, .10), transparent 70%);
-        pointer-events: none;
+        inset: 0;
+        background-image:
+            radial-gradient(3px 3px at 12% 30%, rgba(255,214,150,.9), transparent 60%),
+            radial-gradient(3px 3px at 22% 18%, rgba(255,214,150,.7), transparent 60%),
+            radial-gradient(3px 3px at 34% 26%, rgba(255,214,150,.8), transparent 60%),
+            radial-gradient(3px 3px at 46% 16%, rgba(255,214,150,.65), transparent 60%),
+            radial-gradient(3px 3px at 58% 24%, rgba(255,214,150,.8), transparent 60%),
+            radial-gradient(3px 3px at 70% 14%, rgba(255,214,150,.6), transparent 60%),
+            radial-gradient(3px 3px at 82% 22%, rgba(255,214,150,.75), transparent 60%),
+            radial-gradient(2px 2px at 15% 55%, rgba(255,255,255,.35), transparent 60%),
+            radial-gradient(2px 2px at 63% 60%, rgba(255,255,255,.3), transparent 60%),
+            radial-gradient(2px 2px at 88% 68%, rgba(255,255,255,.3), transparent 60%);
+        opacity: .8;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(90deg, rgba(6,5,8,.75) 0%, rgba(6,5,8,.35) 55%, rgba(6,5,8,.15) 100%);
+    }
+
+    .hero-inner {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 40px;
+        padding: 56px 44px;
+        align-items: start;
+    }
+
+    @media (max-width: 991px) {
+        .hero-inner {
+            grid-template-columns: 1fr;
+            padding: 40px 24px;
+        }
     }
 
     .hero-eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: var(--accent);
-        font-weight: 600;
+        color: var(--pink);
+        font-weight: 700;
         font-size: .82rem;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-        background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
-        padding: 6px 14px;
+        letter-spacing: .01em;
+        background: rgba(236, 72, 153, .14);
+        border: 1px solid rgba(236, 72, 153, .3);
+        padding: 7px 16px;
         border-radius: 999px;
-        margin-bottom: 22px;
-        position: relative;
+        margin-bottom: 26px;
         animation: fadeInUp .5s var(--ease) both;
     }
 
-    .hero h1 {
-        position: relative;
-        font-size: clamp(2.1rem, 5vw, 3.4rem);
+    .hero-inner h1 {
+        font-size: clamp(2.3rem, 4.6vw, 3.6rem);
         line-height: 1.12;
-        max-width: 780px;
-        margin: 0 auto;
+        margin: 0 0 20px;
         animation: fadeInUp .55s var(--ease) both;
         animation-delay: .05s;
     }
 
-    .hero .lead {
-        position: relative;
+    .hero-inner h1 .l1 { color: #fff; }
+    .hero-inner h1 .hl-pink { color: var(--pink); }
+    .hero-inner h1 .hl-orange { color: var(--orange); }
+    .hero-inner h1 .hl-purple { color: var(--purple); }
+
+    .hero-inner .lead {
         color: var(--text-secondary);
-        max-width: 560px;
-        margin: 18px auto 0;
-        font-weight: 400;
+        max-width: 480px;
+        font-weight: 500;
         font-size: 1.05rem;
+        line-height: 1.6;
+        margin: 0 0 34px;
         animation: fadeInUp .55s var(--ease) both;
         animation-delay: .12s;
     }
 
     .hero-actions {
-        position: relative;
         display: flex;
-        justify-content: center;
         gap: 14px;
-        margin-top: 34px;
         flex-wrap: wrap;
         animation: fadeInUp .55s var(--ease) both;
         animation-delay: .18s;
     }
 
+    .hero-actions .btn-outline-primary {
+        border: 1px solid rgba(255,255,255,.35);
+        background: rgba(255,255,255,.04);
+    }
+
+    /* Trending card */
+
+    .trending-card {
+        background: rgba(20, 16, 24, .72);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, .1);
+        border-radius: var(--radius-lg);
+        padding: 22px;
+        animation: fadeInUp .55s var(--ease) both;
+        animation-delay: .1s;
+    }
+
+    .trending-card h5 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.05rem;
+        margin-bottom: 18px;
+    }
+
+    .trending-item {
+        display: flex;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255,255,255,.07);
+        color: inherit;
+        cursor: pointer;
+        transition: transform .2s var(--ease), opacity .2s var(--ease);
+    }
+
+    .trending-item:hover {
+        transform: translateX(3px);
+        opacity: .9;
+    }
+
+    .trending-item:last-of-type {
+        border-bottom: none;
+    }
+
+    .trending-item .thumb {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, #241a26, #171018);
+        background-size: cover;
+        background-position: center;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+    }
+
+    .trending-item .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .trending-item .info h6 {
+        font-size: .87rem;
+        font-weight: 700;
+        margin: 0 0 3px;
+        color: #fff;
+    }
+
+    .trending-item .info .meta {
+        font-size: .75rem;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+    }
+
+    .trending-item .info .badge {
+        font-size: .64rem;
+        padding: .3em .65em;
+        background: rgba(168, 85, 247, .18);
+        color: #d6a9fb;
+        border: 1px solid rgba(168, 85, 247, .3);
+    }
+
+    .trending-view-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 14px;
+        color: var(--pink);
+        font-weight: 700;
+        font-size: .85rem;
+    }
+
+    .trending-view-all:hover {
+        color: #ff6fb4;
+    }
+
+    /* ===== Section heading ===== */
+
     .section-heading {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 64px;
+        margin-top: 56px;
+        gap: 8px;
+    }
+
+    .section-heading .heading-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-heading .heading-left i {
+        color: var(--purple);
+        font-size: 1.3rem;
     }
 
     .section-heading h3 {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         margin: 0;
     }
 
     .section-heading p {
         color: var(--text-muted);
-        font-size: .88rem;
-        margin: 4px 0 0;
+        font-size: .86rem;
+        margin: 2px 0 0;
     }
 
-    /* Event cards */
+    .section-heading .view-all {
+        color: var(--pink);
+        font-weight: 700;
+        font-size: .87rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .section-heading .view-all:hover {
+        color: #ff6fb4;
+    }
+
+    /* ===== Event cards ===== */
 
     .event-card {
         overflow: hidden;
@@ -104,8 +279,8 @@ Home
     }
 
     .event-card .event-media {
-        height: 170px;
-        background: linear-gradient(135deg, #1c1c20, #131316);
+        height: 150px;
+        background: linear-gradient(135deg, #221a26, #14101a);
         position: relative;
         display: flex;
         align-items: center;
@@ -133,12 +308,11 @@ Home
         position: absolute;
         top: 12px;
         left: 12px;
-        background: rgba(11, 11, 12, .72);
-        backdrop-filter: blur(6px);
-        color: var(--text-primary);
-        border: 1px solid var(--border);
-        font-weight: 600;
-        font-size: .68rem;
+        background: rgba(168, 85, 247, .85);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        font-size: .64rem;
         text-transform: uppercase;
         letter-spacing: .04em;
         padding: 5px 10px;
@@ -150,32 +324,38 @@ Home
         position: absolute;
         top: 12px;
         right: 12px;
-        background: var(--accent);
-        color: #1a1400;
+        background: rgba(8,7,11,.75);
+        backdrop-filter: blur(4px);
+        color: #fff;
         font-weight: 700;
-        font-size: .74rem;
+        font-size: .72rem;
         padding: 5px 11px;
         border-radius: 999px;
         z-index: 2;
+        border: 1px solid rgba(255,255,255,.15);
     }
 
+    .event-card:nth-of-type(3n+1) .badge-category { background: rgba(236, 72, 153, .85); }
+    .event-card:nth-of-type(3n+2) .badge-category { background: rgba(249, 115, 22, .85); }
+    .event-card:nth-of-type(3n+3) .badge-category { background: rgba(168, 85, 247, .85); }
+
     .event-card .card-body {
-        padding: 22px;
+        padding: 20px;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
     .event-card h4 {
-        font-size: 1.08rem;
-        margin-bottom: 8px;
+        font-size: 1.02rem;
+        margin-bottom: 6px;
     }
 
     .event-card .event-desc {
         color: var(--text-secondary);
-        font-size: .87rem;
-        line-height: 1.55;
-        margin-bottom: 16px;
+        font-size: .85rem;
+        line-height: 1.5;
+        margin-bottom: 14px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -184,8 +364,9 @@ Home
 
     .event-meta {
         display: flex;
-        gap: 16px;
-        margin-bottom: 18px;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 16px;
         margin-top: auto;
         padding-top: 12px;
         border-top: 1px solid var(--border);
@@ -196,13 +377,20 @@ Home
         align-items: center;
         gap: 6px;
         color: var(--text-muted);
-        font-size: .8rem;
-        font-weight: 500;
+        font-size: .78rem;
+        font-weight: 600;
+        max-width: 100%;
+    }
+
+    .event-meta span.truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .event-meta i {
-        color: var(--accent);
-        font-size: .85rem;
+        color: var(--pink);
+        font-size: .82rem;
     }
 
     .event-card .btn {
@@ -221,22 +409,6 @@ Home
         display: flex;
         justify-content: center;
         margin-top: 36px;
-    }
-
-    /* Event meta */
-
-    .event-meta {
-        flex-wrap: wrap;
-    }
-
-    .event-meta span {
-        max-width: 100%;
-    }
-
-    .event-meta span.truncate {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     /* Empty / error states */
@@ -265,141 +437,71 @@ Home
         margin-bottom: 18px;
     }
 
-    /* Toast notifications */
-
-    #toastContainer {
-        z-index: 1080;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 10px;
-        pointer-events: none;
-    }
-
-    .site-toast {
-        pointer-events: auto;
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        width: 320px;
-        max-width: calc(100vw - 40px);
-        padding: 14px 16px;
-        border-radius: var(--radius-sm, 10px);
-        background: #1c1c20;
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--accent);
-        box-shadow: 0 14px 32px -8px rgba(0, 0, 0, .55);
-        animation: toastIn .3s var(--ease, ease) both;
-    }
-
-    .site-toast.hiding {
-        animation: toastOut .22s var(--ease, ease) both;
-    }
-
-    .site-toast.success {
-        border-left-color: #4ecb8d;
-    }
-
-    .site-toast.danger {
-        border-left-color: #ef5b6a;
-    }
-
-    .site-toast .toast-icon {
-        flex-shrink: 0;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .95rem;
-        margin-top: 1px;
-    }
-
-    .site-toast.success .toast-icon {
-        background: rgba(78, 203, 141, .15);
-        color: #4ecb8d;
-    }
-
-    .site-toast.danger .toast-icon {
-        background: rgba(239, 91, 106, .15);
-        color: #ef5b6a;
-    }
-
-    .site-toast .toast-message {
-        flex: 1;
-        font-size: .87rem;
-        line-height: 1.4;
-        color: var(--text-secondary, #e6e6e6);
-        padding-top: 3px;
-    }
-
-    .site-toast .toast-close {
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1rem;
-        line-height: 1;
-        padding: 2px;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-
-    .site-toast .toast-close:hover {
-        color: var(--text-secondary, #e6e6e6);
-    }
-
-    @keyframes toastIn {
-        from { transform: translateX(24px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes toastOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(24px); opacity: 0; }
-    }
-
 </style>
 
 {% endblock %}
 
 {% block content %}
 
-<!-- Toast notifications -->
-<div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
+<div class="hero-wrap fade-in">
 
-<div class="hero fade-in">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
 
-    <span class="hero-eyebrow">
-        <i class="bi bi-stars"></i>
-        Curated gatherings, every week
-    </span>
+    <div class="hero-inner">
 
-    <h1 class="fw-bold">
+        <div class="hero-left">
 
-        Discover Amazing House Parties
+            <span class="hero-eyebrow">
+                🎉 Curated Gatherings. Every Weekend.
+            </span>
 
-    </h1>
+            <h1 class="fw-bold">
+                <span class="hl-pink">Good</span> <span class="l1">Vibes.</span><br>
+                <span class="hl-orange">Great</span> <span class="l1">People.</span><br>
+                <span class="hl-purple">Unforgettable</span> <span class="l1">Nights.</span>
+            </h1>
 
-    <p class="lead">
+            <p class="lead">
+                Discover and host the best house parties in your city.
+                Meet new people, dance, and create memories.
+            </p>
 
-        Book unique events, meet new people and create unforgettable memories.
+            <div class="hero-actions">
 
-    </p>
+                <a href="/hosting/" class="btn btn-primary btn-lg">
+                    <i class="bi bi-lightning-charge-fill me-1"></i> Host Your Event
+                </a>
 
-    <div class="hero-actions">
+                <a href="/events/" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-slash-circle me-1"></i> Explore Events
+                </a>
 
-        <a href="/hosting/" class="btn btn-primary btn-lg">
+            </div>
 
-            Host Your Event
+        </div>
 
-        </a>
+        <aside class="trending-card">
 
-        <a href="/events/" class="btn btn-secondary btn-lg">
+            <h5>🔥 Trending This Week</h5>
 
-            Browse Events
+            <div id="trendingList">
 
-        </a>
+                <div class="trending-item">
+                    <div class="thumb"><i class="bi bi-image"></i></div>
+                    <div class="info">
+                        <h6>&nbsp;</h6>
+                        <div class="meta">&nbsp;</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <a href="/events/" class="trending-view-all">
+                View All Events <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </aside>
 
     </div>
 
@@ -407,16 +509,17 @@ Home
 
 <div class="section-heading" id="eventsSection">
 
-    <div>
-        <h3>
-
-            Upcoming Events
-
-        </h3>
-
-        <p>Fresh gatherings happening near you</p>
-
+    <div class="heading-left">
+        <i class="bi bi-lightning-charge-fill"></i>
+        <div>
+            <h3>Upcoming Events</h3>
+            <p>Handpicked parties you don't want to miss.</p>
+        </div>
     </div>
+
+    <a href="/events/" class="view-all">
+        View All <i class="bi bi-arrow-right"></i>
+    </a>
 
 </div>
 
@@ -526,54 +629,12 @@ function formatEventDate(dateStr){
 
 }
 
-// Site-styled toast notifications, shown top-right.
-function showToast(message,type="success"){
-
-    const container=document.getElementById("toastContainer");
-
-    if(!container){
-
-        return;
-
-    }
-
-    const icon=(type==="success") ? "bi-check-circle-fill" : "bi-exclamation-circle-fill";
-
-    const toastEl=document.createElement("div");
-
-    toastEl.className=`site-toast ${type}`;
-
-    toastEl.innerHTML=`
-        <div class="toast-icon"><i class="bi ${icon}"></i></div>
-        <div class="toast-message">${message}</div>
-        <button type="button" class="toast-close" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-    `;
-
-    container.appendChild(toastEl);
-
-    let dismissTimer;
-
-    function dismiss(){
-
-        clearTimeout(dismissTimer);
-
-        toastEl.classList.add("hiding");
-
-        toastEl.addEventListener("animationend",()=>toastEl.remove(),{once:true});
-
-    }
-
-    toastEl.querySelector(".toast-close").addEventListener("click",dismiss);
-
-    dismissTimer=setTimeout(dismiss,4000);
-
-}
-
 // All events as loaded from the API.
 let allEvents=[];
 
-// Only this many events are shown on the home page.
+// Only this many events are shown on the home page grid / trending list.
 const HOME_EVENTS_LIMIT=3;
+const TRENDING_LIMIT=3;
 
 function renderEventCard(event){
 
@@ -583,7 +644,7 @@ function renderEventCard(event){
 
     return `
 
-    <div class="col-lg-4 mb-4">
+    <div class="col-lg-4 col-md-6 mb-4">
 
         <div class="card event-card h-100">
 
@@ -655,6 +716,58 @@ function renderEventCard(event){
 
 }
 
+function renderTrendingItem(event){
+
+    const dateLabel=formatEventDate(event.event_date);
+
+    return `
+
+    <a class="trending-item" href="/event-details/${event.event_id}/" aria-label="View ${event.event_name}">
+
+        <div class="thumb">
+
+            ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-image"></i>`}
+
+        </div>
+
+        <div class="info">
+
+            <h6>${event.event_name}</h6>
+
+            <div class="meta">${dateLabel}</div>
+
+            <span class="badge">${categoryLabel(event.event_category)}</span>
+
+        </div>
+
+    </a>
+
+    `;
+
+}
+
+function renderTrending(sorted){
+
+    const trendingList=document.getElementById("trendingList");
+
+    if(!trendingList){
+
+        return;
+
+    }
+
+    if(sorted.length===0){
+
+        trendingList.innerHTML=`<p class="text-muted small mb-0">No trending events yet.</p>`;
+
+        return;
+
+    }
+
+    trendingList.innerHTML=sorted.slice(0,TRENDING_LIMIT).map(renderTrendingItem).join("");
+
+}
+
 function renderEvents(){
 
     const container=document.getElementById("eventContainer");
@@ -683,6 +796,8 @@ function renderEvents(){
 
         `;
 
+        renderTrending([]);
+
         return;
 
     }
@@ -701,6 +816,8 @@ function renderEvents(){
     const visibleEvents=sorted.slice(0,HOME_EVENTS_LIMIT);
 
     container.innerHTML=visibleEvents.map(renderEventCard).join("");
+
+    renderTrending(sorted);
 
 }
 
@@ -750,6 +867,8 @@ async function loadEvents(){
         `;
 
         showToast("Unable to load events right now.","danger");
+
+        renderTrending([]);
 
     }
 
