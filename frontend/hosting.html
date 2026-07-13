@@ -13,12 +13,23 @@ Host Event
         justify-content: space-between;
         align-items: flex-end;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 16px;
         margin-bottom: 28px;
+        padding: 8px 0 4px;
+    }
+
+    .hosting-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--pink);
+        font-weight: 800;
+        font-size: .78rem;
+        margin-bottom: 10px;
     }
 
     .hosting-header h1 {
-        font-size: 1.7rem;
+        font-size: clamp(1.75rem, 3vw, 2.15rem);
         margin-bottom: 6px;
     }
 
@@ -28,45 +39,12 @@ Host Event
         margin: 0;
     }
 
-    /* Floating Action Button */
-
-    .fab-btn {
-        position: fixed;
-        bottom: 32px;
-        right: 32px;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: var(--accent);
-        color: #1a1400;
-        border: none;
-        font-size: 1.5rem;
+    .hosting-header-actions {
         display: flex;
         align-items: center;
-        justify-content: center;
-        box-shadow: 0 12px 28px -6px rgba(245, 200, 76, .5);
-        z-index: 1040;
-        transition: transform .25s var(--ease), box-shadow .25s var(--ease);
-        cursor: pointer;
-    }
-
-    .fab-btn:hover {
-        transform: translateY(-3px) scale(1.04);
-        box-shadow: 0 16px 34px -6px rgba(245, 200, 76, .6);
-    }
-
-    .fab-btn:active {
-        transform: translateY(0) scale(.96);
-    }
-
-    @media (max-width: 576px) {
-        .fab-btn {
-            bottom: 20px;
-            right: 20px;
-            width: 54px;
-            height: 54px;
-            font-size: 1.35rem;
-        }
+        gap: 10px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
     }
 
     /* Modal form */
@@ -167,7 +145,7 @@ Host Event
     /* Events grid */
 
     .event-mgmt-card {
-        overflow: hidden;
+        overflow: visible;
         display: flex;
         flex-direction: column;
         margin-bottom: 20px;
@@ -201,9 +179,41 @@ Host Event
         flex-direction: column;
     }
 
+    .event-mgmt-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
     .event-mgmt-body h4 {
         font-size: 1.05rem;
-        margin-bottom: 6px;
+        margin: 0;
+    }
+
+    .event-title-link {
+        color: var(--text-primary);
+        transition: color .2s var(--ease);
+    }
+
+    .event-title-link:hover {
+        color: var(--pink);
+    }
+
+    .event-date-pill {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(236, 72, 153, .13);
+        color: #f5b4d4;
+        border: 1px solid rgba(236, 72, 153, .24);
+        font-size: .74rem;
+        font-weight: 800;
+        white-space: nowrap;
     }
 
     .event-mgmt-body .event-desc {
@@ -240,13 +250,68 @@ Host Event
         font-size: .82rem;
     }
 
-    .event-mgmt-actions {
+    .event-actions-menu {
+        position: relative;
         display: flex;
-        gap: 8px;
+        justify-content: flex-end;
     }
 
-    .event-mgmt-actions .btn {
-        flex: 1;
+    .event-actions-toggle {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, .04);
+        color: var(--text-secondary);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+    }
+
+    .event-actions-toggle:hover,
+    .event-actions-toggle:focus {
+        background: rgba(255, 255, 255, .08);
+        color: var(--text-primary);
+        border-color: rgba(255, 255, 255, .18);
+    }
+
+    .event-actions-menu .dropdown-menu {
+        min-width: 160px;
+        padding: 8px;
+        border-radius: var(--radius-sm);
+        background: #17151c;
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 44px -16px rgba(0, 0, 0, .8);
+    }
+
+    .event-actions-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-size: .86rem;
+        font-weight: 700;
+        padding: 9px 10px;
+    }
+
+    .event-actions-menu .dropdown-item:hover,
+    .event-actions-menu .dropdown-item:focus {
+        background: rgba(255, 255, 255, .06);
+        color: var(--text-primary);
+    }
+
+    .event-actions-menu .dropdown-item.text-danger {
+        color: #f7a5ab !important;
+    }
+
+    .event-actions-menu .dropdown-item.text-danger:hover {
+        background: #2a1416;
+        color: #ffb3b8 !important;
+    }
+
+    @media (max-width: 767px) {
     }
 
     .empty-state {
@@ -467,25 +532,23 @@ Host Event
 <div class="hosting-header fade-in">
 
     <div>
+        <span class="hosting-eyebrow">
+            <i class="bi bi-lightning-charge-fill"></i>
+            Host Event
+        </span>
         <h1 class="fw-bold">My Hosted Events</h1>
         <p>Everything you're hosting, all in one place.</p>
+    </div>
+
+    <div class="hosting-header-actions">
+        <button class="btn btn-primary" type="button" onclick="handleCreateEventClick()">
+            Create Event
+        </button>
     </div>
 
 </div>
 
 <div id="eventList"></div>
-
-<!-- Floating Action Button -->
-<button
-    class="fab-btn"
-    type="button"
-    onclick="handleCreateEventClick()"
-    aria-label="Create Event"
-    title="Create Event">
-
-    <i class="bi bi-plus-lg"></i>
-
-</button>
 
 <!-- Toast notifications (replaces browser alert()) -->
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
@@ -650,8 +713,6 @@ Host Event
                     id="createEventBtn"
                     class="btn btn-primary"
                     onclick="createHostEvent()">
-
-                    <i class="bi bi-plus-circle-fill me-1"></i>
 
                     Create Event
 
@@ -984,6 +1045,34 @@ function categoryLabel(key){
 
 }
 
+function formatHostPrice(fee){
+
+    const num=Number(fee);
+
+    if(Number.isNaN(num) || num<=0){
+        return "Free";
+    }
+
+    return `₹${num}`;
+
+}
+
+function formatHostDate(dateStr){
+
+    if(!dateStr){
+        return "Date TBD";
+    }
+
+    const parsed=new Date(dateStr);
+
+    if(Number.isNaN(parsed.getTime())){
+        return dateStr;
+    }
+
+    return parsed.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+
+}
+
 loadEvents();
 
 function handleCreateEventClick(){
@@ -1090,6 +1179,8 @@ function previewPoster(e,targetId="posterPreviewWrap"){
 
 function renderEventCard(event,index=0){
 
+    const dateLabel=formatHostDate(event.event_date);
+
     return `
 
     <div class="col-md-6 col-lg-4">
@@ -1104,61 +1195,61 @@ function renderEventCard(event,index=0){
 
             <div class="event-mgmt-body">
 
-                <h4>
+                <div class="event-mgmt-heading">
+                    <h4>
+                        <a href="/event-details/${event.event_id}/" class="event-title-link">
+                            ${event.event_name}
+                        </a>
+                    </h4>
+                    <span class="event-date-pill">
+                        <i class="bi bi-calendar-event"></i>
+                        ${dateLabel}
+                    </span>
+                </div>
 
-                    ${event.event_name}
-
-                </h4>
-
-                <p class="event-desc">
-
-                    ${event.description || ""}
-
-                </p>
+                <p class="event-desc">${event.description || ""}</p>
 
                 <div class="event-mgmt-meta">
 
                     <span><i class="bi bi-tag-fill"></i> ${categoryLabel(event.event_category)}</span>
 
-                    <span><i class="bi bi-cash-coin"></i> ₹${event.fee}</span>
+                    <span><i class="bi bi-cash-coin"></i> ${formatHostPrice(event.fee)}</span>
 
                     <span><i class="bi bi-people-fill"></i> ${event.max_members} guests</span>
 
                 </div>
 
-                <div class="event-mgmt-actions">
+                <div class="event-actions-menu dropdown">
 
                     <button
-                        class="btn btn-secondary btn-sm"
-                        onclick="viewEvent(${event.event_id})">
-
-                        <i class="bi bi-eye-fill me-1"></i> View
-
+                        class="event-actions-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Event actions">
+                        <i class="bi bi-three-dots"></i>
                     </button>
 
-                    <button
-                        class="btn btn-secondary btn-sm"
-                        onclick="viewAttendees(${event.event_id})">
-
-                        <i class="bi bi-people-fill me-1"></i> Attendees
-
-                    </button>
-
-                    <button
-                        class="btn btn-secondary btn-sm"
-                        onclick="editEvent(${event.event_id})">
-
-                        <i class="bi bi-pencil-fill me-1"></i> Edit
-
-                    </button>
-
-                    <button
-                        class="btn btn-danger btn-sm"
-                        onclick="deleteEvent(${event.event_id})">
-
-                        <i class="bi bi-trash-fill me-1"></i> Delete
-
-                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <button class="dropdown-item" type="button" onclick="viewAttendees(${event.event_id})">
+                                <i class="bi bi-people-fill"></i>
+                                Attendees
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" type="button" onclick="editEvent(${event.event_id})">
+                                <i class="bi bi-pencil-fill"></i>
+                                Edit
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger" type="button" onclick="deleteEvent(${event.event_id})">
+                                <i class="bi bi-trash-fill"></i>
+                                Delete
+                            </button>
+                        </li>
+                    </ul>
 
                 </div>
 
