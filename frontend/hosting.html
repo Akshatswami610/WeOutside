@@ -145,15 +145,26 @@ Host Event
     /* Events grid */
 
     .event-mgmt-card {
-        overflow: visible;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         margin-bottom: 20px;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, .12);
+        border-radius: 18px;
+        background: linear-gradient(180deg, #16141b 0%, #111016 100%);
+        box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .9);
         animation: fadeInUp .45s var(--ease) both;
     }
 
+    .event-mgmt-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(236, 72, 153, .38);
+        box-shadow: 0 24px 50px -22px rgba(236, 72, 153, .28);
+    }
+
     .event-mgmt-media {
-        height: 160px;
+        height: 176px;
         background: linear-gradient(135deg, #1c1c20, #131316);
         display: flex;
         align-items: center;
@@ -162,6 +173,15 @@ Host Event
         font-size: 1.8rem;
         position: relative;
         overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .event-mgmt-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, .08) 40%, rgba(0, 0, 0, .55) 100%);
+        pointer-events: none;
     }
 
     .event-mgmt-media img {
@@ -173,22 +193,21 @@ Host Event
     }
 
     .event-mgmt-body {
-        padding: 20px;
+        padding: 18px;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
     .event-mgmt-heading {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
+        display: grid;
         gap: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
     }
 
     .event-mgmt-body h4 {
-        font-size: 1.05rem;
+        font-size: 1.06rem;
+        line-height: 1.35;
         margin: 0;
     }
 
@@ -202,7 +221,6 @@ Host Event
     }
 
     .event-date-pill {
-        flex-shrink: 0;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -214,35 +232,60 @@ Host Event
         font-size: .74rem;
         font-weight: 800;
         white-space: nowrap;
+        width: fit-content;
     }
 
     .event-mgmt-body .event-desc {
         color: var(--text-secondary);
         font-size: .86rem;
-        margin-bottom: 14px;
+        line-height: 1.55;
+        margin-bottom: 16px;
         display: -webkit-box;
+        line-clamp: 2;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
     .event-mgmt-meta {
-        display: flex;
-        gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 2px;
         margin-top: auto;
-        padding-top: 12px;
+        padding-top: 14px;
         border-top: 1px solid var(--border);
     }
 
-    .event-mgmt-meta span {
+    .event-mgmt-meta .meta-item {
         display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, .02);
+        min-width: 0;
+    }
+
+    .event-mgmt-meta .meta-label {
+        display: inline-flex;
         align-items: center;
         gap: 6px;
         color: var(--text-muted);
-        font-size: .8rem;
-        font-weight: 500;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .event-mgmt-meta .meta-value {
+        color: var(--text-primary);
+        font-size: .83rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .event-mgmt-meta i {
@@ -252,17 +295,23 @@ Host Event
 
     .event-actions-menu {
         position: relative;
-        display: flex;
-        justify-content: flex-end;
+        z-index: 3;
+    }
+
+    .event-card-top-actions {
+        position: absolute;
+        top: 10px;
+        right: 10px;
     }
 
     .event-actions-toggle {
         width: 34px;
         height: 34px;
         border-radius: 999px;
-        border: 1px solid var(--border);
-        background: rgba(255, 255, 255, .04);
-        color: var(--text-secondary);
+        border: 1px solid rgba(255, 255, 255, .2);
+        background: rgba(8, 7, 11, .72);
+        backdrop-filter: blur(8px);
+        color: var(--text-primary);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -271,9 +320,15 @@ Host Event
 
     .event-actions-toggle:hover,
     .event-actions-toggle:focus {
-        background: rgba(255, 255, 255, .08);
+        background: rgba(8, 7, 11, .9);
         color: var(--text-primary);
-        border-color: rgba(255, 255, 255, .18);
+        border-color: rgba(255, 255, 255, .3);
+    }
+
+    @media (max-width: 767px) {
+        .event-mgmt-meta {
+            grid-template-columns: 1fr;
+        }
     }
 
     .event-actions-menu .dropdown-menu {
@@ -1187,6 +1242,40 @@ function renderEventCard(event,index=0){
 
         <div class="card event-mgmt-card h-100" style="animation-delay:${Math.min(index,6)*45}ms">
 
+            <div class="event-actions-menu dropdown event-card-top-actions">
+
+                <button
+                    class="event-actions-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    aria-label="Event actions">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <button class="dropdown-item" type="button" onclick="viewAttendees(${event.event_id})">
+                            <i class="bi bi-people-fill"></i>
+                            Attendees
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" type="button" onclick="editEvent(${event.event_id})">
+                            <i class="bi bi-pencil-fill"></i>
+                            Edit
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item text-danger" type="button" onclick="deleteEvent(${event.event_id})">
+                            <i class="bi bi-trash-fill"></i>
+                            Delete
+                        </button>
+                    </li>
+                </ul>
+
+            </div>
+
             <div class="event-mgmt-media">
 
                 ${event.poster ? `<img src="${event.poster}" alt="${event.event_name}">` : `<i class="bi bi-image"></i>`}
@@ -1211,45 +1300,20 @@ function renderEventCard(event,index=0){
 
                 <div class="event-mgmt-meta">
 
-                    <span><i class="bi bi-tag-fill"></i> ${categoryLabel(event.event_category)}</span>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="bi bi-tag-fill"></i> Category</span>
+                        <span class="meta-value">${categoryLabel(event.event_category)}</span>
+                    </div>
 
-                    <span><i class="bi bi-cash-coin"></i> ${formatHostPrice(event.fee)}</span>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="bi bi-cash-coin"></i> Price</span>
+                        <span class="meta-value">${formatHostPrice(event.fee)}</span>
+                    </div>
 
-                    <span><i class="bi bi-people-fill"></i> ${event.max_members} guests</span>
-
-                </div>
-
-                <div class="event-actions-menu dropdown">
-
-                    <button
-                        class="event-actions-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        aria-label="Event actions">
-                        <i class="bi bi-three-dots"></i>
-                    </button>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li>
-                            <button class="dropdown-item" type="button" onclick="viewAttendees(${event.event_id})">
-                                <i class="bi bi-people-fill"></i>
-                                Attendees
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item" type="button" onclick="editEvent(${event.event_id})">
-                                <i class="bi bi-pencil-fill"></i>
-                                Edit
-                            </button>
-                        </li>
-                        <li>
-                            <button class="dropdown-item text-danger" type="button" onclick="deleteEvent(${event.event_id})">
-                                <i class="bi bi-trash-fill"></i>
-                                Delete
-                            </button>
-                        </li>
-                    </ul>
+                    <div class="meta-item">
+                        <span class="meta-label"><i class="bi bi-people-fill"></i> Members</span>
+                        <span class="meta-value">${event.max_members} guests</span>
+                    </div>
 
                 </div>
 
