@@ -31,7 +31,7 @@ class OTPThrottle(AnonRateThrottle):
 # --------------------------------------------------
 
 def send_otp_email(email, otp, purpose):
-    subject = f"AtOurs Marketplace - {purpose}"
+    subject = f"AtOurs - {purpose}"
 
     # Plain text fallback
     text_content = f"""
