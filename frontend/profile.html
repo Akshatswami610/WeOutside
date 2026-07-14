@@ -8,6 +8,48 @@ My Profile
 
 <style>
 
+    .profile-shell {
+        padding: 0;
+        min-height: auto;
+        background: transparent;
+    }
+
+    .profile-topbar {
+        display: none;
+    }
+
+    .profile-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--pink);
+        font-weight: 800;
+        font-size: .78rem;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .profile-topbar h1 {
+        font-size: clamp(1.6rem, 3vw, 2.1rem);
+        margin-bottom: 6px;
+    }
+
+    .profile-topbar p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .profile-card,
+    .profile-info-card,
+    .auth-required-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px -8px rgba(0, 0, 0, .5);
+        height: 100%;
+    }
+
     .profile-card {
         text-align: center;
         padding: 34px 24px;
@@ -19,7 +61,8 @@ My Profile
         margin: 0 auto 20px;
         border-radius: 50%;
         padding: 4px;
-        background: linear-gradient(135deg, var(--accent), rgba(245, 200, 76, .15));
+        background: var(--gradient-brand-3);
+        box-shadow: 0 14px 28px -16px rgba(236, 72, 153, .6);
     }
 
     #avatar {
@@ -48,12 +91,14 @@ My Profile
         margin-bottom: 0;
     }
 
-    .profile-card .btn-danger {
-        width: 100%;
+    .profile-actions {
+        margin-top: 20px;
+        display: grid;
+        gap: 10px;
     }
 
     .danger-zone {
-        margin-top: 16px;
+        margin-top: 18px;
         padding-top: 16px;
         border-top: 1px dashed var(--border);
     }
@@ -81,61 +126,21 @@ My Profile
         transform: translateY(-2px);
     }
 
-    #deleteAccountModal .modal-dialog {
-        max-width: 440px;
+    .profile-info-card {
+        padding: 26px 22px;
     }
 
-    #deleteAccountModal .warning-box {
-        display: flex;
-        gap: 12px;
-        padding: 14px;
-        border-radius: var(--radius-sm);
-        background: #241014;
-        border: 1px solid rgba(255, 90, 100, .25);
-        margin-bottom: 18px;
+    .info-header {
+        margin-bottom: 0;
     }
 
-    #deleteAccountModal .warning-box i {
-        color: #f7a5ab;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-        margin-top: 1px;
-    }
-
-    #deleteAccountModal .warning-box p {
-        color: #f7c8cc;
-        font-size: .85rem;
-        line-height: 1.55;
+    .info-header h3 {
+        font-size: 1.2rem;
         margin: 0;
     }
 
-    #deleteConfirmInput {
-        margin-top: 8px;
-    }
-
-    #deleteStatus .alert {
-        font-size: .85rem;
-        margin-top: 12px;
-        margin-bottom: 0;
-    }
-
-    #changePasswordModal .modal-dialog {
-        max-width: 440px;
-    }
-
-    #changePasswordModal label {
-        font-size: .85rem;
-    }
-
-    #changePasswordStatus .alert {
-        font-size: .85rem;
-        margin-top: 12px;
-        margin-bottom: 0;
-    }
-
-    .info-panel h3 {
-        font-size: 1.2rem;
-        margin-bottom: 0;
+    .info-subtle {
+        display: none;
     }
 
     .info-list {
@@ -160,7 +165,7 @@ My Profile
         flex-shrink: 0;
         border-radius: 10px;
         background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
+        border: 1px solid rgba(236, 72, 153, .25);
         color: var(--accent);
         display: flex;
         align-items: center;
@@ -170,8 +175,8 @@ My Profile
 
     .info-list .info-label {
         display: block;
-        font-size: .74rem;
-        font-weight: 600;
+        font-size: .72rem;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: .04em;
         color: var(--text-muted);
@@ -179,8 +184,8 @@ My Profile
     }
 
     .info-list .info-value {
-        font-size: .96rem;
-        font-weight: 600;
+        font-size: .95rem;
+        font-weight: 700;
         color: var(--text-primary);
     }
 
@@ -191,7 +196,7 @@ My Profile
 
     .auth-required-card i {
         font-size: 2.4rem;
-        color: var(--accent);
+        color: var(--pink);
         margin-bottom: 18px;
         display: block;
     }
@@ -226,11 +231,11 @@ My Profile
         padding: 14px 16px;
         border-radius: var(--radius-sm);
         background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
+        border: 1px solid rgba(236, 72, 153, .25);
     }
 
     .support-note i {
-        color: var(--accent);
+        color: var(--pink);
         font-size: 1rem;
         flex-shrink: 0;
         margin-top: 2px;
@@ -243,7 +248,7 @@ My Profile
     }
 
     .support-note a {
-        color: var(--accent);
+        color: var(--pink);
         font-weight: 600;
         text-decoration: none;
     }
@@ -252,31 +257,92 @@ My Profile
         text-decoration: underline;
     }
 
+    #deleteAccountModal .modal-dialog,
+    #changePasswordModal .modal-dialog {
+        max-width: 440px;
+    }
+
+    #deleteAccountModal .warning-box {
+        display: flex;
+        gap: 12px;
+        padding: 14px;
+        border-radius: var(--radius-sm);
+        background: #241014;
+        border: 1px solid rgba(255, 90, 100, .25);
+        margin-bottom: 18px;
+    }
+
+    #deleteAccountModal .warning-box i {
+        color: #f7a5ab;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+
+    #deleteAccountModal .warning-box p {
+        color: #f7c8cc;
+        font-size: .85rem;
+        line-height: 1.55;
+        margin: 0;
+    }
+
+    #deleteConfirmInput {
+        margin-top: 8px;
+    }
+
+    #deleteStatus .alert,
+    #changePasswordStatus .alert {
+        font-size: .85rem;
+        margin-top: 12px;
+        margin-bottom: 0;
+    }
+
+    #changePasswordModal label {
+        font-size: .85rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .profile-info-card,
+        .profile-card {
+            padding: 24px 16px;
+        }
+    }
+
 </style>
 
 {% endblock %}
 
 {% block content %}
 
-<div class="row fade-in" id="authRequired" style="display:none;">
+<div class="profile-shell">
 
-    <div class="col-md-6 offset-md-3">
+    <div class="container">
 
-        <div class="card">
+        <div class="profile-topbar fade-in">
+            <span class="profile-eyebrow"><i class="bi bi-person-badge-fill"></i> Profile Center</span>
+            <h1 class="fw-bold">My Profile</h1>
+            <p>Manage your account details, security settings, and support actions.</p>
+        </div>
 
-            <div class="card-body auth-required-card">
+        <div class="row fade-in" id="authRequired" style="display:none;">
 
-                <i class="bi bi-person-lock"></i>
+            <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
 
-                <h3>You're not logged in</h3>
+                <div class="auth-required-card">
 
-                <p>Log in or create an account to view your profile.</p>
+                    <i class="bi bi-person-lock"></i>
 
-                <div class="auth-required-actions">
+                    <h3>You're not logged in</h3>
 
-                    <a href="/login/" class="btn btn-primary">Login</a>
+                    <p>Log in or create an account to view your profile.</p>
 
-                    <a href="/register/" class="btn btn-secondary">Create Account</a>
+                    <div class="auth-required-actions">
+
+                        <a href="/login/" class="btn btn-primary">Login</a>
+
+                        <a href="/register/" class="btn btn-secondary">Create Account</a>
+
+                    </div>
 
                 </div>
 
@@ -284,137 +350,130 @@ My Profile
 
         </div>
 
-    </div>
+        <div class="row g-3 fade-in" id="profileContent" style="display:none;">
 
-</div>
+            <div class="col-lg-4">
 
-<div class="row fade-in" id="profileContent" style="display:none;">
+                <div class="profile-card">
 
-    <div class="col-md-4">
+                    <div class="profile-avatar-wrap">
 
-        <div class="card">
+                        <img src="https://ui-avatars.com/api/?name=User&background=0D0D0D&color=F5C84C&size=150"
+                            id="avatar"
+                            class="rounded-circle">
 
-            <div class="card-body profile-card">
+                    </div>
 
-                <div class="profile-avatar-wrap">
+                    <h3 id="name">Loading...</h3>
 
-                    <img src="https://ui-avatars.com/api/?name=User&background=0D0D0D&color=F5C84C&size=150"
-                        id="avatar"
-                        class="rounded-circle">
+                    <p id="email"></p>
 
-                </div>
+                    <p id="phone"></p>
 
-                <h3 id="name">Loading...</h3>
+                    <div class="profile-actions">
+                        <button class="btn btn-danger" onclick="logout()">
 
-                <p id="email"></p>
+                            <i class="bi bi-box-arrow-right me-1"></i>
 
-                <p id="phone"></p>
+                            Logout
 
-                <button class="btn btn-danger mt-4" onclick="logout()">
+                        </button>
 
-                    <i class="bi bi-box-arrow-right me-1"></i>
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#changePasswordModal">
 
-                    Logout
+                            <i class="bi bi-key-fill me-1"></i>
+                            Change Password
 
-                </button>
+                        </button>
+                    </div>
 
-                <button
-                    type="button"
-                    class="btn btn-secondary w-100 mt-2"
-                    data-bs-toggle="modal"
-                    data-bs-target="#changePasswordModal">
+                    <div class="danger-zone">
 
-                    <i class="bi bi-key-fill me-1"></i>
-                    Change Password
+                        <div class="danger-zone-label">Danger Zone</div>
 
-                </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteAccountModal">
 
-                <div class="danger-zone">
+                            <i class="bi bi-trash3 me-1"></i>
+                            Delete Account
 
-                    <div class="danger-zone-label">Danger Zone</div>
+                        </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-outline-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#deleteAccountModal">
-
-                        <i class="bi bi-trash3 me-1"></i>
-                        Delete Account
-
-                    </button>
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+            <div class="col-lg-8">
 
-    </div>
+                <div class="profile-info-card">
 
-    <div class="col-md-8">
+                    <div class="info-header">
+                        <h3>My Information</h3>
+                        <span class="info-subtle">Read Only</span>
+                    </div>
 
-        <div class="card">
+                    <div class="info-list">
 
-            <div class="card-body info-panel">
+                        <div class="info-row">
 
-                <h3>
+                            <div class="info-icon"><i class="bi bi-person-fill"></i></div>
 
-                    My Information
+                            <div>
+                                <span class="info-label">Full Name</span>
+                                <span class="info-value" id="fullname">-</span>
+                            </div>
 
-                </h3>
+                        </div>
 
-                <div class="info-list">
+                        <div class="info-row">
 
-                    <div class="info-row">
+                            <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
 
-                        <div class="info-icon"><i class="bi bi-person-fill"></i></div>
+                            <div>
+                                <span class="info-label">Email</span>
+                                <span class="info-value" id="email2">-</span>
+                            </div>
 
-                        <div>
-                            <span class="info-label">Full Name</span>
-                            <span class="info-value" id="fullname">-</span>
+                        </div>
+
+                        <div class="info-row">
+
+                            <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
+
+                            <div>
+                                <span class="info-label">Phone</span>
+                                <span class="info-value" id="phone2">-</span>
+                            </div>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <div class="info-icon"><i class="bi bi-cake2-fill"></i></div>
+
+                            <div>
+                                <span class="info-label">Date of Birth</span>
+                                <span class="info-value" id="dob">-</span>
+                            </div>
+
                         </div>
 
                     </div>
 
-                    <div class="info-row">
-
-                        <div class="info-icon"><i class="bi bi-envelope-fill"></i></div>
-
-                        <div>
-                            <span class="info-label">Email</span>
-                            <span class="info-value" id="email2">-</span>
-                        </div>
-
+                    <div class="support-note">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>Need to update any of the information above? Please <a href="/support/">contact our support team</a> for assistance.</span>
                     </div>
 
-                    <div class="info-row">
-
-                        <div class="info-icon"><i class="bi bi-telephone-fill"></i></div>
-
-                        <div>
-                            <span class="info-label">Phone</span>
-                            <span class="info-value" id="phone2">-</span>
-                        </div>
-
-                    </div>
-
-                    <div class="info-row">
-
-                        <div class="info-icon"><i class="bi bi-cake2-fill"></i></div>
-
-                        <div>
-                            <span class="info-label">Date of Birth</span>
-                            <span class="info-value" id="dob">-</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="support-note">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <span>Need to update any of the information above? Please <a href="/support/">contact our support team</a> for assistance.</span>
                 </div>
 
             </div>
