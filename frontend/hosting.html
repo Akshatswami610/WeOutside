@@ -638,6 +638,13 @@ Host Event
                     rows="3"
                     placeholder="What should guests expect?"></textarea>
 
+                <label class="form-label mb-1 d-block" for="rules">Rules and regulations <span class="text-danger">*</span></label>
+                <textarea
+                    class="form-control mb-3"
+                    id="rules"
+                    rows="3"
+                    placeholder="1. Arrive on time&#10;2. Carry a valid ID&#10;3. Respect the host and other guests"></textarea>
+
                 <div class="form-row-split mb-3">
 
                     <div>
@@ -812,6 +819,13 @@ Host Event
                     id="edit_description"
                     rows="3"
                     placeholder="What should guests expect?"></textarea>
+
+                <label class="form-label mb-1 d-block" for="edit_rules">Rules and regulations <span class="text-danger">*</span></label>
+                <textarea
+                    class="form-control mb-3"
+                    id="edit_rules"
+                    rows="3"
+                    placeholder="Share entry rules, house guidelines, or anything guests must follow."></textarea>
 
                 <div class="form-row-split mb-3">
 
@@ -1401,6 +1415,8 @@ async function createHostEvent(){
 
         const descriptionEl=document.getElementById("description");
 
+        const rulesEl=document.getElementById("rules");
+
         const categoryEl=document.getElementById("category");
 
         const posterEl=document.getElementById("poster");
@@ -1419,7 +1435,7 @@ async function createHostEvent(){
 
         const eventTimeEl=document.getElementById("event_time");
 
-        if(!titleEl || !descriptionEl || !categoryEl || !posterEl || !ticketPriceEl || !maxGuestsEl || !ageLimitEl || !genderEl || !locationEl || !eventDateEl){
+        if(!titleEl || !descriptionEl || !rulesEl || !categoryEl || !posterEl || !ticketPriceEl || !maxGuestsEl || !ageLimitEl || !genderEl || !locationEl || !eventDateEl){
 
             status.innerHTML="<div class='alert alert-danger'>Something went wrong loading the form. Please refresh the page and try again.</div>";
 
@@ -1430,6 +1446,8 @@ async function createHostEvent(){
         const title=titleEl.value.trim();
 
         const description=descriptionEl.value.trim();
+
+        const rules=rulesEl.value.trim();
 
         const category=categoryEl.value;
 
@@ -1455,6 +1473,8 @@ async function createHostEvent(){
 
             description==="" ||
 
+            rules==="" ||
+
             !posterFile ||
 
             ticket_price==="" ||
@@ -1469,7 +1489,7 @@ async function createHostEvent(){
 
         ){
 
-            status.innerHTML="<div class='alert alert-danger'>Please fill all required fields, including a poster image.</div>";
+            status.innerHTML="<div class='alert alert-danger'>Please fill all required fields, including rules and a poster image.</div>";
 
             return;
 
@@ -1510,6 +1530,8 @@ async function createHostEvent(){
         formData.append("event_name",title);
 
         formData.append("description",description);
+
+        formData.append("rules",rules);
 
         formData.append("event_category",category);
 
@@ -1874,6 +1896,8 @@ function editEvent(id){
 
     document.getElementById("edit_description").value=event.description || "";
 
+    document.getElementById("edit_rules").value=event.rules || "";
+
     document.getElementById("edit_category").value=event.event_category || "HOUSE_PARTY";
 
     document.getElementById("edit_ticket_price").value=(event.fee!=null) ? event.fee : "";
@@ -1918,6 +1942,8 @@ async function updateHostEvent(){
 
         const descriptionEl=document.getElementById("edit_description");
 
+        const rulesEl=document.getElementById("edit_rules");
+
         const categoryEl=document.getElementById("edit_category");
 
         const posterEl=document.getElementById("edit_poster");
@@ -1939,6 +1965,8 @@ async function updateHostEvent(){
         const title=titleEl.value.trim();
 
         const description=descriptionEl.value.trim();
+
+        const rules=rulesEl.value.trim();
 
         const category=categoryEl.value;
 
@@ -1964,6 +1992,8 @@ async function updateHostEvent(){
 
             description==="" ||
 
+            rules==="" ||
+
             ticket_price==="" ||
 
             max_guests==="" ||
@@ -1976,7 +2006,7 @@ async function updateHostEvent(){
 
         ){
 
-            status.innerHTML="<div class='alert alert-danger'>Please fill all required fields.</div>";
+            status.innerHTML="<div class='alert alert-danger'>Please fill all required fields, including rules.</div>";
 
             return;
 
@@ -2017,6 +2047,8 @@ async function updateHostEvent(){
         formData.append("event_name",title);
 
         formData.append("description",description);
+
+        formData.append("rules",rules);
 
         formData.append("event_category",category);
 
