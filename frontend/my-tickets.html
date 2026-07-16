@@ -41,66 +41,13 @@ My Tickets
         font-size: .96rem;
     }
 
-    /* Stats summary */
-
-    .stats-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin-bottom: 26px;
-    }
-
-    @media (max-width: 700px) {
-        .stats-row {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media (max-width: 420px) {
-        .stats-row {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .stat-card {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 18px 20px;
-    }
-
-    .stat-card .stat-icon {
-        width: 44px;
-        height: 44px;
-        flex-shrink: 0;
-        border-radius: 12px;
-        background: var(--accent-dim);
-        color: var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.15rem;
-    }
-
-    .stat-card .stat-value {
-        font-size: 1.35rem;
-        font-weight: 700;
-        line-height: 1.1;
-    }
-
-    .stat-card .stat-label {
-        color: var(--text-muted);
-        font-size: .78rem;
-        margin-top: 2px;
-    }
-
     /* Filter bar */
 
     .filter-bar {
         padding: 18px;
         margin-bottom: 16px;
         display: grid;
-        grid-template-columns: 1.6fr 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
         gap: 12px;
         position: sticky;
         top: 12px;
@@ -109,36 +56,17 @@ My Tickets
         background: rgba(26, 26, 30, .92);
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 700px) {
         .filter-bar {
             grid-template-columns: 1fr 1fr;
         }
     }
 
-    @media (max-width: 576px) {
+    @media (max-width: 420px) {
         .filter-bar {
             grid-template-columns: 1fr;
             position: static;
         }
-    }
-
-    .filter-bar .search-input-wrap {
-        position: relative;
-    }
-
-    .filter-bar .search-input-wrap i {
-        position: absolute;
-        top: 50%;
-        left: 14px;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: .9rem;
-        pointer-events: none;
-    }
-
-    .filter-bar .search-input-wrap input {
-        padding-left: 38px;
-        width: 100%;
     }
 
     .active-filters {
@@ -753,45 +681,7 @@ My Tickets
 
 </div>
 
-<div class="stats-row" id="statsRow" style="display:none;">
-
-    <div class="card stat-card">
-        <div class="stat-icon"><i class="bi bi-ticket-perforated-fill"></i></div>
-        <div>
-            <div class="stat-value" id="statTotal">0</div>
-            <div class="stat-label">Total Tickets</div>
-        </div>
-    </div>
-
-    <div class="card stat-card">
-        <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
-        <div>
-            <div class="stat-value" id="statUpcoming">0</div>
-            <div class="stat-label">Upcoming Events</div>
-        </div>
-    </div>
-
-    <div class="card stat-card">
-        <div class="stat-icon"><i class="bi bi-wallet2"></i></div>
-        <div>
-            <div class="stat-value" id="statSpent">₹0</div>
-            <div class="stat-label">Total Spent</div>
-        </div>
-    </div>
-
-</div>
-
 <div class="card filter-bar">
-
-    <div class="search-input-wrap">
-        <i class="bi bi-search"></i>
-        <input
-            type="text"
-            id="searchInput"
-            class="form-control"
-            placeholder="Search by event name"
-            oninput="handleFiltersChanged()">
-    </div>
 
     <select id="paymentFilter" class="form-select" onchange="handleFiltersChanged()">
         <option value="">All Payment Status</option>
@@ -1021,7 +911,7 @@ function getEventInfo(booking){
 
         event_id:event,
 
-        event_name:booking.event_name || `Event #${event}`,
+        event_name:booking.event || eventNameCache[event] || "Event",
 
         poster:null,
 
@@ -1032,6 +922,62 @@ function getEventInfo(booking){
         event_time:null
 
     };
+
+}
+
+// Cache of event id -> event name, used when the API returns booking.event
+// as a bare id with no nested object and no booking.event_name field. In
+// that case we look the name up once per event id and re-render.
+let eventNameCache={};
+
+async function resolveMissingEventNames(bookings){
+
+    const missingIds=[...new Set(
+
+        bookings
+
+            .filter(booking=>{
+
+                const event=booking.event;
+
+                return event && typeof event!=="object" && !booking.event_name && !eventNameCache[event];
+
+            })
+
+            .map(booking=>booking.event)
+
+    )];
+
+    if(missingIds.length===0){
+
+        return;
+
+    }
+
+    // NOTE: assumes individual events are readable at /events/<id>/,
+    // mirroring the /bookings/ convention used elsewhere on this page.
+    // Adjust this path if your events app is mounted differently.
+    await Promise.all(missingIds.map(async id=>{
+
+        try{
+
+            const eventData=await api(`/events/${id}/`);
+
+            if(eventData && eventData.event_name){
+
+                eventNameCache[id]=eventData.event_name;
+
+            }
+
+        }
+
+        catch(error){
+
+            // Leave this event id unresolved; renderTicketCard falls back to "Event".
+
+        }
+
+    }));
 
 }
 
@@ -1077,8 +1023,6 @@ function handleFiltersChanged(){
 
 function clearFilters(){
 
-    document.getElementById("searchInput").value="";
-
     document.getElementById("paymentFilter").value="";
 
     document.getElementById("bookingFilter").value="";
@@ -1089,67 +1033,15 @@ function clearFilters(){
 
 }
 
-function renderStats(){
-
-    const statsRow=document.getElementById("statsRow");
-
-    if(allBookings.length===0){
-
-        statsRow.style.display="none";
-
-        return;
-
-    }
-
-    statsRow.style.display="grid";
-
-    const upcomingCount=allBookings.filter(booking=>{
-
-        const event=getEventInfo(booking);
-
-        return event.event_date && !isPastEvent(event.event_date) && booking.booking_status!=="cancelled";
-
-    }).length;
-
-    const totalSpent=allBookings.reduce((sum,booking)=>{
-
-        if(booking.payment_status!=="paid"){
-
-            return sum;
-
-        }
-
-        const amount=Number(booking.total_amount);
-
-        return sum+(Number.isNaN(amount) ? 0 : amount);
-
-    },0);
-
-    document.getElementById("statTotal").textContent=allBookings.length;
-
-    document.getElementById("statUpcoming").textContent=upcomingCount;
-
-    document.getElementById("statSpent").textContent=formatCurrency(totalSpent);
-
-}
-
 function renderActiveFilters(){
 
     const wrap=document.getElementById("activeFilters");
-
-    const query=document.getElementById("searchInput").value.trim();
 
     const paymentStatus=document.getElementById("paymentFilter").value;
 
     const bookingStatus=document.getElementById("bookingFilter").value;
 
     const chips=[];
-
-    if(query){
-
-        chips.push({label:`Search: "${query}"`,clear:()=>{document.getElementById("searchInput").value="";}});
-
-    }
 
     if(paymentStatus){
 
@@ -1372,11 +1264,7 @@ function renderTickets(){
 
     const resultsCount=document.getElementById("resultsCount");
 
-    renderStats();
-
     renderActiveFilters();
-
-    const query=document.getElementById("searchInput").value.trim().toLowerCase();
 
     const paymentStatus=document.getElementById("paymentFilter").value;
 
@@ -1386,15 +1274,11 @@ function renderTickets(){
 
     let filtered=allBookings.filter(booking=>{
 
-        const event=getEventInfo(booking);
-
-        const matchesQuery=(query==="") || (event.event_name || "").toLowerCase().includes(query);
-
         const matchesPayment=(paymentStatus==="") || booking.payment_status===paymentStatus;
 
         const matchesBooking=(bookingStatus==="") || booking.booking_status===bookingStatus;
 
-        return matchesQuery && matchesPayment && matchesBooking;
+        return matchesPayment && matchesBooking;
 
     });
 
@@ -1554,6 +1438,10 @@ async function loadTickets(){
         }
 
         allBookings=bookings;
+
+        renderTickets();
+
+        await resolveMissingEventNames(allBookings);
 
         renderTickets();
 
