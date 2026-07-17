@@ -967,19 +967,6 @@
 
                 <ul class="navbar-nav align-items-lg-center flex-row gap-2 ms-lg-3">
 
-                    <li class="nav-item d-none d-lg-block">
-                        <button class="navbar-icon-btn" type="button" aria-label="Search events" id="navbarSearchBtn">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </li>
-
-                    <li class="nav-item d-none d-lg-block">
-                        <button class="navbar-icon-btn" type="button" aria-label="Notifications">
-                            <i class="bi bi-bell-fill"></i>
-                            <span class="dot"></span>
-                        </button>
-                    </li>
-
                     <li class="nav-item ms-lg-1" id="loginNavItem">
                         <a href="/login/" class="nav-link btn btn-primary btn-sm px-3">
                             Login
@@ -1323,33 +1310,6 @@
                     profileMenuAvatar.textContent = "U";
                 }
             }
-
-        }
-
-        function setupNavbarSearch() {
-
-            const searchButton = document.getElementById("navbarSearchBtn");
-
-            if (!searchButton) {
-                return;
-            }
-
-            searchButton.addEventListener("click", () => {
-
-                if (window.location.pathname === "/events/") {
-                    const searchInput = document.getElementById("searchInput");
-
-                    if (searchInput) {
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-
-                    return;
-                }
-
-                window.location = "/events/?focus=search";
-
-            });
 
         }
 
