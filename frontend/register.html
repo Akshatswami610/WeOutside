@@ -8,168 +8,52 @@ Register
 
 <style>
 
-    .auth-shell {
-        min-height: calc(100vh - 220px);
-        padding: 46px 0;
-        background:
-            radial-gradient(85% 90% at 14% 8%, rgba(236, 72, 153, .15), transparent 64%),
-            radial-gradient(75% 85% at 88% 95%, rgba(249, 115, 22, .13), transparent 66%),
-            linear-gradient(180deg, #09070c 0%, #0b0910 100%);
-    }
-
-    .auth-stage {
-        max-width: 1160px;
-        margin: 0 auto;
-        border: 1px solid var(--border);
-        border-radius: 28px;
-        overflow: hidden;
-        box-shadow: 0 28px 68px -32px rgba(0, 0, 0, .82);
-        animation: fadeInUp .5s var(--ease) both;
-    }
-
-    .auth-showcase {
-        height: 100%;
-        padding: 46px;
-        color: var(--text-primary);
-        border-right: 1px solid var(--border);
-        background:
-            radial-gradient(circle at 86% 18%, rgba(249, 115, 22, .2), transparent 40%),
-            radial-gradient(circle at 12% 84%, rgba(236, 72, 153, .24), transparent 46%),
-            linear-gradient(160deg, rgba(23, 21, 28, .98), rgba(11, 10, 16, .96));
-    }
-
-    .showcase-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, .13);
-        background: rgba(255, 255, 255, .04);
-        font-size: .77rem;
-        font-weight: 700;
-        letter-spacing: .03em;
-        text-transform: uppercase;
-        color: #ffd3ea;
-        margin-bottom: 18px;
-    }
-
-    .showcase-title {
-        font-size: clamp(1.9rem, 3vw, 2.75rem);
-        line-height: 1.08;
-        margin-bottom: 14px;
-    }
-
-    .showcase-copy {
-        color: var(--text-secondary);
-        line-height: 1.6;
-        margin-bottom: 24px;
-        max-width: 38ch;
-    }
-
-    .showcase-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: grid;
-        gap: 12px;
-    }
-
-    .showcase-list li {
+    .auth-wrap {
+        min-height: calc(100vh - 260px);
         display: flex;
         align-items: center;
-        gap: 10px;
-        color: #ddd6e6;
-        font-weight: 600;
-    }
-
-    .showcase-list i {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(236, 72, 153, .15);
-        border: 1px solid rgba(236, 72, 153, .26);
-        color: #ff84c0;
-        font-size: .82rem;
+        padding: 40px 0;
     }
 
     .auth-card {
-        height: 100%;
-        padding: 40px 36px;
-        background: linear-gradient(180deg, rgba(20, 18, 25, .98), rgba(12, 10, 16, .96));
+        padding: 44px 40px;
+        animation: fadeInUp .5s var(--ease) both;
     }
 
     .auth-logo {
-        width: 62px;
-        height: 62px;
-        border-radius: 20px;
-        margin: 0 auto 20px;
-        font-size: 1.45rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: var(--gradient-brand-3);
         color: #fff;
+        font-size: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--gradient-brand-3);
-        box-shadow: 0 14px 28px -14px rgba(236, 72, 153, .62);
+        margin: 0 auto 22px;
+        box-shadow: 0 12px 26px -12px rgba(236, 72, 153, .55);
     }
 
     .auth-title {
         text-align: center;
-        font-size: 1.6rem;
+        font-size: 1.55rem;
         margin-bottom: 6px;
     }
 
     .auth-subtitle {
         text-align: center;
-        color: var(--text-secondary);
+        color: var(--text-muted);
         font-size: .9rem;
-        margin-bottom: 24px;
+        margin-bottom: 30px;
     }
 
     .auth-card .form-control {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border);
-        color: var(--text-primary);
-        padding: .75rem 1rem;
-    }
-
-    .auth-card .form-control:focus {
-        background: #18151d;
-        border-color: var(--pink);
-        box-shadow: 0 0 0 4px rgba(236, 72, 153, .14);
+        padding: .78rem 1rem;
     }
 
     .auth-card .btn-primary {
-        padding: .8rem 1rem;
-        margin-top: 10px;
-        background: var(--gradient-brand);
-        box-shadow: 0 10px 24px -8px rgba(236, 72, 153, .52);
-    }
-
-    .auth-card .btn-primary:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.08);
-        box-shadow: 0 14px 30px -8px rgba(236, 72, 153, .62);
-    }
-
-    .form-row-split {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-
-    @media (max-width: 576px) {
-        .form-row-split {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .field-hint {
-        color: var(--text-muted);
-        font-size: .76rem;
+        padding: .78rem 1rem;
+        font-size: .95rem;
         margin-top: 6px;
     }
 
@@ -205,80 +89,32 @@ Register
         opacity: .75;
     }
 
-    /* OTP modal */
+    /* Form step */
 
-    .otp-inputs {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin: 22px 0 6px;
+    .auth-step {
+        display: none;
     }
 
-    .otp-inputs input {
-        width: 46px;
-        height: 54px;
-        text-align: center;
-        font-size: 1.25rem;
-        font-weight: 600;
-        padding: 0;
-        background: var(--bg-secondary);
-        border: 1px solid var(--border);
-        color: var(--text-primary);
+    .auth-step.active {
+        display: block;
     }
 
-    .otp-sent-to {
-        text-align: center;
+    .form-row-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 576px) {
+        .form-row-split {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .field-hint {
         color: var(--text-muted);
-        font-size: .85rem;
-        margin-top: -6px;
-    }
-
-    .otp-sent-to strong {
-        color: var(--text-primary);
-    }
-
-    .otp-resend {
-        text-align: center;
-        font-size: .84rem;
-        color: var(--text-muted);
-        margin-top: 18px;
-    }
-
-    .otp-resend a {
-        color: var(--pink);
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .otp-resend a.disabled {
-        pointer-events: none;
-        opacity: .5;
-    }
-
-    .password-field {
-        position: relative;
-    }
-
-    .password-field .form-control {
-        padding-right: 2.6rem;
-    }
-
-    .password-toggle {
-        position: absolute;
-        top: 50%;
-        right: 12px;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 1.05rem;
-        cursor: pointer;
-        padding: 4px;
-        line-height: 1;
-    }
-
-    .password-toggle:hover {
-        color: var(--text-primary);
+        font-size: .76rem;
+        margin-top: 6px;
     }
 
     .terms-check {
@@ -311,6 +147,65 @@ Register
 
     .terms-check a:hover {
         opacity: .8;
+    }
+
+    /* OTP step */
+
+    .otp-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 18px 0 6px;
+    }
+
+    .otp-inputs input {
+        width: 46px;
+        height: 54px;
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 0;
+    }
+
+    .otp-sent-to {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: .85rem;
+        margin-top: -4px;
+    }
+
+    .otp-sent-to strong {
+        color: var(--text-primary);
+    }
+
+    .otp-resend {
+        text-align: center;
+        font-size: .84rem;
+        color: var(--text-muted);
+        margin-top: 16px;
+    }
+
+    .otp-resend a {
+        color: var(--pink);
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .otp-resend a.disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+
+    .otp-change-email {
+        text-align: center;
+        font-size: .8rem;
+        margin-top: 4px;
+    }
+
+    .otp-change-email a {
+        color: var(--text-muted);
+        cursor: pointer;
+        text-decoration: underline;
     }
 
     /* Toast notifications */
@@ -382,6 +277,12 @@ Register
         padding-top: 3px;
     }
 
+    .site-toast .toast-message a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
     .site-toast .toast-close {
         background: none;
         border: none;
@@ -407,41 +308,6 @@ Register
         to { transform: translateX(24px); opacity: 0; }
     }
 
-    @media (max-width: 991.98px) {
-
-        .auth-shell {
-            min-height: calc(100vh - 180px);
-            padding: 28px 0;
-        }
-
-        .auth-stage {
-            border-radius: 20px;
-        }
-
-        .auth-showcase {
-            padding: 34px 26px;
-            border-right: none;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .auth-card {
-            padding: 34px 24px;
-        }
-
-    }
-
-    @media (max-width: 575.98px) {
-
-        .showcase-title {
-            font-size: 1.7rem;
-        }
-
-        .auth-card {
-            padding: 28px 16px;
-        }
-
-    }
-
 </style>
 
 {% endblock %}
@@ -451,43 +317,13 @@ Register
 <!-- Toast notifications -->
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3"></div>
 
-<div class="auth-shell">
+<div class="auth-wrap">
 
-    <div class="container">
+    <div class="row justify-content-center w-100">
 
-        <div class="auth-stage">
+        <div class="col-md-7 col-lg-6">
 
-            <div class="row g-0 align-items-stretch">
-
-                <div class="col-lg-5">
-
-                    <div class="auth-showcase">
-
-                        <span class="showcase-kicker">
-                            <i class="bi bi-stars"></i> Join AtOurs
-                        </span>
-
-                        <h1 class="showcase-title">
-                            Build your profile and unlock every event.
-                        </h1>
-
-                        <p class="showcase-copy">
-                            Create your account to discover events, reserve tickets faster, and host memorable experiences.
-                        </p>
-
-                        <ul class="showcase-list">
-                            <li><i class="bi bi-check2"></i> Secure email verification with OTP</li>
-                            <li><i class="bi bi-check2"></i> Fast onboarding with guided form flow</li>
-                            <li><i class="bi bi-check2"></i> Instant access after successful sign up</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="col-lg-7">
-
-                    <div class="auth-card">
+            <div class="card auth-card">
 
                 <div class="auth-logo">
                     <i class="bi bi-stars"></i>
@@ -501,169 +337,217 @@ Register
                     Join AtOurs to discover and host unforgettable events.
                 </p>
 
-                <div class="mb-3">
+                <!-- STEP 1: REGISTRATION FORM -->
+                <div id="formStep" class="auth-step active">
 
-                    <label class="form-label">
-                        Full Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="full_name"
-                        class="form-control"
-                        placeholder="Your name"
-                        autocomplete="name">
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        class="form-control"
-                        placeholder="yourmail@gmail.com"
-                        autocomplete="email">
-
-                </div>
-
-                <div class="form-row-split mb-3">
-
-                    <div>
+                    <div class="mb-3">
 
                         <label class="form-label">
-                            Phone Number
+                            Full Name
                         </label>
 
                         <input
                             type="text"
-                            id="phone_number"
+                            id="full_name"
                             class="form-control"
-                            placeholder="9876543210"
-                            autocomplete="tel">
+                            placeholder="Your name"
+                            autocomplete="name">
 
                     </div>
 
-                    <div>
+                    <div class="mb-3">
 
                         <label class="form-label">
-                            Date of Birth
+                            Email Address
                         </label>
 
                         <input
-                            type="date"
-                            id="date_of_birth"
+                            type="email"
+                            id="email"
                             class="form-control"
-                            autocomplete="bday">
+                            placeholder="you@example.com"
+                            autocomplete="email">
 
                     </div>
 
-                </div>
+                    <div class="form-row-split mb-3">
 
-                <p class="field-hint mb-3" style="margin-top:-8px;">
+                        <div>
 
-                    You must be 18 or older to register.
-
-                </p>
-
-                <div class="form-row-split mb-3">
-
-                    <div>
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <div class="password-field">
+                            <label class="form-label">
+                                Phone Number
+                            </label>
 
                             <input
-                                type="password"
-                                id="password"
+                                type="text"
+                                id="phone_number"
                                 class="form-control"
-                                placeholder="********"
-                                autocomplete="new-password">
+                                placeholder="9876543210"
+                                autocomplete="tel">
 
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                onclick="togglePassword('password', this)"
-                                aria-label="Show password">
+                        </div>
 
-                                <i class="bi bi-eye"></i>
+                        <div>
 
-                            </button>
+                            <label class="form-label">
+                                Date of Birth
+                            </label>
+
+                            <input
+                                type="date"
+                                id="date_of_birth"
+                                class="form-control"
+                                autocomplete="bday">
 
                         </div>
 
                     </div>
 
-                    <div>
+                    <p class="field-hint mb-3" style="margin-top:-8px;">
 
-                        <label class="form-label">
-                            Confirm Password
-                        </label>
+                        You must be 18 or older to register.
 
-                        <div class="password-field">
+                    </p>
 
-                            <input
-                                type="password"
-                                id="confirm_password"
-                                class="form-control"
-                                placeholder="********"
-                                autocomplete="new-password">
+                    <div class="form-row-split mb-3">
 
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                onclick="togglePassword('confirm_password', this)"
-                                aria-label="Show password">
+                        <div>
 
-                                <i class="bi bi-eye"></i>
+                            <label class="form-label">
+                                Password
+                            </label>
 
-                            </button>
+                            <div class="password-field">
+
+                                <input
+                                    type="password"
+                                    id="password"
+                                    class="form-control"
+                                    placeholder="Enter password"
+                                    autocomplete="new-password">
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Show password"
+                                    onclick="togglePasswordVisibility('password', this)">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            <label class="form-label">
+                                Confirm Password
+                            </label>
+
+                            <div class="password-field">
+
+                                <input
+                                    type="password"
+                                    id="confirm_password"
+                                    class="form-control"
+                                    placeholder="Re-enter password"
+                                    autocomplete="new-password">
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Show password"
+                                    onclick="togglePasswordVisibility('confirm_password', this)">
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+                            </div>
 
                         </div>
 
                     </div>
 
+                    <div class="terms-check">
+
+                        <input
+                            type="checkbox"
+                            id="agreeTerms">
+
+                        <label for="agreeTerms">
+
+                            I have read and agree to the
+
+                            <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+
+                            and
+
+                            <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+
+                        </label>
+
+                    </div>
+
+                    <button
+                        id="registerBtn"
+                        class="btn btn-primary w-100"
+                        onclick="register()">
+
+                        Register
+
+                    </button>
+
                 </div>
 
-                <div class="terms-check">
+                <!-- STEP 2: OTP VERIFICATION -->
+                <div id="otpStep" class="auth-step">
 
-                    <input
-                        type="checkbox"
-                        id="agreeTerms">
+                    <p class="otp-sent-to">
+                        We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
+                    </p>
 
-                    <label for="agreeTerms">
+                    <div class="otp-inputs" id="otpInputs">
 
-                        I have read and agree to the
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit" autocomplete="one-time-code">
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
+                        <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
 
-                        <a href="/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                    </div>
 
-                        and
+                    <button
+                        id="verifyOtpBtn"
+                        class="btn btn-primary w-100 mt-3"
+                        onclick="verifyOtp()">
 
-                        <a href="/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+                        Verify & Create Account
 
-                    </label>
+                    </button>
+
+                    <p class="otp-resend">
+
+                        Didn't get the code?
+                        <a id="resendOtpLink" onclick="resendOtp()">Resend OTP</a>
+                        <span id="resendTimer"></span>
+
+                    </p>
+
+                    <p class="otp-change-email">
+
+                        <a onclick="editDetails()">Edit registration details</a>
+
+                    </p>
 
                 </div>
 
-                <button
-                    id="registerBtn"
-                    class="btn btn-primary w-100"
-                    onclick="register()">
+                <div class="auth-divider" id="authDivider">or</div>
 
-                    Register
-
-                </button>
-
-                <div class="auth-divider">or</div>
-
-                <p class="text-center mb-0">
+                <p class="text-center mb-0" id="loginLinkRow">
 
                     Already have an account?
 
@@ -672,67 +556,6 @@ Register
                         Login
 
                     </a>
-
-                </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- OTP verification modal -->
-<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header border-0 pb-0">
-
-                <h5 class="modal-title fw-bold" id="otpModalLabel">Verify Your Email</h5>
-
-                <button type="button" class="btn-close" onclick="closeOtpModal()" aria-label="Close"></button>
-
-            </div>
-
-            <div class="modal-body pt-2">
-
-                <p class="otp-sent-to">
-                    We sent a 6-digit code to <strong id="otpEmailDisplay"></strong>
-                </p>
-
-                <div class="otp-inputs" id="otpInputs">
-
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit" autocomplete="one-time-code">
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
-                    <input type="text" inputmode="numeric" maxlength="1" class="form-control otp-digit">
-
-                </div>
-
-                <button
-                    id="verifyOtpBtn"
-                    class="btn btn-primary w-100 mt-3"
-                    onclick="verifyOtp()">
-
-                    Verify & Create Account
-
-                </button>
-
-                <p class="otp-resend">
-
-                    Didn't get the code?
-                    <a id="resendOtpLink" onclick="resendOtp()">Resend OTP</a>
-                    <span id="resendTimer"></span>
 
                 </p>
 
@@ -755,7 +578,7 @@ Register
 redirectIfAuthenticated("/", "You're already logged in.");
 
 // Site-styled toast notifications, shown top-right.
-function showToast(message,type="success"){
+function showToast(message,type="success",duration=4000){
 
     const container=document.getElementById("toastContainer");
 
@@ -793,39 +616,7 @@ function showToast(message,type="success"){
 
     toastEl.querySelector(".toast-close").addEventListener("click",dismiss);
 
-    dismissTimer=setTimeout(dismiss,4000);
-
-}
-
-function togglePassword(fieldId, btn){
-
-    const input=document.getElementById(fieldId);
-
-    const icon=btn.querySelector("i");
-
-    if(input.type==="password"){
-
-        input.type="text";
-
-        icon.classList.remove("bi-eye");
-
-        icon.classList.add("bi-eye-slash");
-
-        btn.setAttribute("aria-label","Hide password");
-
-    }
-
-    else{
-
-        input.type="password";
-
-        icon.classList.remove("bi-eye-slash");
-
-        icon.classList.add("bi-eye");
-
-        btn.setAttribute("aria-label","Show password");
-
-    }
+    dismissTimer=setTimeout(dismiss,duration);
 
 }
 
@@ -941,7 +732,7 @@ async function register(){
 
         if(sent){
 
-            openOtpModal(email);
+            showOtpStep(email);
 
         }
 
@@ -1011,17 +802,21 @@ async function sendRegisterOtp(showSuccessToast){
 
 }
 
-function openOtpModal(email){
+// Swaps the form panel for the OTP panel, mirroring how the login page
+// switches between its password and OTP tabs.
+function showOtpStep(email){
 
     document.getElementById("otpEmailDisplay").textContent=email;
 
     document.querySelectorAll(".otp-digit").forEach(input=>input.value="");
 
-    const modalEl=document.getElementById("otpModal");
+    document.getElementById("formStep").classList.remove("active");
 
-    const modal=bootstrap.Modal.getOrCreateInstance(modalEl);
+    document.getElementById("otpStep").classList.add("active");
 
-    modal.show();
+    document.getElementById("authDivider").style.display="none";
+
+    document.getElementById("loginLinkRow").style.display="none";
 
     startResendTimer();
 
@@ -1029,19 +824,22 @@ function openOtpModal(email){
 
         document.querySelector(".otp-digit").focus();
 
-    },300);
+    },200);
 
 }
 
-function closeOtpModal(){
-
-    const modalEl=document.getElementById("otpModal");
-
-    const modal=bootstrap.Modal.getOrCreateInstance(modalEl);
-
-    modal.hide();
+// Lets the user go back and fix a field without losing what they typed.
+function editDetails(){
 
     clearInterval(resendTimerHandle);
+
+    document.getElementById("otpStep").classList.remove("active");
+
+    document.getElementById("formStep").classList.add("active");
+
+    document.getElementById("authDivider").style.display="";
+
+    document.getElementById("loginLinkRow").style.display="";
 
 }
 
@@ -1173,13 +971,13 @@ async function verifyOtp(){
 
             clearInterval(resendTimerHandle);
 
-            showToast("Registration successful.","success");
+            showToast("Registration successful!","success");
 
             setTimeout(()=>{
 
                 window.location="/";
 
-            },1200);
+            },1000);
 
             return;
 
