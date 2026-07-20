@@ -8,46 +8,101 @@ Support
 
 <style>
 
-    .page-hero {
+    /* ===== Hero ===== */
+
+    .support-hero {
+        position: relative;
+        overflow: hidden;
         text-align: center;
-        padding: 20px 20px 40px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border);
+        padding: 52px 24px 44px;
+        margin-top: 22px;
+        background:
+            radial-gradient(60% 140% at 50% -10%, rgba(236, 72, 153, .20), transparent 60%),
+            radial-gradient(50% 100% at 100% 100%, rgba(168, 85, 247, .16), transparent 60%),
+            radial-gradient(45% 90% at 0% 100%, rgba(249, 115, 22, .12), transparent 60%),
+            var(--bg-secondary);
     }
 
-    .page-hero .hero-eyebrow {
+    .support-hero .hero-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 18px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+        background: var(--gradient-brand-3);
+        box-shadow: 0 14px 28px -12px rgba(236, 72, 153, .55);
+    }
+
+    .support-hero .hero-eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: var(--accent);
-        font-weight: 600;
-        font-size: .82rem;
-        letter-spacing: .04em;
+        color: var(--pink);
+        font-weight: 700;
+        font-size: .8rem;
+        letter-spacing: .03em;
         text-transform: uppercase;
         background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
+        border: 1px solid rgba(236, 72, 153, .3);
         padding: 6px 14px;
         border-radius: 999px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
-    .page-hero h1 {
-        font-size: clamp(1.9rem, 4vw, 2.4rem);
+    .support-hero h1 {
+        font-size: clamp(1.9rem, 4vw, 2.5rem);
         margin-bottom: 10px;
     }
 
-    .page-hero p {
+    .support-hero p {
         color: var(--text-secondary);
         max-width: 480px;
         margin: 0 auto;
         font-size: .96rem;
     }
 
+    /* ===== Section layout ===== */
+
+    .support-body {
+        margin-top: 40px;
+    }
+
+    /* ===== Form card ===== */
+
     .support-form-card {
         padding: 8px;
     }
 
+    .support-form-card .card-header-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 6px;
+    }
+
+    .support-form-card .card-header-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent-dim);
+        border: 1px solid rgba(236, 72, 153, .3);
+        color: var(--pink);
+        font-size: 1.1rem;
+    }
+
     .support-form-card h2 {
         font-size: 1.25rem;
-        margin-bottom: 6px;
+        margin-bottom: 2px;
     }
 
     .support-form-card .subtext {
@@ -80,21 +135,49 @@ Support
     }
 
     .logged-in-badge i {
-        color: var(--accent);
+        color: var(--pink);
     }
 
     .subject-other-wrap {
         margin-top: 10px;
     }
 
+    /* ===== FAQ card ===== */
+
     .faq-card {
         margin-top: 24px;
         padding: 8px;
     }
 
+    .faq-card .card-header-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .faq-card .card-header-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(168, 85, 247, .14);
+        border: 1px solid rgba(168, 85, 247, .3);
+        color: var(--purple);
+        font-size: 1.1rem;
+    }
+
     .faq-card h4 {
         font-size: 1.1rem;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
+    }
+
+    .faq-card .subtext {
+        color: var(--text-muted);
+        font-size: .85rem;
+        margin: 0;
     }
 
     .faq-card hr {
@@ -140,7 +223,7 @@ Support
 
     .faq-item.open .faq-trigger i {
         transform: rotate(180deg);
-        color: var(--accent);
+        color: var(--pink);
     }
 
     .faq-panel {
@@ -163,6 +246,149 @@ Support
 
     .faq-panel p strong {
         color: var(--text-primary);
+    }
+
+    /* ===== Sidebar ===== */
+
+    .support-side {
+        position: sticky;
+        top: 96px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .side-card {
+        padding: 22px;
+    }
+
+    .side-card h6 {
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+    }
+
+    .contact-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
+        padding: 8px 0;
+        transition: transform .2s var(--ease), opacity .2s var(--ease);
+    }
+
+    .contact-row:hover {
+        transform: translateX(3px);
+        opacity: .9;
+    }
+
+    .contact-row .icon-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+    }
+
+    .contact-row:nth-of-type(3n+1) .icon-box {
+        background: rgba(236, 72, 153, .14);
+        border: 1px solid rgba(236, 72, 153, .28);
+        color: var(--pink);
+    }
+
+    .contact-row:nth-of-type(3n+2) .icon-box {
+        background: rgba(249, 115, 22, .14);
+        border: 1px solid rgba(249, 115, 22, .28);
+        color: var(--orange);
+    }
+
+    .contact-row:nth-of-type(3n+3) .icon-box {
+        background: rgba(168, 85, 247, .14);
+        border: 1px solid rgba(168, 85, 247, .28);
+        color: var(--purple);
+    }
+
+    .contact-row .label {
+        font-size: .78rem;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+    }
+
+    .contact-row .value {
+        font-size: .89rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .response-time-card {
+        text-align: center;
+    }
+
+    .response-time-card .big-stat {
+        font-size: 1.9rem;
+        font-weight: 800;
+        background: var(--gradient-brand);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 4px;
+    }
+
+    .response-time-card p {
+        color: var(--text-muted);
+        font-size: .84rem;
+        margin: 0;
+    }
+
+    .quick-links-card ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .quick-links-card a {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--text-secondary);
+        font-size: .87rem;
+        font-weight: 600;
+        padding: 10px 4px;
+        border-radius: 8px;
+        transition: color .2s var(--ease), background .2s var(--ease);
+    }
+
+    .quick-links-card a:hover {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, .05);
+    }
+
+    .quick-links-card a i:last-child {
+        color: var(--text-muted);
+        font-size: .8rem;
+        transition: transform .2s var(--ease);
+    }
+
+    .quick-links-card a:hover i:last-child {
+        transform: translateX(3px);
+        color: var(--pink);
+    }
+
+    @media (max-width: 991.98px) {
+        .support-side {
+            position: static;
+            margin-top: 24px;
+        }
     }
 
     /* Toast notifications */
@@ -270,210 +496,318 @@ Support
 
 <div class="row justify-content-center fade-in">
 
-    <div class="col-lg-8">
+    <div class="col-lg-10">
 
-        <div class="page-hero">
+        <div class="support-hero">
+
+            <div class="hero-icon">
+                <i class="bi bi-headset"></i>
+            </div>
 
             <span class="hero-eyebrow">
-                <i class="bi bi-headset"></i>
+                <i class="bi bi-stars"></i>
                 We're Here to Help
             </span>
 
             <h1 class="fw-bold">
-
                 Contact Support
-
             </h1>
 
             <p>
-
                 Need help? Submit your issue below and our team will get back to you soon.
-
             </p>
 
         </div>
 
-        <div class="card support-form-card">
+        <div class="row support-body">
 
-            <div class="card-body">
+            <div class="col-lg-8">
 
-                <h2 class="fw-bold">Submit a Ticket</h2>
+                <div class="card support-form-card">
 
-                <p class="subtext">
+                    <div class="card-body">
 
-                    Tell us what's going on and we'll take it from there.
+                        <div class="card-header-row">
 
-                </p>
+                            <div class="card-header-icon">
+                                <i class="bi bi-envelope-paper-fill"></i>
+                            </div>
 
-                <div id="loggedInBadge"></div>
+                            <div>
+                                <h2 class="fw-bold">Submit a Ticket</h2>
+                            </div>
 
-                <div class="row">
+                        </div>
 
-                    <div class="col-md-6 mb-3">
+                        <p class="subtext">
 
-                        <label class="form-label">
+                            Tell us what's going on and we'll take it from there.
 
-                            Full Name
+                        </p>
 
-                        </label>
+                        <div id="loggedInBadge"></div>
 
-                        <input
-                            type="text"
-                            id="name"
-                            class="form-control"
-                            placeholder="John Doe">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Full Name
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    class="form-control"
+                                    placeholder="John Doe">
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+
+                                    Phone Number
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="phone_number"
+                                    class="form-control"
+                                    placeholder="9876543210">
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Email
+
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                class="form-control"
+                                placeholder="you@example.com">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Subject
+
+                            </label>
+
+                            <select
+                                id="subject"
+                                class="form-select"
+                                onchange="handleSubjectChange()">
+
+                                <option value="">Select a topic</option>
+                                <option value="Booking Issue">Booking Issue</option>
+                                <option value="Payment &amp; Refunds">Payment &amp; Refunds</option>
+                                <option value="Event Hosting">Event Hosting</option>
+                                <option value="Account &amp; Login">Account &amp; Login</option>
+                                <option value="Report a User or Event">Report a User or Event</option>
+                                <option value="Technical Bug">Technical Bug</option>
+                                <option value="Profile Updation">Profile Updation</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+
+                            <div class="subject-other-wrap" id="subjectOtherWrap" style="display:none;">
+
+                                <input
+                                    type="text"
+                                    id="subject_other"
+                                    class="form-control"
+                                    placeholder="Briefly describe your topic">
+
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Message
+
+                            </label>
+
+                            <textarea
+                                id="message"
+                                rows="6"
+                                class="form-control"
+                                placeholder="Describe your issue"></textarea>
+
+                        </div>
+
+                        <button
+                            id="submitTicketBtn"
+                            class="btn btn-primary"
+                            onclick="submitTicket()">
+
+                            <i class="bi bi-send-fill me-1"></i>
+
+                            Submit Ticket
+
+                        </button>
 
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                </div>
 
-                        <label class="form-label">
+                <div class="card faq-card">
 
-                            Phone Number
+                    <div class="card-body">
 
-                        </label>
+                        <div class="card-header-row">
 
-                        <input
-                            type="text"
-                            id="phone_number"
-                            class="form-control"
-                            placeholder="9876543210">
+                            <div class="card-header-icon">
+                                <i class="bi bi-patch-question-fill"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="fw-bold">Frequently Asked Questions</h4>
+                                <p class="subtext">Quick answers to common questions</p>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
+                        <div class="faq-item">
+
+                            <button class="faq-trigger" onclick="toggleFaq(this)">
+                                <h6>How do I book an event?</h6>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+
+                            <div class="faq-panel">
+                                <p>Select an event and click <strong>Book Ticket</strong>.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="faq-item">
+
+                            <button class="faq-trigger" onclick="toggleFaq(this)">
+                                <h6>How do I become a host?</h6>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+
+                            <div class="faq-panel">
+                                <p>Go to the <strong>Hosting</strong> page and create your first event.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="faq-item">
+
+                            <button class="faq-trigger" onclick="toggleFaq(this)">
+                                <h6>Can I cancel my booking?</h6>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+
+                            <div class="faq-panel">
+                                <p>Yes, depending on the host's cancellation policy.</p>
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Email
-
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        class="form-control"
-                        placeholder="you@example.com">
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Subject
-
-                    </label>
-
-                    <select
-                        id="subject"
-                        class="form-select"
-                        onchange="handleSubjectChange()">
-
-                        <option value="">Select a topic</option>
-                        <option value="Booking Issue">Booking Issue</option>
-                        <option value="Payment &amp; Refunds">Payment &amp; Refunds</option>
-                        <option value="Event Hosting">Event Hosting</option>
-                        <option value="Account &amp; Login">Account &amp; Login</option>
-                        <option value="Report a User or Event">Report a User or Event</option>
-                        <option value="Technical Bug">Technical Bug</option>
-                        <option value="Booking Issue">Profile Updation</option>
-                        <option value="Other">Other</option>
-
-                    </select>
-
-                    <div class="subject-other-wrap" id="subjectOtherWrap" style="display:none;">
-
-                        <input
-                            type="text"
-                            id="subject_other"
-                            class="form-control"
-                            placeholder="Briefly describe your topic">
-
-                    </div>
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Message
-
-                    </label>
-
-                    <textarea
-                        id="message"
-                        rows="6"
-                        class="form-control"
-                        placeholder="Describe your issue"></textarea>
-
-                </div>
-
-                <button
-                    id="submitTicketBtn"
-                    class="btn btn-primary"
-                    onclick="submitTicket()">
-
-                    <i class="bi bi-send-fill me-1"></i>
-
-                    Submit Ticket
-
-                </button>
 
             </div>
 
-        </div>
+            <div class="col-lg-4">
 
-        <div class="card faq-card">
+                <div class="support-side">
 
-            <div class="card-body">
+                    <div class="card side-card response-time-card">
 
-                <h4 class="fw-bold">
+                        <div class="big-stat">&lt; 24h</div>
+                        <p>Average response time on weekdays</p>
 
-                    Frequently Asked Questions
-
-                </h4>
-
-                <hr>
-
-                <div class="faq-item">
-
-                    <button class="faq-trigger" onclick="toggleFaq(this)">
-                        <h6>How do I book an event?</h6>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
-
-                    <div class="faq-panel">
-                        <p>Select an event and click <strong>Book Ticket</strong>.</p>
                     </div>
 
-                </div>
+                    <div class="card side-card">
 
-                <div class="faq-item">
+                        <h6>Other Ways to Reach Us</h6>
 
-                    <button class="faq-trigger" onclick="toggleFaq(this)">
-                        <h6>How do I become a host?</h6>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
+                        <a href="mailto:support@atours.app" class="contact-row">
+                            <div class="icon-box"><i class="bi bi-envelope-fill"></i></div>
+                            <div>
+                                <div class="label">Email</div>
+                                <div class="value">support@atours.app</div>
+                            </div>
+                        </a>
 
-                    <div class="faq-panel">
-                        <p>Go to the <strong>Hosting</strong> page and create your first event.</p>
+                        <a href="tel:+911234567890" class="contact-row">
+                            <div class="icon-box"><i class="bi bi-telephone-fill"></i></div>
+                            <div>
+                                <div class="label">Phone</div>
+                                <div class="value">+91 12345 67890</div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="contact-row">
+                            <div class="icon-box"><i class="bi bi-chat-dots-fill"></i></div>
+                            <div>
+                                <div class="label">Community</div>
+                                <div class="value">Join the Discord</div>
+                            </div>
+                        </a>
+
                     </div>
 
-                </div>
+                    <div class="card side-card quick-links-card">
 
-                <div class="faq-item">
+                        <h6>Helpful Links</h6>
 
-                    <button class="faq-trigger" onclick="toggleFaq(this)">
-                        <h6>Can I cancel my booking?</h6>
-                        <i class="bi bi-chevron-down"></i>
-                    </button>
+                        <ul>
 
-                    <div class="faq-panel">
-                        <p>Yes, depending on the host's cancellation policy.</p>
+                            <li>
+                                <a href="/events/">
+                                    Browse Events
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/hosting/">
+                                    Hosting Guide
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/privacy-policy/">
+                                    Privacy Policy
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/terms-and-conditions/">
+                                    Terms &amp; Conditions
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+
                     </div>
 
                 </div>
