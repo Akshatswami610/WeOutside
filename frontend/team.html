@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 Our Team
@@ -10,36 +11,44 @@ Our Team
 
     .page-hero {
         text-align: center;
-        padding: 20px 20px 40px;
+        padding: 20px 20px 44px;
     }
 
     .page-hero .hero-eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: var(--accent);
-        font-weight: 600;
+        color: var(--pink);
+        font-weight: 700;
         font-size: .82rem;
-        letter-spacing: .04em;
-        text-transform: uppercase;
+        letter-spacing: .01em;
         background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
-        padding: 6px 14px;
+        border: 1px solid rgba(236, 72, 153, .3);
+        padding: 7px 16px;
         border-radius: 999px;
-        margin-bottom: 20px;
+        margin-bottom: 22px;
+        animation: fadeInUp .5s var(--ease) both;
     }
 
     .page-hero h1 {
-        font-size: clamp(1.9rem, 4vw, 2.4rem);
-        margin-bottom: 10px;
+        font-size: clamp(2rem, 4.2vw, 2.7rem);
+        margin-bottom: 12px;
+        animation: fadeInUp .55s var(--ease) both;
+        animation-delay: .05s;
     }
 
     .page-hero p {
         color: var(--text-secondary);
-        max-width: 520px;
+        max-width: 540px;
         margin: 0 auto;
-        font-size: .96rem;
+        font-size: .98rem;
+        line-height: 1.6;
+        font-weight: 500;
+        animation: fadeInUp .55s var(--ease) both;
+        animation-delay: .1s;
     }
+
+    /* ===== Team grid ===== */
 
     .team-grid {
         display: grid;
@@ -60,34 +69,140 @@ Our Team
         }
     }
 
-    .team-card {
+    /* ===== Flip cards ===== */
+
+    .team-flip {
+        height: 360px;
+        perspective: 1400px;
+    }
+
+    .team-flip-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform .6s var(--ease);
+        transform-style: preserve-3d;
+    }
+
+    .team-flip:hover .team-flip-inner,
+    .team-flip:focus-within .team-flip-inner {
+        transform: rotateY(180deg);
+    }
+
+    .team-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(255, 255, 255, .1);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px -8px rgba(0, 0, 0, .5);
         padding: 32px 24px;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .team-face-front {
+        background: var(--card);
+        justify-content: flex-start;
+    }
+
+    .team-face-back {
+        background: var(--card-hover);
+        transform: rotateY(180deg);
+        justify-content: center;
     }
 
     .team-avatar {
-        width: 76px;
-        height: 76px;
+        width: 112px;
+        height: 112px;
         border-radius: 50%;
-        background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .3);
-        color: var(--accent);
-        font-size: 1.9rem;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 18px;
+        font-weight: 800;
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
+        flex-shrink: 0;
+        overflow: hidden;
     }
 
-    .team-card h5 {
+    .team-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    /* Each member gets a distinct brand color, cycling pink / orange / purple */
+    .team-flip:nth-of-type(3n+1) .team-avatar {
+        background: rgba(236, 72, 153, .14);
+        border: 1px solid rgba(236, 72, 153, .3);
+        color: var(--pink);
+    }
+
+    .team-flip:nth-of-type(3n+1) .team-role {
+        color: var(--pink);
+    }
+
+    .team-flip:nth-of-type(3n+1) .team-quote {
+        color: var(--pink);
+    }
+
+    .team-flip:nth-of-type(3n+1) .team-socials a:hover {
+        color: var(--pink);
+        border-color: rgba(236, 72, 153, .4);
+    }
+
+    .team-flip:nth-of-type(3n+2) .team-avatar {
+        background: rgba(249, 115, 22, .14);
+        border: 1px solid rgba(249, 115, 22, .3);
+        color: var(--orange);
+    }
+
+    .team-flip:nth-of-type(3n+2) .team-role {
+        color: var(--orange);
+    }
+
+    .team-flip:nth-of-type(3n+2) .team-quote {
+        color: var(--orange);
+    }
+
+    .team-flip:nth-of-type(3n+2) .team-socials a:hover {
+        color: var(--orange);
+        border-color: rgba(249, 115, 22, .4);
+    }
+
+    .team-flip:nth-of-type(3n+3) .team-avatar {
+        background: rgba(168, 85, 247, .14);
+        border: 1px solid rgba(168, 85, 247, .3);
+        color: var(--purple);
+    }
+
+    .team-flip:nth-of-type(3n+3) .team-role {
+        color: var(--purple);
+    }
+
+    .team-flip:nth-of-type(3n+3) .team-quote {
+        color: var(--purple);
+    }
+
+    .team-flip:nth-of-type(3n+3) .team-socials a:hover {
+        color: var(--purple);
+        border-color: rgba(168, 85, 247, .4);
+    }
+
+    .team-face h5 {
         font-size: 1.08rem;
         margin-bottom: 2px;
     }
 
     .team-role {
-        color: var(--accent);
         font-size: .82rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-bottom: 14px;
     }
 
@@ -98,10 +213,23 @@ Our Team
         margin-bottom: 18px;
     }
 
+    .team-face-back .team-role {
+        margin-bottom: 16px;
+    }
+
+    .team-quote {
+        font-size: .88rem;
+        font-weight: 600;
+        font-style: italic;
+        line-height: 1.5;
+        margin: 0 0 16px;
+    }
+
     .team-socials {
         display: flex;
         justify-content: center;
         gap: 10px;
+        margin-top: auto;
     }
 
     .team-socials a {
@@ -119,15 +247,31 @@ Our Team
     }
 
     .team-socials a:hover {
-        color: var(--accent);
-        border-color: rgba(245, 200, 76, .4);
         transform: translateY(-2px);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        .team-flip-inner {
+            transition: none;
+        }
+    }
+
+    /* ===== CTA ===== */
+
     .team-cta {
+        position: relative;
         text-align: center;
-        padding: 48px 24px;
-        background: radial-gradient(120% 140% at 50% 0%, rgba(245, 200, 76, .08), transparent 60%), var(--bg-secondary);
+        padding: 52px 24px;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    .team-cta::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(120% 160% at 50% 0%, rgba(236, 72, 153, .12), transparent 60%), var(--bg-secondary);
     }
 
     .team-cta h3 {
@@ -139,9 +283,20 @@ Our Team
         color: var(--text-secondary);
         font-size: .92rem;
         max-width: 440px;
-        margin: 0 auto 22px;
+        margin: 0 auto 24px;
+        font-weight: 500;
     }
-
+    .team-cta .btn {
+        align-self: center;      /* stops it stretching full-width inside the flex .card */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;     /* keeps icon + text on one line */
+        width: auto;
+        min-width: 160px;
+        padding: 8px 16px;
+    }
 </style>
 
 {% endblock %}
@@ -167,35 +322,79 @@ Our Team
 
 <div class="team-grid">
 
-    <div class="card team-card">
-        <div class="team-avatar">
-            <i class="bi bi-person-fill"></i>
-        </div>
-        <h5 class="fw-bold">Akshat Swami</h5>
-        <div class="team-role">Founder &amp; CEO</div>
-        <p class="team-bio">
-            Started AtOurs after one too many events with a broken RSVP link. Still hosts every month.
-        </p>
-        <div class="team-socials">
-            <a href="https://www.linkedin.com/in/akshatswami/" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="https://github.com/Akshatswami610" target="_blank" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
-            <a href="https://instagram.com/akshatswami_" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    <div class="team-flip slide-up">
+        <div class="team-flip-inner">
+
+            <div class="team-face team-face-front">
+                <div class="team-avatar">
+                    <img src="{% static 'images/team/akshat.jpg' %}" alt="Akshat Swami">
+                </div>
+                <h5 class="fw-bold">Akshat Swami</h5>
+                <div class="team-role">Founder &amp; CEO</div>
+                <p class="team-bio">
+                    Started AtOurs after one too many events with a broken RSVP link. Still hosts every month.
+                </p>
+                <div class="team-socials">
+                    <a href="https://www.linkedin.com/in/akshatswami/" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://github.com/Akshatswami610" target="_blank" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://instagram.com/akshatswami_" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="team-face team-face-back">
+                <h5 class="fw-bold">Akshat Swami</h5>
+                <div class="team-role">Founder &amp; CEO</div>
+                <p class="team-quote">
+                    "The best parties start with one good invite."
+                </p>
+                <p class="team-bio">
+                    Before AtOurs, he ran pop-up dinners out of his own living room to fund the idea. Still spends most weekends test-driving new venues around the city.
+                </p>
+                <div class="team-socials">
+                    <a href="https://www.linkedin.com/in/akshatswami/" target="_blank" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://github.com/Akshatswami610" target="_blank" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://instagram.com/akshatswami_" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div class="card team-card">
-        <div class="team-avatar">
-            <i class="bi bi-person-fill"></i>
-        </div>
-        <h5 class="fw-bold">Sneha Benjwal</h5>
-        <div class="team-role">Head of Community</div>
-        <p class="team-bio">
-            Makes sure hosts get the guests they want and guests get the parties worth showing up for.
-        </p>
-        <div class="team-socials">
-            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-            <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
-            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    <div class="team-flip slide-up">
+        <div class="team-flip-inner">
+
+            <div class="team-face team-face-front">
+                <div class="team-avatar">
+                    <img src="{% static 'images/team/sneha.jpg' %}" alt="Sneha Benjwal">
+                </div>
+                <h5 class="fw-bold">Sneha Benjwal</h5>
+                <div class="team-role">Head of Community</div>
+                <p class="team-bio">
+                    Makes sure hosts get the guests they want and guests get the parties worth showing up for.
+                </p>
+                <div class="team-socials">
+                    <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="team-face team-face-back">
+                <h5 class="fw-bold">Sneha Benjwal</h5>
+                <div class="team-role">Head of Community</div>
+                <p class="team-quote">
+                    "A good guest list is a curated one."
+                </p>
+                <p class="team-bio">
+                    Quietly follows up with every host to make sure the vibe check happens before doors open. Previously ran community ops for a college fest circuit.
+                </p>
+                <div class="team-socials">
+                    <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -209,7 +408,7 @@ Our Team
         We're always looking for people who care about bringing others together. Check out our open roles.
     </p>
 
-    <a href="/careers/" class="btn btn-primary">
+    <a href="/careers/" class="btn btn-primary btn-sm px-2">
         <i class="bi bi-briefcase-fill me-1"></i>
         View Open Roles
     </a>
