@@ -68,6 +68,7 @@ class RegisterVerifyOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
     phone_number = serializers.CharField(max_length=15)
     date_of_birth = serializers.DateField()
+    profile_image = serializers.ImageField(required=True)
     password = serializers.CharField(write_only=True)
     otp = serializers.CharField(max_length=6)
 
