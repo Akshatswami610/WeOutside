@@ -17,16 +17,16 @@ Careers
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: var(--accent);
-        font-weight: 600;
+        color: var(--pink);
+        font-weight: 700;
         font-size: .82rem;
-        letter-spacing: .04em;
-        text-transform: uppercase;
+        letter-spacing: .01em;
         background: var(--accent-dim);
-        border: 1px solid rgba(245, 200, 76, .25);
-        padding: 6px 14px;
+        border: 1px solid rgba(236, 72, 153, .3);
+        padding: 7px 16px;
         border-radius: 999px;
-        margin-bottom: 20px;
+        margin-bottom: 22px;
+        animation: fadeInUp .5s var(--ease) both;
     }
 
     .page-hero h1 {
@@ -40,12 +40,12 @@ Careers
         max-width: 560px;
         margin: 16px auto 0;
         font-size: 1rem;
-        font-weight: 400;
+        font-weight: 500;
     }
 
     .section-label {
         font-size: 1.3rem;
-        font-weight: 700;
+        font-weight: 800;
         margin: 0 0 28px;
     }
 
@@ -55,14 +55,40 @@ Careers
         margin: 44px 0;
     }
 
+    /* ===== Perk cards — cycle the brand palette ===== */
+
     .perk-card {
         text-align: center;
         padding: 30px 20px;
     }
 
-    .perk-card i {
-        font-size: 2.1rem;
-        color: var(--accent) !important;
+    .perk-card .perk-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 1.5rem;
+    }
+
+    .col-md-4:nth-of-type(3n+1) .perk-icon {
+        background: rgba(236, 72, 153, .14);
+        border: 1px solid rgba(236, 72, 153, .3);
+        color: var(--pink);
+    }
+
+    .col-md-4:nth-of-type(3n+2) .perk-icon {
+        background: rgba(249, 115, 22, .14);
+        border: 1px solid rgba(249, 115, 22, .3);
+        color: var(--orange);
+    }
+
+    .col-md-4:nth-of-type(3n+3) .perk-icon {
+        background: rgba(168, 85, 247, .14);
+        border: 1px solid rgba(168, 85, 247, .3);
+        color: var(--purple);
     }
 
     .perk-card h5 {
@@ -77,7 +103,7 @@ Careers
         line-height: 1.6;
     }
 
-    /* Job accordion */
+    /* ===== Job accordion ===== */
 
     .job-list {
         display: flex;
@@ -128,19 +154,19 @@ Careers
     }
 
     .job-meta i {
-        color: var(--accent);
+        color: var(--pink);
         font-size: .78rem;
     }
 
     .role-type {
         display: inline-block;
         font-size: .74rem;
-        font-weight: 600;
+        font-weight: 700;
         padding: 4px 10px;
         border-radius: 999px;
         background: var(--accent-dim);
-        color: var(--accent);
-        border: 1px solid rgba(245, 200, 76, .25);
+        color: var(--pink);
+        border: 1px solid rgba(236, 72, 153, .3);
         white-space: nowrap;
     }
 
@@ -153,7 +179,7 @@ Careers
 
     .job-item.open .job-chevron {
         transform: rotate(180deg);
-        color: var(--accent);
+        color: var(--pink);
     }
 
     .job-panel {
@@ -203,7 +229,7 @@ Careers
     .job-req-list li::before {
         content: '\F26B';
         font-family: "bootstrap-icons";
-        color: var(--accent);
+        color: var(--pink);
         font-size: .78rem;
         margin-top: 3px;
     }
@@ -211,6 +237,8 @@ Careers
     .job-panel-inner .job-apply-btn {
         margin-top: 4px;
     }
+
+    /* ===== Bottom CTA ===== */
 
     .cta-block {
         text-align: center;
@@ -220,6 +248,7 @@ Careers
     .cta-block p.eyebrow-text {
         color: var(--text-secondary);
         margin-bottom: 6px;
+        font-weight: 600;
     }
 
     .cta-block h4 {
@@ -277,7 +306,7 @@ Careers
 
             <div class="card perk-card h-100">
 
-                <i class="bi bi-lightbulb"></i>
+                <div class="perk-icon"><i class="bi bi-lightbulb"></i></div>
 
                 <h5>
                     Innovation
@@ -295,7 +324,7 @@ Careers
 
             <div class="card perk-card h-100">
 
-                <i class="bi bi-globe"></i>
+                <div class="perk-icon"><i class="bi bi-globe"></i></div>
 
                 <h5>
                     Remote Friendly
@@ -313,7 +342,7 @@ Careers
 
             <div class="card perk-card h-100">
 
-                <i class="bi bi-people"></i>
+                <div class="perk-icon"><i class="bi bi-people"></i></div>
 
                 <h5>
                     Amazing Team
@@ -379,7 +408,7 @@ Careers
 
                     </ul>
 
-                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Frontend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Frontend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+                    <a href="mailto:contact@atours.app?subject=Application%20-%20Frontend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Frontend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
 
                         <i class="bi bi-envelope-fill me-1"></i> Apply via Email
 
@@ -429,7 +458,7 @@ Careers
 
                     </ul>
 
-                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Backend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Backend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+                    <a href="mailto:contact@atours.app?subject=Application%20-%20Backend%20Developer&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Backend%20Developer%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
 
                         <i class="bi bi-envelope-fill me-1"></i> Apply via Email
 
@@ -479,7 +508,7 @@ Careers
 
                     </ul>
 
-                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20UI%2FUX%20Designer%20Internship&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20UI%2FUX%20Designer%20Internship.%20Please%20find%20my%20CV%2Fportfolio%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+                    <a href="mailto:contact@atours.app?subject=Application%20-%20UI%2FUX%20Designer%20Internship&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20UI%2FUX%20Designer%20Internship.%20Please%20find%20my%20CV%2Fportfolio%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
 
                         <i class="bi bi-envelope-fill me-1"></i> Apply via Email
 
@@ -529,7 +558,7 @@ Careers
 
                     </ul>
 
-                    <a href="mailto:careers@housepartymarketplace.com?subject=Application%20-%20Community%20Manager&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Community%20Manager%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
+                    <a href="mailto:contact@atours.app?subject=Application%20-%20Community%20Manager&body=Hi%20House%20Party%20team%2C%0A%0AI%27m%20interested%20in%20the%20Community%20Manager%20role.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary job-apply-btn">
 
                         <i class="bi bi-envelope-fill me-1"></i> Apply via Email
 
@@ -551,11 +580,11 @@ Careers
 
         <p class="sub">Share your CV with us and we'll reach out when something matches.</p>
 
-        <a href="mailto:careers@housepartymarketplace.com?subject=General%20Application&body=Hi%20House%20Party%20team%2C%0A%0AI%27d%20love%20to%20be%20considered%20for%20future%20opportunities.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary btn-lg mail-btn">
+        <a href="mailto:contact@atours.app?subject=General%20Application&body=Hi%20House%20Party%20team%2C%0A%0AI%27d%20love%20to%20be%20considered%20for%20future%20opportunities.%20Please%20find%20my%20CV%20attached.%0A%0AThanks!" class="btn btn-primary btn-lg mail-btn">
 
             <i class="bi bi-envelope-fill"></i>
 
-            careers@housepartymarketplace.com
+            contact@atours.app
 
         </a>
 
