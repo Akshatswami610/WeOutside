@@ -15,6 +15,16 @@ Events
         align-items: flex-end;
         gap: 20px;
         flex-wrap: wrap;
+        transition: padding-bottom .25s var(--ease);
+    }
+
+    /* Reserve space below the header so the open filter popover pushes the
+       event grid down instead of floating over the top row of cards.
+       --filter-dropdown-space is computed in JS from the popover's actual
+       rendered height, so this stays correct if its content changes. */
+    .page-header:has(.filter-menu.open),
+    .page-header:has(.filter-menu:hover) {
+        padding-bottom: var(--filter-dropdown-space, 8px);
     }
 
     .page-header h1 {
@@ -26,6 +36,13 @@ Events
         color: var(--text-secondary);
         font-size: 1rem;
         margin: 0;
+    }
+
+    .page-header .search-filter-bar {
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+        flex: 0 0 auto;
     }
 
     .page-header .search-wrap {
@@ -50,8 +67,166 @@ Events
     }
 
     @media (max-width: 767px) {
+        .page-header .search-filter-bar {
+            width: 100%;
+        }
+
         .page-header .search-wrap {
             width: 100%;
+            flex: 1 1 auto;
+        }
+    }
+
+    /* ===== Filter button + dropdown ===== */
+
+    .filter-menu {
+        position: relative;
+        flex: 0 0 auto;
+    }
+
+    .filter-btn {
+        height: 100%;
+        min-height: 38px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: .42rem .8rem;
+        font-size: .85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+        white-space: nowrap;
+    }
+
+    .filter-btn i {
+        font-size: .85rem;
+    }
+
+    .filter-btn .filter-btn-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 999px;
+        background: var(--gradient-brand);
+        color: #fff;
+        font-size: .68rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .filter-menu:hover .filter-btn,
+    .filter-menu.open .filter-btn,
+    .filter-btn:focus-visible {
+        color: var(--text-primary);
+        border-color: rgba(255, 255, 255, .2);
+        background: var(--card-hover);
+    }
+
+    .filter-dropdown {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 10px);
+        width: 260px;
+        padding: 16px;
+        border-radius: var(--radius-md);
+        background: #17151c;
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 44px -16px rgba(0, 0, 0, .8);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s var(--ease);
+        z-index: 1040;
+    }
+
+    .filter-dropdown::before {
+        content: '';
+        position: absolute;
+        top: -18px;
+        left: 0;
+        right: 0;
+        height: 18px;
+    }
+
+    .filter-menu:hover .filter-dropdown,
+    .filter-menu.open .filter-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .filter-dropdown .filter-group {
+        margin-bottom: 14px;
+    }
+
+    .filter-dropdown .filter-group:last-of-type {
+        margin-bottom: 16px;
+    }
+
+    .filter-dropdown label.filter-label {
+        display: block;
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+
+    .filter-dropdown select.form-select {
+        font-size: .85rem;
+        padding: .4rem .6rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .filter-dropdown .filter-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+    }
+
+    .filter-dropdown .filter-clear-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: .8rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 4px 2px;
+        transition: color .2s var(--ease);
+    }
+
+    .filter-dropdown .filter-clear-btn:hover {
+        color: var(--pink);
+    }
+
+    .filter-dropdown .filter-apply-btn {
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: .4rem 1rem;
+        font-size: .8rem;
+        font-weight: 700;
+        color: #fff;
+        background: var(--gradient-brand);
+        cursor: pointer;
+    }
+
+    @media (max-width: 767px) {
+        .filter-dropdown {
+            right: 0;
+            left: auto;
+            width: 84vw;
+            max-width: 300px;
         }
     }
     /* Event cards (same as home.html) */
@@ -330,9 +505,60 @@ Events
 
     </div>
 
-    <div class="search-wrap">
-        <i class="bi bi-search"></i>
-        <input type="text" class="form-control" id="searchInput" placeholder="Search events...">
+    <div class="search-filter-bar">
+
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control" id="searchInput" placeholder="Search events...">
+        </div>
+
+        <div class="filter-menu" id="filterMenu">
+
+            <button type="button" class="filter-btn" id="filterBtn" aria-haspopup="true" aria-expanded="false">
+                <i class="bi bi-sliders"></i>
+                <span>Filter</span>
+                <span class="filter-btn-count d-none" id="filterCount">0</span>
+            </button>
+
+            <div class="filter-dropdown" id="filterDropdown">
+
+                <div class="filter-group">
+                    <label class="filter-label" for="categoryFilter">Category</label>
+                    <select class="form-select" id="categoryFilter">
+                        <option value="">All categories</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="priceFilter">Price</label>
+                    <select class="form-select" id="priceFilter">
+                        <option value="">Any price</option>
+                        <option value="free">Free</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="sortFilter">Sort by</label>
+                    <select class="form-select" id="sortFilter">
+                        <option value="newest">Newest first</option>
+                        <option value="upcoming">Date: soonest first</option>
+                        <option value="price_low">Price: low to high</option>
+                        <option value="price_high">Price: high to low</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button type="button" class="filter-clear-btn" id="filterClearBtn">
+                        <i class="bi bi-x-circle me-1"></i>Clear
+                    </button>
+                    <button type="button" class="filter-apply-btn" id="filterApplyBtn">Apply</button>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -407,6 +633,25 @@ const CATEGORY_LABELS={
 function categoryLabel(key){
 
     return CATEGORY_LABELS[key] || key || "Uncategorized";
+
+}
+
+// Fills the category <select> in the filter dropdown from CATEGORY_LABELS.
+function populateCategoryOptions(){
+
+    const select=document.getElementById("categoryFilter");
+
+    Object.keys(CATEGORY_LABELS).forEach(key=>{
+
+        const option=document.createElement("option");
+
+        option.value=key;
+
+        option.textContent=CATEGORY_LABELS[key];
+
+        select.appendChild(option);
+
+    });
 
 }
 
@@ -496,6 +741,10 @@ let visibleCount=PAGE_SIZE;
 
 // Current filter state.
 let searchTerm="";
+let categoryFilter="";
+let priceFilter="";
+let sortFilter="newest";
+
 function debounce(fn,delay){
 
     let timer;
@@ -516,19 +765,80 @@ function getFilteredEvents(){
 
     return allEvents.filter(event=>{
 
-        if(!term){
+        if(term){
 
-            return true;
+            const name=(event.event_name || "").toLowerCase();
+
+            const location=(event.location || "").toLowerCase();
+
+            if(!name.includes(term) && !location.includes(term)){
+
+                return false;
+
+            }
 
         }
 
-        const name=(event.event_name || "").toLowerCase();
+        if(categoryFilter && event.event_category!==categoryFilter){
 
-        const location=(event.location || "").toLowerCase();
+            return false;
 
-        return name.includes(term) || location.includes(term);
+        }
+
+        if(priceFilter){
+
+            const fee=Number(event.fee) || 0;
+
+            if(priceFilter==="free" && fee>0){
+
+                return false;
+
+            }
+
+            if(priceFilter==="paid" && fee<=0){
+
+                return false;
+
+            }
+
+        }
+
+        return true;
 
     });
+
+}
+
+// Number of active (non-default) filters, shown as a badge on the filter button.
+function countActiveFilters(){
+
+    let count=0;
+
+    if(categoryFilter){
+        count++;
+    }
+
+    if(priceFilter){
+        count++;
+    }
+
+    if(sortFilter && sortFilter!=="newest"){
+        count++;
+    }
+
+    return count;
+
+}
+
+function updateFilterCountBadge(){
+
+    const badge=document.getElementById("filterCount");
+
+    const count=countActiveFilters();
+
+    badge.textContent=count;
+
+    badge.classList.toggle("d-none",count===0);
 
 }
 
@@ -650,9 +960,29 @@ function renderEvents(){
 
     const filtered=getFilteredEvents();
 
-    // Newest first — fall back to event id if there's no event_date field.
     const sorted=filtered.slice().sort((a,b)=>{
 
+        if(sortFilter==="upcoming"){
+
+            const aKey=a.event_date ? new Date(a.event_date).getTime() : Infinity;
+
+            const bKey=b.event_date ? new Date(b.event_date).getTime() : Infinity;
+
+            return aKey-bKey;
+
+        }
+
+        if(sortFilter==="price_low" || sortFilter==="price_high"){
+
+            const aFee=Number(a.fee) || 0;
+
+            const bFee=Number(b.fee) || 0;
+
+            return sortFilter==="price_low" ? aFee-bFee : bFee-aFee;
+
+        }
+
+        // Default: newest first — fall back to event id if there's no event_date field.
         const aKey=a.event_date ? new Date(a.event_date).getTime() : a.event_id;
 
         const bKey=b.event_date ? new Date(b.event_date).getTime() : b.event_id;
@@ -703,9 +1033,23 @@ function resetFilters(){
 
     searchTerm="";
 
+    categoryFilter="";
+
+    priceFilter="";
+
+    sortFilter="newest";
+
     visibleCount=PAGE_SIZE;
 
     document.getElementById("searchInput").value="";
+
+    document.getElementById("categoryFilter").value="";
+
+    document.getElementById("priceFilter").value="";
+
+    document.getElementById("sortFilter").value="newest";
+
+    updateFilterCountBadge();
 
     renderEvents();
 
@@ -783,6 +1127,148 @@ document.getElementById("loadMoreBtn").addEventListener("click",function(){
 
 });
 
+// Filter dropdown: opens on hover (via CSS) and on click/tap for touch devices,
+// closes on outside click or Escape.
+function setupFilterDropdown(){
+
+    const filterMenu=document.getElementById("filterMenu");
+
+    const filterBtn=document.getElementById("filterBtn");
+
+    const filterDropdown=document.getElementById("filterDropdown");
+
+    const pageHeader=document.querySelector(".page-header");
+
+    const categorySelect=document.getElementById("categoryFilter");
+
+    const priceSelect=document.getElementById("priceFilter");
+
+    const sortSelect=document.getElementById("sortFilter");
+
+    // Measures how far the popover's bottom edge extends past the header
+    // and stores that as a CSS variable, so the :has() rule above can push
+    // the event grid down by exactly enough to avoid overlapping it -
+    // no more, no less - even if the popover's content or the viewport
+    // width changes.
+    function updateDropdownSpacing(){
+
+        const dropdownRect=filterDropdown.getBoundingClientRect();
+
+        const anchorRect=filterMenu.getBoundingClientRect();
+
+        const breathingRoom=16;
+
+        const needed=Math.max(8,Math.ceil(dropdownRect.bottom-anchorRect.bottom+breathingRoom));
+
+        pageHeader.style.setProperty("--filter-dropdown-space",needed+"px");
+
+    }
+
+    updateDropdownSpacing();
+
+    window.addEventListener("resize",updateDropdownSpacing);
+
+    window.addEventListener("load",updateDropdownSpacing);
+
+    function openMenu(){
+
+        updateDropdownSpacing();
+
+        filterMenu.classList.add("open");
+
+        filterBtn.setAttribute("aria-expanded","true");
+
+    }
+
+    function closeMenu(){
+
+        filterMenu.classList.remove("open");
+
+        filterBtn.setAttribute("aria-expanded","false");
+
+    }
+
+    filterBtn.addEventListener("click",function(event){
+
+        event.stopPropagation();
+
+        filterMenu.classList.contains("open") ? closeMenu() : openMenu();
+
+    });
+
+    document.addEventListener("click",function(event){
+
+        if(!filterMenu.contains(event.target)){
+
+            closeMenu();
+
+        }
+
+    });
+
+    document.addEventListener("keydown",function(event){
+
+        if(event.key==="Escape"){
+
+            closeMenu();
+
+        }
+
+    });
+
+    function applyFilters(){
+
+        categoryFilter=categorySelect.value;
+
+        priceFilter=priceSelect.value;
+
+        sortFilter=sortSelect.value;
+
+        visibleCount=PAGE_SIZE;
+
+        updateFilterCountBadge();
+
+        renderEvents();
+
+        closeMenu();
+
+    }
+
+    document.getElementById("filterApplyBtn").addEventListener("click",applyFilters);
+
+    // Also apply immediately when a dropdown value changes, for faster feedback.
+    [categorySelect,priceSelect,sortSelect].forEach(select=>{
+
+        select.addEventListener("change",applyFilters);
+
+    });
+
+    document.getElementById("filterClearBtn").addEventListener("click",function(){
+
+        categoryFilter="";
+
+        priceFilter="";
+
+        sortFilter="newest";
+
+        categorySelect.value="";
+
+        priceSelect.value="";
+
+        sortSelect.value="newest";
+
+        visibleCount=PAGE_SIZE;
+
+        updateFilterCountBadge();
+
+        renderEvents();
+
+        closeMenu();
+
+    });
+
+}
+
 function initializeSearchFromUrl(){
 
     const params=new URLSearchParams(window.location.search);
@@ -816,6 +1302,10 @@ function initializeSearchFromUrl(){
     }
 
 }
+
+populateCategoryOptions();
+
+setupFilterDropdown();
 
 initializeSearchFromUrl();
 
