@@ -14,6 +14,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 User = get_user_model()
@@ -76,12 +77,14 @@ class MeView(APIView):
 
     def get(self, request):
         user = request.user
+
         return Response({
             "id": user.id,
             "name": user.name,
             "email": user.email,
             "phone_number": user.phone_number,
-            "date_of_birth": user.date_of_birth
+            "date_of_birth": user.date_of_birth,
+            "profile_image": request.build_absolute_uri(user.profile_image.url) if user.profile_image else None
         })
 
     def patch(self, request):
@@ -145,12 +148,14 @@ class RegisterSendOTPView(APIView):
 # --------------------------------------------------
 
 class RegisterVerifyOTPView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
     permission_classes = [permissions.AllowAny]
     throttle_classes = [OTPThrottle]
 
     def post(self, request):
-        serializer = RegisterVerifyOTPSerializer( data=request.data)
+        serializer = RegisterVerifyOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         data = serializer.validated_data
 
         try:
@@ -161,20 +166,15 @@ class RegisterVerifyOTPView(APIView):
             )
 
         except OTPVerification.DoesNotExist:
-
             return Response(
-                {
-                    "error": "Invalid OTP."
-                },
+                {"error": "Invalid OTP."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if timezone.now() > otp_obj.expires_at:
             otp_obj.delete()
             return Response(
-                {
-                    "error": "OTP expired."
-                },
+                {"error": "OTP expired."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -183,10 +183,12 @@ class RegisterVerifyOTPView(APIView):
             phone_number=data["phone_number"],
             name=data["name"],
             date_of_birth=data["date_of_birth"],
+            profile_image=data["profile_image"],
             password=data["password"]
         )
 
         otp_obj.delete()
+
         token, _ = Token.objects.get_or_create(user=user)
 
         return Response({
@@ -195,11 +197,12 @@ class RegisterVerifyOTPView(APIView):
                 "id": user.id,
                 "name": user.name,
                 "email": user.email,
-                "phone_number": user.phone_number
+                "phone_number": user.phone_number,
+                "date_of_birth": user.date_of_birth,
+                "profile_image": request.build_absolute_uri(user.profile_image.url)
             },
             "message": "Registration successful."
         })
-
 
 # --------------------------------------------------
 # LOGIN WITH PASSWORD
