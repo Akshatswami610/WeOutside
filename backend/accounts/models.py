@@ -3,6 +3,12 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+import uuid
+import os
+
+def profile_image_upload_path(instance, filename):
+    ext = os.path.splitext(filename)[1]   # .jpg, .png, .jpeg
+    return f"profile_images/{uuid.uuid4()}{ext}"
 
 
 phone_validator = RegexValidator( regex=r"^\+?\d{10,15}$", message="Enter a valid phone number.")
@@ -14,6 +20,7 @@ class UserManager(BaseUserManager):
         phone_number,
         name,
         date_of_birth,
+        profile_image=None,
         password=None,
         **extra_fields
     ):
@@ -39,6 +46,7 @@ class UserManager(BaseUserManager):
             phone_number=phone_number,
             name=name,
             date_of_birth=date_of_birth,
+            profile_image=profile_image,
             **extra_fields
         )
 
@@ -59,21 +67,15 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-
         return self.create_user(
             email=email,
             phone_number=phone_number,
             name=name,
             date_of_birth=date_of_birth,
+            profile_image=None,
             password=password,
             **extra_fields
         )
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=150)
@@ -83,6 +85,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField( max_length=15, unique=True, db_index=True, validators=[phone_validator] )
 
     date_of_birth = models.DateField()
+
+    profile_image = models.ImageField( upload_to=profile_image_upload_path )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
