@@ -1212,6 +1212,87 @@
 
         }
 
+        // ===== Age-restricted event filtering (shared by home.html / events.html) =====
+
+        // Computes a whole-number age in years from a "YYYY-MM-DD" (or any
+        // Date-parseable) date of birth string. Returns null if it can't be
+        // determined.
+        function calculateAge(dobString) {
+
+            if (!dobString) {
+                return null;
+            }
+
+            const dob = new Date(dobString);
+
+            if (isNaN(dob.getTime())) {
+                return null;
+            }
+
+            const today = new Date();
+
+            let age = today.getFullYear() - dob.getFullYear();
+
+            const hasHadBirthdayThisYear =
+                (today.getMonth() > dob.getMonth()) ||
+                (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+
+            if (!hasHadBirthdayThisYear) {
+                age -= 1;
+            }
+
+            return age;
+
+        }
+
+        // Fetches (and caches for the lifetime of this page) the logged-in
+        // user's age based on their date of birth. Resolves to null if the
+        // user is logged out, or if their date of birth isn't available.
+        let _currentUserAgePromise = null;
+
+        function getCurrentUserAge() {
+
+            if (!getToken()) {
+                return Promise.resolve(null);
+            }
+
+            if (!_currentUserAgePromise) {
+
+                _currentUserAgePromise = api("/accounts/me/")
+                    .then(user => calculateAge(user && user.date_of_birth))
+                    .catch(() => null);
+
+            }
+
+            return _currentUserAgePromise;
+
+        }
+
+        // Removes events whose age_limit is higher than the logged-in
+        // user's age. Events with no age_limit, and users who are logged
+        // out or have no date of birth on file, are left unaffected.
+        async function filterEventsByAgeLimit(events) {
+
+            const age = await getCurrentUserAge();
+
+            if (age === null) {
+                return events;
+            }
+
+            return events.filter(event => {
+
+                const limit = Number(event.age_limit);
+
+                if (!Number.isFinite(limit) || limit <= 0) {
+                    return true;
+                }
+
+                return age >= limit;
+
+            });
+
+        }
+
         // Site-styled toast notifications, shown top-right on any page.
         function showToast(message, type = "success", duration = 4000) {
 
