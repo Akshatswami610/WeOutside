@@ -10,6 +10,7 @@ class EventHostSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "email",
+            "profile_image",
         ]
 
 
