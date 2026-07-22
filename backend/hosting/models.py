@@ -2,8 +2,14 @@ from django.db import models
 from django.conf import settings
 from datetime import time
 from django.db.models import Sum
+import uuid
+import os
 
 User = settings.AUTH_USER_MODEL
+
+def event_poster_upload_path(instance, filename):
+    ext = os.path.splitext(filename)[1]   # .jpg, .png, .jpeg
+    return f"event_posters/{uuid.uuid4()}{ext}"
 
 class EventCategory(models.TextChoices):
     HOUSE_PARTY = "HOUSE_PARTY", "House Party"
@@ -42,7 +48,7 @@ class Event(models.Model):
     event_category = models.CharField( max_length=100, choices=EventCategory.choices, db_index=True )
     description = models.TextField()
     rules = models.TextField()
-    poster = models.ImageField(upload_to="event_posters/")
+    poster = models.ImageField(upload_to=event_poster_upload_path)
     max_members = models.PositiveIntegerField()
     fee = models.PositiveIntegerField(default=0)
     gender = models.CharField( max_length=10, choices=Gender.choices, default=Gender.ANY )
