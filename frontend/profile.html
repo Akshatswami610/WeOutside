@@ -693,8 +693,33 @@ async function loadProfile(){
 
         document.getElementById("dob").textContent=user.date_of_birth || "Not available";
 
-        document.getElementById("avatar").src=
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0D0D0D&color=F5C84C&size=150`;
+        const fallbackAvatar=`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0D0D0D&color=F5C84C&size=150`;
+
+        if(user.profile_image){
+
+            // profile_image may come back as a relative path (e.g. "/media/...")
+            // or a full URL, depending on the serializer. Normalize it.
+            const imageUrl=/^https?:\/\//i.test(user.profile_image)
+                ? user.profile_image
+                : `${API_BASE}${user.profile_image}`;
+
+            document.getElementById("avatar").src=imageUrl;
+
+            // If the image fails to load (broken link, deleted file, etc.),
+            // gracefully fall back to the generated avatar instead of
+            // showing a broken image icon.
+            document.getElementById("avatar").onerror=function(){
+                this.onerror=null;
+                this.src=fallbackAvatar;
+            };
+
+        }
+
+        else{
+
+            document.getElementById("avatar").src=fallbackAvatar;
+
+        }
 
     }
 
