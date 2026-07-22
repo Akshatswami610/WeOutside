@@ -384,6 +384,46 @@ Events
         margin-bottom: 18px;
     }
 
+    .empty-state .clear-search-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: .68rem 1.5rem;
+        border-radius: 999px;
+        border: none;
+        font-weight: 700;
+        font-size: .9rem;
+        color: #fff;
+        background: var(--gradient-brand);
+        box-shadow: 0 10px 24px -8px rgba(236, 72, 153, .5);
+        cursor: pointer;
+        transition: transform .25s var(--ease), box-shadow .25s var(--ease), filter .25s var(--ease), gap .25s var(--ease);
+    }
+
+    .empty-state .clear-search-btn i {
+        font-size: .85rem;
+        margin: 0;
+        color: inherit;
+        display: inline-block;
+        transition: transform .25s var(--ease);
+    }
+
+    .empty-state .clear-search-btn:hover {
+        filter: brightness(1.08);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px -8px rgba(236, 72, 153, .6);
+        gap: 12px;
+    }
+
+    .empty-state .clear-search-btn:hover i {
+        transform: translateX(-3px);
+    }
+
+    .empty-state .clear-search-btn:active {
+        transform: translateY(0) scale(.97);
+    }
+
     /* Pagination / load more */
 
     .load-more-wrap {
@@ -1003,9 +1043,9 @@ function renderEvents(){
 
                 <p>No events match your search.</p>
 
-                <button type="button" class="btn btn-primary" onclick="resetFilters()">
+                <button type="button" class="clear-search-btn" onclick="resetFilters()">
 
-                    <i class="bi bi-x-circle me-1"></i> Clear Search
+                    <i class="bi bi-x-circle"></i> Clear Search
 
                 </button>
 
@@ -1070,7 +1110,7 @@ async function loadEvents(){
 
         const events=await api("/hosting/events/");
 
-        allEvents=Array.isArray(events) ? events : [];
+        allEvents=Array.isArray(events) ? await filterEventsByAgeLimit(events) : [];
 
         renderEvents();
 
