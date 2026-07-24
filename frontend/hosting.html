@@ -23,20 +23,26 @@ Host Event
         align-items: center;
         gap: 8px;
         color: var(--pink);
-        font-weight: 800;
-        font-size: .78rem;
-        margin-bottom: 10px;
+        font-weight: 700;
+        font-size: .82rem;
+        letter-spacing: .01em;
+        background: var(--accent-dim);
+        border: 1px solid rgba(236, 72, 153, .3);
+        padding: 7px 16px;
+        border-radius: 999px;
+        margin-bottom: 14px;
     }
 
     .hosting-header h1 {
-        font-size: clamp(1.75rem, 3vw, 2.15rem);
-        margin-bottom: 6px;
+        font-size: clamp(1.9rem, 4vw, 2.4rem);
+        margin-bottom: 8px;
     }
 
     .hosting-header p {
-        color: var(--text-muted);
-        font-size: .92rem;
+        color: var(--text-secondary);
+        font-size: .95rem;
         margin: 0;
+        max-width: 480px;
     }
 
     .hosting-header-actions {
@@ -45,6 +51,54 @@ Host Event
         gap: 10px;
         flex-wrap: wrap;
         flex-shrink: 0;
+    }
+
+    .hosting-header-actions .btn {
+        border-radius: 999px;
+        padding: 10px 20px;
+        font-weight: 700;
+    }
+
+    /* ===== Auth gate (logged-out state) ===== */
+
+    .auth-required-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px -8px rgba(0, 0, 0, .5);
+        text-align: center;
+        padding: 64px 24px;
+    }
+
+    .auth-required-card i {
+        font-size: 2.4rem;
+        color: var(--pink);
+        margin-bottom: 18px;
+        display: block;
+    }
+
+    .auth-required-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+
+    .auth-required-card p {
+        color: var(--text-secondary);
+        font-size: .92rem;
+        margin: 0 auto 24px;
+        max-width: 380px;
+    }
+
+    .auth-required-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .auth-required-actions .btn {
+        min-width: 140px;
+        border-radius: 999px;
     }
 
     /* Modal form */
@@ -499,19 +553,36 @@ Host Event
 
     .empty-state {
         text-align: center;
-        padding: 70px 20px;
+        padding: 64px 24px;
         color: var(--text-muted);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 8px 24px -8px rgba(0, 0, 0, .5);
     }
 
     .empty-state i {
         font-size: 2.4rem;
-        color: var(--text-muted);
+        color: var(--pink);
         margin-bottom: 16px;
         display: block;
     }
 
+    .empty-state h3 {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
     .empty-state p {
-        margin-bottom: 18px;
+        color: var(--text-secondary);
+        font-size: .92rem;
+        margin: 0 auto 22px;
+        max-width: 380px;
+    }
+
+    .empty-state .btn {
+        border-radius: 999px;
     }
 
     #eventList .loading .spinner-border {
@@ -723,14 +794,37 @@ Host Event
         <p>Everything you're hosting, all in one place.</p>
     </div>
 
-    <div class="hosting-header-actions">
+    <div class="hosting-header-actions" id="hostingHeaderActions" style="display:none;">
         <button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#guidelinesModal">
             <i class="bi bi-shield-check me-1"></i>
             Hosting Guidelines
         </button>
         <button class="btn btn-primary" type="button" onclick="handleCreateEventClick()">
+            <i class="bi bi-plus-lg me-1"></i>
             Create Event
         </button>
+    </div>
+
+</div>
+
+<div class="fade-in" id="authRequired" style="display:none;">
+
+    <div class="auth-required-card">
+
+        <i class="bi bi-person-lock"></i>
+
+        <h3>Log in to view your events</h3>
+
+        <p>Sign in to see the events you're hosting, track attendees, and create new ones.</p>
+
+        <div class="auth-required-actions">
+
+            <a href="/login/" class="btn btn-primary">Login</a>
+
+            <a href="/register/" class="btn btn-secondary">Create Account</a>
+
+        </div>
+
     </div>
 
 </div>
@@ -1388,7 +1482,19 @@ function formatHostDate(dateStr){
 
 }
 
-loadEvents();
+if(getToken()){
+
+    document.getElementById("hostingHeaderActions").style.display="";
+
+    loadEvents();
+
+}
+
+else{
+
+    document.getElementById("authRequired").style.display="";
+
+}
 
 function handleCreateEventClick(){
 
@@ -1623,7 +1729,14 @@ async function loadEvents(){
 
                 <i class="bi bi-calendar-x"></i>
 
-                <p>You haven't hosted any events yet.</p>
+                <h3>No events yet</h3>
+
+                <p>You haven't hosted any events yet. Create one to get started.</p>
+
+                <button class="btn btn-primary" type="button" onclick="handleCreateEventClick()">
+                    <i class="bi bi-plus-lg me-1"></i>
+                    Create Event
+                </button>
 
             </div>
 
