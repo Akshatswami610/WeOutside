@@ -15,6 +15,9 @@ def home(request):
 def events(request):
     return render(request, "events.html")
 
+def earning(request):
+    return render(request, "earning.html")
+
 def eventdetails(request, id):
     return render(request, "event-details.html")
 
